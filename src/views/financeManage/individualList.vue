@@ -170,11 +170,12 @@ export default {
   data() {
     return {
       tableLoading: false,
-      tableData: {},
+      tableData: [],
       dialogVisible_check: false,
       dialogVisible_checkall: false,
       dialogVisible_look: false,
       creditInfo: {},
+      statusList:[],
       // 搜索条件
       columnParam: {
         cnameOrAbbr: "",

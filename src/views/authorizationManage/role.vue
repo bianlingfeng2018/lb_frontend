@@ -133,7 +133,7 @@ const routesArr = [
                 meta: { title: '报价单列表', role: ['/tm/detection/quotation/list'] }
               },
               {
-                meta: { title: '创建报价单', role: ['/tm/detection-quotation-create'] }
+                meta: { title: '新增报价', role: ['/tm/detection-quotation-create'] }
               },
               {
                 meta: { title: '编辑报价单', role: ['/tm/detection-quotation-edit/:id'] }
@@ -183,6 +183,17 @@ const routesArr = [
               },
               {
                 meta: { title: '审核工作单', role: ['/tm/detection/worksheet/audit/:id'] }
+              }
+            ]
+          },
+          {
+            meta: { title: '原始记录单', role: ['/tm/detection/record'] },
+            children: [
+              {
+                meta: { title: '原始记录单列表', role: ['/tm/detection/record/list'] }
+              },
+              {
+                meta: { title: '查看原始记录单', role: ['/tm/detection/record/show/:id'] }
               }
             ]
           },

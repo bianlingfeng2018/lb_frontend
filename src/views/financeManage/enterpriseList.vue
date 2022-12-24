@@ -72,10 +72,11 @@
 
 <script>
 export default {
+  name: "EnterpriseList",
   data() {
     return {
       tableLoading: false,
-      tableData: {},
+      tableData: [],
       dialogVisible: false,
       creditInfo: {},
       // 搜索条件
@@ -96,6 +97,9 @@ export default {
     this.getDate()
   },
   methods: {
+    getDate(){
+
+    },
     // 设置授信额度
     setCreditInfo() {
 

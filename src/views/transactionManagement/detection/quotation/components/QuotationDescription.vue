@@ -1,170 +1,145 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-    <div class="f1 pointer" @click="goBack()"><i class="el-icon-arrow-left" />检测报价单信息</div>
+    <el-button class="f1 pointer" @click="goBack()" icon="el-icon-arrow-left">返回上一页</el-button>
     <el-divider content-position="left">基本信息</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" size="small" border :label-style="{'width': '150px'}" :content-style="{'width': '200px'}">
+    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
-        <template slot="label">{{ "报价单编号\nQuotation No" }}</template>
+        <template slot="label">{{ "报价编号" }}</template>
         {{ postForm.quotationNum }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "联络人\nAttn" }}</template>
+        <template slot="label">{{ "交易名称" }}</template>
         {{ postForm.attn }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "客户\nClient" }}</template>
-        {{ postForm.client }}
+        <template slot="label">{{ "交易描述" }}</template>
+        {{ postForm.attn }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "客户电话\nTel" }}</template>
-        {{ postForm.telClient }}
+        <template slot="label">{{ "支付方式" }}</template>
+        {{ postForm.attn }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "客户传真\nFax" }}</template>
-        {{ postForm.faxClient }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "客户邮箱\nE-mail" }}</template>
-        {{ postForm.email }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "发票抬头\nInvoice Title" }}</template>
-        {{ postForm.invoiceTitle }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "公司\nFrom" }}</template>
+        <template slot="label">{{ "客户公司" }}</template>
         {{ postForm.fromCom }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "公司电话\nFrom Tel" }}</template>
+        <template slot="label">{{ "联系人" }}</template>
+        {{ postForm.client }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">{{ "联系电话" }}</template>
         {{ postForm.telCom }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "公司传真\nFrom Fax" }}</template>
+        <template slot="label">{{ "客户传真" }}</template>
         {{ postForm.faxCom }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "报价日期\nDate" }}</template>
-        {{ postForm.gmtCreate | timeFormatFilter }}
+        <template slot="label">{{ "客户邮箱" }}</template>
+        {{ postForm.email }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "报告类型\nReport Type" }}</template>
-        {{ postForm.reportType }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "报告邮寄地址\nRe.delivery to" }}</template>
+        <template slot="label">{{ "报告邮寄地址" }}</template>
         {{ postForm.deliveryAddress }}
       </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "测试周期\nTest period" }}</template>
-        {{ postForm.testPeroid }}
-      </el-descriptions-item>
     </el-descriptions>
-    <el-divider class="mb36" content-position="left">费用信息</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" size="small" border :label-style="{'width': '150px'}" :content-style="{'width': '200px'}">
-      <el-descriptions-item>
-        <template slot="label">{{ "报告费\nReport Fee" }} </template>
-        {{ postForm.reportFee }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "快递费\nExpress Fee" }} </template>
-        {{ postForm.courierFee }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "税率\nTax Fee" }}</template>
-        {{ postForm.taxFee }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "折扣\nDiscount" }}</template>
-        {{ postForm.discount }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "总费用\nTotal Cost" }}</template>
-        {{ postForm.totalCost }}
-      </el-descriptions-item>
-    </el-descriptions>
-    <el-divider class="mb36" content-position="left">账户信息</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" size="small" border :label-style="{'width': '150px'}" :content-style="{'width': '200px'}">
-      <el-descriptions-item>
-        <template slot="label">{{ "户名\nAccount Name" }}</template>
-        {{ postForm.bankAccountName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "账号\nBank Account" }}</template>
-        {{ postForm.bankAccount }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "银行名称\nBank Name" }}</template>
-        {{ postForm.bankName }}
-      </el-descriptions-item>
-      <!--      <el-descriptions-item>-->
-      <!--        <template slot="label">{{ "申请公司签名\nClient.Sign" }}</template>-->
-      <!--        {{ postForm.clientComSignature }}-->
-      <!--      </el-descriptions-item>-->
-      <!--      <el-descriptions-item>-->
-      <!--        <template slot="label">{{ "立标代表签名\nlibiaoRe.Sign" }}</template>-->
-      <!--        {{ postForm.libiaoRepresentativeSignature }}-->
-      <!--      </el-descriptions-item>-->
-      <!--      <el-descriptions-item>-->
-      <!--        <template slot="label">{{ "盖章\nClient.Chop" }}</template>-->
-      <!--        {{ postForm.clientComChop }}-->
-      <!--      </el-descriptions-item>-->
-      <!--      <el-descriptions-item>-->
-      <!--        <template slot="label">{{ "审核人员签名\nAudit" }}</template>-->
-      <!--        {{ postForm.audit }}-->
-      <!--      </el-descriptions-item>-->
-      <el-descriptions-item>
-        <template slot="label">{{ "客户签名日期\nClient Date" }}</template>
-        {{ postForm.clientSignatureDate }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "立标签名日期\nLibiao Date" }} </template>
-        {{ postForm.libiaoSignatureDate }}
-      </el-descriptions-item>
-    </el-descriptions>
-    <el-divider content-position="left">报价单明细</el-divider>
-    <vxe-table
-      ref="xTable"
-      border
-      show-footer
-      show-overflow
-      class="editable-footer mb20"
-      :merge-footer-items="mergeFooterItems"
-      :row-config="{ isHover: true }"
-      :export-config="{}"
-      :footer-method="footerMethod"
-      :data="postForm.testQuotationItemList"
-      resizable
-    >
-      <vxe-column type="seq" width="60" :title="'序号\nNum'" align="right" />
-      <vxe-column field="reportNum" :title="'报告编号\nReport No'" />
-      <vxe-column field="productDes" :title="'产品名称\nProduct Description'" />
-      <vxe-column field="style" :title="'型号\nStyle/Item No'" />
-      <vxe-column field="materialColor" :title="'材质/颜色\nMaterial/Color'" />
-      <vxe-column field="testItem" :title="'测试项目\nTest Item'" />
-      <vxe-column field="unitPrice" :title="'单价\nUnit Price'" />
-      <vxe-column field="qty" :title="'测试点数\nQty'" />
-      <vxe-column field="amountRmb" :title="'测试金额\nAmount/RMB'" />
-    </vxe-table>
-    <el-divider content-position="left">备注</el-divider>
-    <div class="remark-content">
-      <P style="white-space: pre-wrap">
-        {{ postForm.remark }}
-      </P>
-    </div>
-    <el-button
-      v-loading="submitLoading"
-      type="primary"
-      size="small"
-      plain
-      @click="handleDownLoad()"
-    >下载</el-button>
-    <el-button
-      type="primary"
-      size="small"
-      plain
-      @click="handlePreview()"
-    >预览</el-button>
+
+    <el-tabs v-model="activeIndex" @tab-click="handleClick" style="width: 100%">
+      <el-tab-pane label="报价明细" name="0">
+        <vxe-table ref="xTable" border show-overflow class="editable-footer mb20" :merge-footer-items="mergeFooterItems"
+          :row-config="{ isHover: true }" :export-config="{}" :footer-method="footerMethod"
+          :data="postForm.testQuotationItemList" resizable>
+          <vxe-column type="seq" width="60" :title="'序号\nNum'" align="right" />
+          <vxe-column field="reportNum" :title="'报告编号\nReport No'" />
+          <vxe-column field="productDes" :title="'产品名称\nProduct Description'" />
+          <vxe-column field="style" :title="'型号\nStyle/Item No'" />
+          <vxe-column field="materialColor" :title="'材质/颜色\nMaterial/Color'" />
+          <vxe-column field="testItem" :title="'测试项目\nTest Item'" />
+          <vxe-column field="unitPrice" :title="'单价\nUnit Price'" />
+          <vxe-column field="qty" :title="'测试点数\nQty'" />
+          <vxe-column field="amountRmb" :title="'测试金额\nAmount/RMB'" />
+        </vxe-table></el-tab-pane>
+      <el-tab-pane label="申请单" name="1">
+        <el-table v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
+          <el-table-column prop="applicationName" label="申请单编号" min-width="120" />
+          <el-table-column prop="reportTitle" label="申请日期" min-width="120" />
+          <el-table-column prop="sameAsApplicant" label="收样状态" min-width="120">
+            <template slot-scope="scope">
+              <span v-if="scope.row.confirmed == 1">已收样</span>
+              <span v-else-if="scope.row.confirmed == 2">未收样</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="otherName" label="样品接收日期" min-width="120" />
+          <el-table-column prop="otherAddress" label="要求完成日期" min-width="120" />
+          <el-table-column prop="contact" label="合同评审状态" min-width="120">
+            <template slot-scope="scope">
+              <span v-if="scope.row.confirmed == 1">待评审</span>
+              <span v-else-if="scope.row.confirmed == 2">评审通过</span>
+              <span v-else-if="scope.row.confirmed == 3">评审不通过</span>
+              <span v-else-if="scope.row.confirmed == 4">已下单</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="tel" label="跟进人" min-width="120" />
+          <el-table-column prop="fax" label="评审人" min-width="120" />
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="工作单" name="2">
+        <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
+          <el-table-column prop="workOrderNum" label="工作单编号" min-width="120" />
+          <el-table-column prop="gmtCreate" label="开单日期" min-width="120" />
+          <el-table-column prop="busyStatus" label="是否加急" min-width="120" />
+          <el-table-column prop="issuer" label="要求完成日期" min-width="120" />
+          <el-table-column prop="gmtOutput" label="出单日期" min-width="120" />
+          <el-table-column prop="withdraw" label="检测单位名称" min-width="120" />
+          <el-table-column prop="withdraw" label="是否分包商" min-width="120" />
+          <el-table-column fixed="right" label="状态" min-width="90">
+            <template slot-scope="scope">
+              <span v-if="scope.row.confirmed">已确认</span>
+              <span v-else>待确认</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="原始记录单" name="3" >
+        <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
+          <el-table-column prop="workOrderNum" label="原始记录单编号" min-width="120" />
+          <el-table-column prop="gmtCreate" label="检测项目" min-width="120" />
+          <el-table-column prop="busyStatus" label="检测实验室" min-width="120" />
+          <el-table-column prop="issuer" label="检测设备号" min-width="120" />
+          <el-table-column prop="gmtOutput" label="测试人员" min-width="120" />
+          <el-table-column prop="withdraw" label="创建日期" min-width="120" />
+          <el-table-column prop="withdraw" label="要求日期" min-width="120" />
+          <el-table-column prop="withdraw" label="报告日期" min-width="120" />
+          <el-table-column fixed="right" label="状态" min-width="90">
+            <template slot-scope="scope">
+              <span v-if="scope.row.confirmed">已确认</span>
+              <span v-else>待确认</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="检测报告单" name="4" >
+        <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
+          <el-table-column prop="workOrderNum" label="报告编号" min-width="120" />
+          <el-table-column prop="gmtCreate" label="客户名称" min-width="120" />
+          <el-table-column prop="gmtOutput" label="测试人员" min-width="120" />
+          <el-table-column prop="withdraw" label="要求日期" min-width="120" />
+          <el-table-column prop="withdraw" label="报告日期" min-width="120" />
+          <el-table-column fixed="right" label="状态" min-width="90">
+            <template slot-scope="scope">
+              <span v-if="scope.row.confirmed">已确认</span>
+              <span v-else>待确认</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+
+
+   
+    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
+    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>
 </template>
 
@@ -202,13 +177,13 @@ export default {
       fetch(prefix.lb +
         "/api/test/previewTestQuotation?testTradeId=" +
         this.downloadParam.testTradeId,
-      {
-        method: "GET",
-        responseType: "application/pdf",
-        headers: new Headers({
-          "token": getToken().toString()
-        })
-      }) // FETCH BLOB FROM IT
+        {
+          method: "GET",
+          responseType: "application/pdf",
+          headers: new Headers({
+            "token": getToken().toString()
+          })
+        }) // FETCH BLOB FROM IT
         .then((response) => response.blob())
         .then((blob) => { // RETRIEVE THE BLOB AND CREATE LOCAL URL
           var _url = window.URL.createObjectURL(blob)
@@ -250,9 +225,9 @@ export default {
             message: "文件下载失败，请稍后再试~"
           })
         })
-        .finally(() => {})
+        .finally(() => { })
     },
-    fetchData: function(id) {
+    fetchData: function (id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
         console.log(response.data)
         this.postForm = response.data.testQuotation
@@ -267,12 +242,12 @@ export default {
       })
     },
     setTagsViewTitle() {
-      const title = '查看检测报价单'
+      const title = '查看报价单'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.tempRoute.params.id}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     setPageTitle() {
-      const title = '查看检测报价单'
+      const title = '查看报价单'
       document.title = `${title} - ${this.tempRoute.params.id}`
     },
     goBack() {
@@ -310,6 +285,7 @@ export default {
     color: #808080;
     line-height: 20px;
   }
+
   ::v-deep .el-descriptions-item__label {
     white-space: pre-line;
   }

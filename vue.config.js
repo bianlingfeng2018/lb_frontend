@@ -37,7 +37,7 @@ module.exports = {
       errors: true
     },
     proxy: {
-      'backend': {
+      '/backend': {
         target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,

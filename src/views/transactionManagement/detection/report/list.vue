@@ -38,7 +38,7 @@
         plain
         size="small"
         style="position: absolute;right:10px;top:5px;"
-        @click="handleCreate"
+        @click="handleShow"
       >审核
       </el-button>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container ohn ">
     <!-- <div class="f1 pointer" @click="goBack()"><i class="el-icon-arrow-left" />检测报价单</div> -->
-<<<<<<< HEAD
+
     <el-form
       ref="postForm"
       v-loading="formLoading"
@@ -12,17 +12,13 @@
       label-width="110px"
       class="mt20"
     >
-=======
-    <el-form ref="postForm" v-loading="formLoading"  :inline="true" :model="postForm" status-icon
-      :rules="rules" label-width="110px" class="mt20">
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <el-form-item label="交易名称" prop="quotationNum">
         <el-input v-model="postForm.quotationNum" placeholder="请输入交易名称" clearable style="width: 400px" />
       </el-form-item>
       <br>
       <el-form-item label="交易描述" prop="quotationNum">
         <el-input v-model="postForm.quotationNum" placeholder="请输入交易描述" clearable style="width: 400px" />
-<<<<<<< HEAD
+
       </el-form-item>
       <br>
       <el-form-item label="支付方式" prop="quotationNum">
@@ -70,47 +66,6 @@
         />
       </el-form-item>
 
-=======
-      </el-form-item>
-      <br>
-      <el-form-item label="支付方式" prop="quotationNum">
-        <el-radio-group v-model="radio" style="width: 540px">
-          <el-radio :label="1">挂账</el-radio>
-          <el-radio :label="2">先付后检</el-radio>
-          <el-radio :label="3">先付</el-radio>
-          <el-input 
-               class="short" 
-               style="width: 100px"
-               v-model="postForm.quotationNum">
-            </el-input>
-            <el-button type="text" style="color:black">%后检</el-button>
-        </el-radio-group>
-      </el-form-item>
-      <el-divider class="mt20" content-position="left">客户公司</el-divider>
-      <el-form-item label="客户公司" prop="quotationNum">
-        <el-input v-model="postForm.quotationNum" placeholder="请输入客户公司" clearable style="width: 240px" />
-      </el-form-item>
-      <el-form-item label="客户联系人">
-        <el-select v-model="postForm.serviceId" placeholder="请选择" style="width: 240px" @change="onChange">
-          <el-option v-for="item in userList" :key="item.id" :label="item.nickname" :value="item.id" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="联系电话" prop="attn">
-        <el-input v-model="postForm.attn" placeholder="请输入联系电话" clearable style="width: 240px" />
-      </el-form-item>
-      <el-form-item label="邮箱" prop="client">
-        <el-input v-model="postForm.client" placeholder="请输入邮箱" clearable style="width: 240px" />
-      </el-form-item>
-      <el-form-item label="传真" prop="telClient">
-        <el-input v-model="postForm.telClient" placeholder="请输入传真" clearable style="width: 240px" />
-      </el-form-item>
-      <br>
-      <el-form-item label="报告邮寄地址" prop="deliveryAddress">
-        <el-input v-model="postForm.deliveryAddress" type="textarea" placeholder="请输入邮寄地址" :max-rows="3" maxlength="100"
-          show-word-limit clearable style="width: 500px" />
-      </el-form-item>
- 
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <el-divider content-position="left">报价明细</el-divider>
       <vxe-toolbar ref="xToolbar">
         <template #tools>
@@ -118,18 +73,32 @@
           </el-button>
         </template>
       </vxe-toolbar>
-      <vxe-table ref="xTable" border show-footer show-overflow class="editable-footer mb20"
-        :row-config="{ isHover: true }" :export-config="{}" :footer-method="footerMethod"
-        :data="postForm.testQuotationItemList" :edit-config="{ trigger: 'click', mode: 'row' }" :edit-rules="tableRules"
-        @edit-closed="editClose">
+      <vxe-table
+        ref="xTable"
+        border
+        show-footer
+        show-overflow
+        class="editable-footer mb20"
+        :row-config="{ isHover: true }"
+        :export-config="{}"
+        :footer-method="footerMethod"
+        :data="postForm.testQuotationItemList"
+        :edit-config="{ trigger: 'click', mode: 'row' }"
+        :edit-rules="tableRules"
+        @edit-closed="editClose"
+      >
         <vxe-column type="seq" width="60" :title="'序号\nNum'" align="right" />
         <vxe-column field="reportNum" :title="'报告编号\nReport No'" :edit-render="{}">
           <template #edit="{ row }">
             <vxe-input v-model="row.reportNum" type="text" />
           </template>
         </vxe-column>
-        <vxe-column field="productDes" :title="'产品名称\nProduct Description'"
-          :edit-render="{ autofocus: '.vxe-input--inner' }" width="160">
+        <vxe-column
+          field="productDes"
+          :title="'产品名称\nProduct Description'"
+          :edit-render="{ autofocus: '.vxe-input--inner' }"
+          width="160"
+        >
           <template #edit="{ row }">
             <vxe-input v-model="row.productDes" type="text" :min="1" :max="120" @change="updateFooterEvent" />
           </template>
@@ -140,8 +109,11 @@
           </template>
         </vxe-column>
 
-        <vxe-column field="materialColor" :title="'材质/颜色\nMaterial/Color'"
-          :edit-render="{ autofocus: '.vxe-input--inner' }">
+        <vxe-column
+          field="materialColor"
+          :title="'材质/颜色\nMaterial/Color'"
+          :edit-render="{ autofocus: '.vxe-input--inner' }"
+        >
           <template #edit="{ row }">
             <vxe-input v-model="row.materialColor" type="text" @input="updateFooterEvent" />
           </template>
@@ -209,11 +181,7 @@ export default {
       rules: methods.quotationCreateValidate,
       // rules: {},
       tableRules: methods.quotationTableValidate,
-<<<<<<< HEAD
       radio: '1',
-=======
-      radio:'1',
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       postForm: {
         testTradeId: "",
         client: "",
@@ -321,7 +289,7 @@ export default {
     this.postForm.testTradeId = this.tmpTestTradeId
   },
   methods: {
-    onChange: function (val) {
+    onChange: function(val) {
       console.log(val)
       for (const u of this.userList) {
         if (u.id === val) {
@@ -337,7 +305,7 @@ export default {
       console.log(res)
       this.userList = res.data
     },
-    fetchData: function (id) {
+    fetchData: function(id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
         console.log(response.data)
         this.postForm = response.data.testQuotation
@@ -351,7 +319,7 @@ export default {
         console.log(err)
       })
     },
-    fetchDataAndFill: function (id) {
+    fetchDataAndFill: function(id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
         console.log(response.data)
         const testTrade = response.data.testTrade
@@ -388,7 +356,7 @@ export default {
       document.title = `${title} - ${this.tmpTestTradeId}`
     },
     submitForm(formName) {
-      this.$refs[formName].validate(async (valid) => {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
           // validate xTable
           const errMap = await this.$refs.xTable
@@ -410,11 +378,11 @@ export default {
               slots: {
                 default() {
                   return [
-                    <div class='red' style='max-height: 400px;overflow: auto;'>
-                      {
-                        msgList.map(msg => <div>{msg}</div>)
-                      }
-                    </div>
+                    // <div class='red' style='max-height: 400px;overflow: auto;'>
+                    //   {
+                    //     msgList.map(msg => <div>{msg}</div>)
+                    //   }
+                    // </div>
                   ]
                 }
               }

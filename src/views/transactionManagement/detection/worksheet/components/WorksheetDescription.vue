@@ -1,10 +1,6 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-<<<<<<< HEAD
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack()">返回上一页</el-button>
-=======
-    <el-button class="f1 pointer" @click="goBack()" icon="el-icon-arrow-left">返回上一页</el-button>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     <el-divider content-position="left">工作单信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
@@ -41,7 +37,6 @@
 
     <div v-for="(item, index) in postForm" :key="index">
 
-<<<<<<< HEAD
       <el-descriptions
         class="margin-top"
         title=""
@@ -49,10 +44,6 @@
         :content-style="{ 'width': '200px' }"
         :style="{ 'margin-top': '20px' }"
       >
-=======
-      <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }"
-        :style="{ 'margin-top': '20px' }">
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         <el-descriptions-item>
           <template slot="label">样品部位名称</template>
           {{ item.customer }}
@@ -92,19 +83,12 @@
 
     <div class="mt36">样品照片</div>
     <div class="flex-direction">
-<<<<<<< HEAD
+
       <div v-for="fit in fits" :key="fit" class="block">
         <el-image class="img" :src="url" />
       </div>
     </div>
 
-=======
-      <div class="block"  v-for="fit in fits" :key="fit">
-        <el-image class="img" :src="url"></el-image>
-      </div>
-    </div>
-   
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>
@@ -194,7 +178,7 @@ export default {
         })
         .finally(() => { })
     },
-    fetchData: function (id) {
+    fetchData: function(id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
         console.log(response.data)
         this.postForm = response.data.testWorkOrder

@@ -2,7 +2,7 @@
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="报价单编号">
-<<<<<<< HEAD
+
         <el-input
           v-model="columnParam.cnameOrAbbr"
           placeholder="请输入报价单编号"
@@ -25,18 +25,7 @@
           style="width: 240px"
           @keydown.enter.native="onSearch"
         />
-=======
-        <el-input v-model="columnParam.cnameOrAbbr" placeholder="请输入报价单编号" style="width: 240px"
-          @keydown.enter.native="onSearch" />
-      </el-form-item>
-      <el-form-item label="客户中文名称">
-        <el-input v-model="columnParam.cnameOrAbbr" placeholder="请输入客户中文名称" style="width: 240px"
-          @keydown.enter.native="onSearch" />
-      </el-form-item>
-      <el-form-item label="检测交易名称">
-        <el-input v-model="columnParam.cnameOrAbbr" placeholder="请输入检测交易名称" style="width: 240px"
-          @keydown.enter.native="onSearch" />
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
       </el-form-item>
 
       <el-form-item label="跟进人" prop="email">
@@ -70,17 +59,15 @@
     </el-form>
 
     <div class="lb-flex" style="position: relative;">
-<<<<<<< HEAD
+
       <el-tabs v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
-=======
-      <el-tabs v-model="activeIndex" @tab-click="handleClick" style="width: 100%">
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
         <el-tab-pane label="全部" name="0" />
         <el-tab-pane label="待审核价格" name="1" />
         <el-tab-pane label="审核不通过" name="2" />
         <el-tab-pane label="已失效" name="3" />
       </el-tabs>
-<<<<<<< HEAD
+
       <el-button
         type="primary"
         plain
@@ -88,10 +75,6 @@
         style="position: absolute;right:10px;top:5px;"
         @click="handleCreate"
       >新增报价
-=======
-      <el-button type="primary" plain size="small" style="position: absolute;right:10px;top:5px;"
-        @click="handleCreate">新增报价
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       </el-button>
     </div>
 
@@ -128,7 +111,7 @@
         </template>
       </el-table-column>
     </el-table>
-<<<<<<< HEAD
+
     <el-pagination
       class="fr mt20"
       :current-page="pagination.currPage"
@@ -139,11 +122,6 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-=======
-    <el-pagination class="fr mt20" :current-page="pagination.currPage" :page-sizes="[10, 20, 30, 50]"
-      :page-size="pagination.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pagination.pageTotal"
-      @size-change="handleSizeChange" @current-change="handleCurrentChange" />
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
 
     <!--弹窗  审核-->
     <el-dialog :visible.sync="dialogVisible_check" title="审核">
@@ -171,7 +149,7 @@
           <el-input v-model="creditInfo.username" width="120" />
         </el-form-item>
         <el-form-item label="上传样品照片：" prop="username">
-<<<<<<< HEAD
+
           <el-upload
             class="avatar-uploader"
             :action="prefix.lb + '/api/certification/uploadFile'"
@@ -184,13 +162,7 @@
           >
             <img v-if="imageUrl" :src="imageUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
-=======
-          <el-upload class="avatar-uploader" :action="prefix.lb + '/api/certification/uploadFile'"
-            :on-success="handleFileSuccess" :before-upload="beforeFlieUpload" :show-file-list="false" :multiple="false"
-            :headers="headers" :limit="1">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
             <div slot="tip" class="el-upload__tip">
               支持jpg、jpeg、gif、png、pdf
             </div>
@@ -264,11 +236,8 @@ export default {
           this.tableLoading = false
         })
     },
-<<<<<<< HEAD
+
     // 上传水单
-=======
-    //上传水单
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     handleDelete(row) {
       this.dialogVisible_settlement = true
       // this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
@@ -308,31 +277,20 @@ export default {
         path: "/tm/detection/quotation/create"
       })
     },
-<<<<<<< HEAD
     // 查看
-=======
-    //查看
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     handleShow(data) {
       this.$router.push({
         path: "/tm/detection/quotation/show/" + data.testTradeId
       })
     },
-<<<<<<< HEAD
     // 编辑
-=======
-    //编辑
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     handleEdit(data) {
       this.$router.push({
         path: "/tm/detection/quotation/edit/" + data.testTradeId
       })
     },
-<<<<<<< HEAD
+
     // 审核
-=======
-    //审核
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     handleCheck(data) {
       this.dialogVisible_check = true
     },
@@ -380,8 +338,4 @@ export default {
   height: 120px;
   display: block;
 }
-<<<<<<< HEAD
 </style>
-=======
-</style>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560

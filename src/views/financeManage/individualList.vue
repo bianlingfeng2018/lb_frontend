@@ -73,7 +73,6 @@
       </el-button>
     </div>
     <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-<<<<<<< HEAD
       <el-table-column align="center" type="selection" min-width="80" />
       <el-table-column prop="clientNum" label="报价单编号" min-width="150" />
       <el-table-column prop="name" label="交易名称" min-width="150" />
@@ -84,18 +83,6 @@
       <el-table-column prop="name" label="实际收款日期" min-width="150" />
       <el-table-column prop="name" label="核销日期" min-width="150" />
       <el-table-column prop="name" label="状态" min-width="150" />
-=======
-      <el-table-column align="center" type="selection"  min-width="80"/>
-      <el-table-column prop="clientNum" label="报价单编号" min-width="150"/>
-      <el-table-column prop="name" label="交易名称" min-width="150"/>
-      <el-table-column prop="name" label="客户中文名称" min-width="150"/>
-      <el-table-column prop="name" label="交易金额" min-width="150"/>
-      <el-table-column prop="name" label="回款金额" min-width="150"/>
-      <el-table-column prop="name" label="上传水单日期" min-width="150"/>
-      <el-table-column prop="name" label="实际收款日期" min-width="150"/>
-      <el-table-column prop="name" label="核销日期" min-width="150"/>
-      <el-table-column prop="name" label="状态" min-width="150"/>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <el-table-column fixed="right" label="操作" width="150">
         <template v-slot="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
@@ -122,17 +109,10 @@
         <el-form-item label="客户名称">{{ creditInfo.identityId }}</el-form-item>
         <el-form-item label="报价单编号">{{ creditInfo.identityId }}</el-form-item>
         <el-form-item label="回款金额" prop="username">
-<<<<<<< HEAD
           <el-input v-model="creditInfo.username" placeholder="输入授信额度" width="120" />
         </el-form-item>
         <el-form-item label="水单" prop="username">
           <el-input v-model="creditInfo.username" width="120" />
-=======
-          <el-input v-model="creditInfo.username" placeholder="输入授信额度" width="120"/>
-        </el-form-item>
-        <el-form-item label="水单" prop="username">
-          <el-input v-model="creditInfo.username" width="120"/>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         </el-form-item>
         <el-form-item label="实际收款日期" prop="username">
           <el-date-picker
@@ -173,12 +153,8 @@
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
-<<<<<<< HEAD
             style="width: 120px"
           />
-=======
-            style="width: 120px"/>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -199,12 +175,8 @@ export default {
       dialogVisible_check: false,
       dialogVisible_checkall: false,
       dialogVisible_look: false,
-      creditInfo: {},
-<<<<<<< HEAD
+      creditInfo: [],
       statusList: [],
-=======
-      statusList:[],
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       // 搜索条件
       columnParam: {
         cnameOrAbbr: "",
@@ -249,28 +221,23 @@ export default {
     },
     // 导出
     onExport() {
-      const colParam = deepClone(this.columnParam)
-      const range = colParam.lastTraceDate
-      if (range && range.length > 1) {
-        colParam.startDate = range[0]
-        colParam.endDate = range[1]
-      }
-      colParam.lastTraceDate = null
-      this.tableLoading = true
-      const fileName = 'export-all.xlsx'
-      const url = "/api/cli-all-export"
-      const urlWithParam = appendParamsToUrl(url, colParam)
-      this.$router.push({
-        path: "/clm/cli-com-export",
-<<<<<<< HEAD
-        query: Object.assign({}, colParam, { url: urlWithParam, fileName: fileName })
-      })
+      // const colParam = deepClone(this.columnParam)
+      // const range = colParam.lastTraceDate
+      // if (range && range.length > 1) {
+      //   colParam.startDate = range[0]
+      //   colParam.endDate = range[1]
+      // }
+      // colParam.lastTraceDate = null
+      // this.tableLoading = true
+      // const fileName = 'export-all.xlsx'
+      // const url = "/api/cli-all-export"
+      // const urlWithParam = appendParamsToUrl(url, colParam)
+      // this.$router.push({
+      //   path: "/clm/cli-com-export",
+      //   query: Object.assign({}, colParam, { url: urlWithParam, fileName: fileName })
+      // })
     }
-=======
-        query: Object.assign({}, colParam, {url: urlWithParam, fileName: fileName})
-      })
-    },
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
   }
 }
 </script>

@@ -1,10 +1,6 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-<<<<<<< HEAD
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack()">返回上一页</el-button>
-=======
-    <el-button class="f1 pointer" @click="goBack()" icon="el-icon-arrow-left">返回上一页</el-button>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     <el-divider content-position="left">检测报告单</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
@@ -92,7 +88,7 @@
       以上信息由申请者提供及确认，我司对其真实性不承担责任
     </p>
     <el-divider content-position="left">样品描述</el-divider>
-<<<<<<< HEAD
+
     <vxe-table
       ref="xTable"
       border
@@ -103,11 +99,6 @@
       :export-config="{}"
       :data="postForm.sampleDesc"
     >
-=======
-    <vxe-table ref="xTable" border show-overflow class="editable-footer mb20"
-      :merge-footer-items="mergeFooterItems" :row-config="{ isHover: true }" :export-config="{}"
-      :data="postForm.sampleDesc">
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <vxe-column type="seq" width="60" :title="'序号'" align="right" />
       <vxe-column field="sampleNum" :title="'样品编号'" :edit-render="{ autofocus: '.vxe-input--inner' }">
         <template #edit="{ row }">
@@ -119,16 +110,12 @@
           <vxe-input v-model="row.sampleDes" type="text" />
         </template>
       </vxe-column>
-<<<<<<< HEAD
+
       <vxe-column
         field="sampleLocation"
         :title="'取样部位(位置)'"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
-=======
-      <vxe-column field="sampleLocation" :title="'取样部位(位置)'"
-        :edit-render="{ autofocus: '.vxe-input--inner' }">
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         <template #edit="{ row }">
           <vxe-input v-model="row.sampleLocation" type="text" :min="1" :max="120" />
         </template>
@@ -140,7 +127,7 @@
       <p>{{ itemI.method }}</p>
       <div v-for="(itemJ, j) in itemI.result" :key="j">
         <p>{{ itemJ.resultDetail }}</p>
-<<<<<<< HEAD
+
         <vxe-table
           :ref="getRef(i, j)"
           border
@@ -157,13 +144,6 @@
             :title="itemK.desc"
             :edit-render="{}"
           >
-=======
-        <vxe-table :ref="getRef(i, j)" border show-footer show-overflow class="editable-footer mb10"
-          :data="itemJ.testItems">
-          <vxe-column type="seq" width="60" :title="'序号'" align="right" />
-          <vxe-column v-for="(itemK, k) in itemJ.attrs" :key="k" :field="itemK.name" :title="itemK.desc"
-            :edit-render="{}">
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
             <template #edit="{ row }">
               <vxe-input v-model="row[itemK.name]" type="text" />
             </template>
@@ -370,13 +350,13 @@ export default {
       fetch(prefix.lb +
         "/api/test/previewTestReport?testTradeId=" +
         this.downloadParam.testTradeId,
-        {
-          method: "GET",
-          responseType: "application/pdf",
-          headers: new Headers({
-            "token": getToken().toString()
-          })
-        }) // FETCH BLOB FROM IT
+      {
+        method: "GET",
+        responseType: "application/pdf",
+        headers: new Headers({
+          "token": getToken().toString()
+        })
+      }) // FETCH BLOB FROM IT
         .then((response) => response.blob())
         .then((blob) => { // RETRIEVE THE BLOB AND CREATE LOCAL URL
           var _url = window.URL.createObjectURL(blob)
@@ -420,7 +400,7 @@ export default {
         })
         .finally(() => { })
     },
-    fetchData: function (id) {
+    fetchData: function(id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
         console.log(response.data)
         this.postForm = response.data.testReport

@@ -2,7 +2,7 @@
   <div class="app-container ohn">
     <div>
       <el-radio-group v-model="radio" @change="findPage">
-<<<<<<< HEAD
+
         <el-radio-button label="消费账" />
         <el-radio-button label="收款账" />
       </el-radio-group>
@@ -17,16 +17,7 @@
       label-width="150px"
     >
       <el-form-item label="客户名称">{{ name }}</el-form-item>
-=======
-        <el-radio-button label="消费账"></el-radio-button>
-        <el-radio-button label="收款账"></el-radio-button>
-      </el-radio-group>
-    </div>
-    <!--消费账-->
-    <el-form v-if="radio='消费账'" ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline"
-             label-width="150px">
-      <el-form-item label="客户名称">{{name}}</el-form-item>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
       <br>
       <el-form-item label="交易名称">
         <el-input
@@ -49,13 +40,10 @@
       <br>
       <el-form-item label="核销状态" prop="email">
         <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px">
-<<<<<<< HEAD
+
           <el-option key="0" label="未核销" value="0" />
           <el-option key="1" label="已核销" value="1" />
-=======
-          <el-option key="0" label="未核销" value="0"></el-option>
-          <el-option key="1" label="已核销" value="1"></el-option>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
         </el-select>
       </el-form-item>
 
@@ -96,7 +84,7 @@
     </div>
 
     <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-<<<<<<< HEAD
+
       <el-table-column align="center" type="selection" min-width="80" />
       <el-table-column prop="clientNum" label="报价单编号" min-width="150" />
       <el-table-column prop="name" label="交易名称" min-width="150" />
@@ -106,17 +94,7 @@
       <el-table-column prop="name" label="最晚收款日期" min-width="150" />
       <el-table-column prop="name" label="状态" min-width="150" />
       <el-table-column prop="name" label="核销日期" min-width="150" />
-=======
-      <el-table-column align="center" type="selection" min-width="80"/>
-      <el-table-column prop="clientNum" label="报价单编号" min-width="150"/>
-      <el-table-column prop="name" label="交易名称" min-width="150"/>
-      <el-table-column prop="name" label="挂账金额" min-width="150"/>
-      <el-table-column prop="name" label="未核销金额" min-width="150"/>
-      <el-table-column prop="name" label="挂账日期" min-width="150"/>
-      <el-table-column prop="name" label="最晚收款日期" min-width="150"/>
-      <el-table-column prop="name" label="状态" min-width="150"/>
-      <el-table-column prop="name" label="核销日期" min-width="150"/>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
     </el-table>
     <el-pagination
       class="fr mt20"
@@ -126,7 +104,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.pageTotal"
       @size-change="handleSizeChange"
-<<<<<<< HEAD
+
       @current-change="handleCurrentChange"
     />
 
@@ -140,16 +118,6 @@
       label-width="150px"
     >
       <el-form-item label="客户名称">{{ name }}</el-form-item>
-=======
-      @current-change="handleCurrentChange"/>
-
-
-
-    <!--收款账-->
-    <el-form v-else-if="'收款账'" ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline"
-             label-width="150px">
-      <el-form-item label="客户名称">{{name}}</el-form-item>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <el-form-item label="剩余收款金额">52,843.69</el-form-item>
       <br>
       <el-form-item :label="'操作日期'">
@@ -165,20 +133,12 @@
 
       <el-form-item label="操作类型" prop="email">
         <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px">
-<<<<<<< HEAD
+
           <el-option key="0" label="入账" value="0" />
           <el-option key="1" label="核销" value="1" />
         </el-select>
       </el-form-item>
 
-=======
-          <el-option key="0" label="入账" value="0"></el-option>
-          <el-option key="1" label="核销" value="1"></el-option>
-        </el-select>
-      </el-form-item>
-
-
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <el-form-item>
         <el-button
           v-loading="tableLoading"
@@ -204,7 +164,7 @@
           <span v-else-if="scope.row.status==1">核销</span>
         </template>
       </el-table-column>
-<<<<<<< HEAD
+
       <el-table-column prop="clientNum" label="收款公司" min-width="150" />
       <el-table-column prop="name" label="期初金额" min-width="150" />
       <el-table-column prop="name" label="发生额" min-width="150" />
@@ -212,15 +172,7 @@
       <el-table-column prop="name" label="操作人" min-width="150" />
       <el-table-column prop="name" label="操作时间" width="150" />
       <el-table-column prop="name" label="备注" width="150" />
-=======
-      <el-table-column prop="clientNum" label="收款公司" min-width="150"/>
-      <el-table-column prop="name" label="期初金额" min-width="150"/>
-      <el-table-column prop="name" label="发生额" min-width="150"/>
-      <el-table-column prop="name" label="期末余额" min-width="150"/>
-      <el-table-column prop="name" label="操作人" min-width="150"/>
-      <el-table-column prop="name" label="操作时间" width="150"/>
-      <el-table-column prop="name" label="备注" width="150"/>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
     </el-table>
     <el-pagination
       class="fr mt20"
@@ -230,12 +182,9 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination2.pageTotal"
       @size-change="handleSizeChange2"
-<<<<<<< HEAD
+
       @current-change="handleCurrentChange2"
     />
-=======
-      @current-change="handleCurrentChange2"/>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
 
     <!--弹窗  核销-->
     <el-dialog :visible.sync="dialogVisible_edit" title="核销">
@@ -252,11 +201,9 @@
 
     <!--弹窗  入账-->
     <el-dialog :visible.sync="dialogVisible_set" title="入账">
-<<<<<<< HEAD
+
       <el-form ref="setRulesForm" :model="creditInfo" label-width="80px" label-position="left" :rules="setRules">
-=======
-      <el-form :model="creditInfo" label-width="80px" label-position="left" :rules="setRules" ref="setRulesForm">
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
         <el-form-item label="收款公司" prop="username">
           <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px">
             <el-option
@@ -268,7 +215,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="收款金额" prop="username">
-<<<<<<< HEAD
+
           <el-input v-model="creditInfo.username" width="120" />
         </el-form-item>
         <el-form-item label="备注" prop="username">
@@ -281,13 +228,7 @@
             :rows="2"
             placeholder="请输入内容"
           />
-=======
-          <el-input v-model="creditInfo.username" width="120"/>
-        </el-form-item>
-        <el-form-item label="备注" prop="username">
-          <el-input v-model="creditInfo.username" width="120"  maxlength="100" show-word-limit
-                    type="textarea" :rows="2" placeholder="请输入内容"/>
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
+
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -301,11 +242,7 @@
 
 <script>
 export default {
-<<<<<<< HEAD
   name: "Details",
-=======
-  name: "details",
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
   data() {
     return {
       tableLoading: false,
@@ -322,7 +259,7 @@ export default {
         endDate: ""
       },
       radio: '消费账',
-<<<<<<< HEAD
+
       // 入账
       setRulesForm: {
         name: '',
@@ -333,18 +270,6 @@ export default {
         name: [{ required: true, message: '请选择收款公司', trigger: 'change' }],
         type: [{ required: true, message: '请输入实际收款金额', trigger: 'blur' }],
         resource: [{ required: true, message: '请输入内容', trigger: 'blur' }]
-=======
-      //入账
-      setRulesForm:{
-        name: '',
-        type: '',
-        resource: '',
-      },
-      setRules:{
-        name: [{required: true, message: '请选择收款公司', trigger: 'change' }],
-        type: [{required: true, message: '请输入实际收款金额', trigger: 'blur' }],
-        resource: [{required: true, message: '请输入内容', trigger: 'blur' }]
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       },
       // 分页
       pagination: {
@@ -365,7 +290,7 @@ export default {
     this.getDate()
   },
   methods: {
-<<<<<<< HEAD
+
     // 切换头部标签==客户佣金设置/查看
     findPage() {
 
@@ -374,16 +299,6 @@ export default {
       this.getDate()
     },
     // 获取列表数据
-=======
-    //切换头部标签==客户佣金设置/查看
-    findPage() {
-
-    },
-    handleClick(tab, event){
-      this.getDate()
-    },
-    //获取列表数据
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     getDate() {
 
     },
@@ -432,15 +347,10 @@ export default {
       const urlWithParam = appendParamsToUrl(url, colParam)
       this.$router.push({
         path: "/clm/cli-com-export",
-<<<<<<< HEAD
+
         query: Object.assign({}, colParam, { url: urlWithParam, fileName: fileName })
       })
     }
-=======
-        query: Object.assign({}, colParam, {url: urlWithParam, fileName: fileName})
-      })
-    },
->>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
   }
 }
 </script>

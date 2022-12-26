@@ -482,11 +482,11 @@ export default {
               slots: {
                 default() {
                   return [
-                    <div class='red' style='max-height: 400px;overflow: auto;'>
-                      {
-                        msgList.map(msg => <div>{msg}</div>)
-                      }
-                    </div>
+                    // <div class='red' style='max-height: 400px;overflow: auto;'>
+                    //   {
+                    //     msgList.map(msg => <div>{msg}</div>)
+                    //   }
+                    // </div>
                   ]
                 }
               }

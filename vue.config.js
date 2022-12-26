@@ -38,7 +38,8 @@ module.exports = {
     },
     proxy: {
       '/backend': {
-        target: 'http://localhost:8080',
+        // target: 'http://localhost:8080',
+        target: 'http://192.168.23.126:8080',
         changeOrigin: true,
         secure: false,
         pathRewrite: {

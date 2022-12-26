@@ -172,7 +172,7 @@ export default {
 }
 </script>
 <style scoped>
-/deep/ .el-descriptions-item__label {
+.el-descriptions-item__label {
   white-space: pre-line;
 }
 </style>

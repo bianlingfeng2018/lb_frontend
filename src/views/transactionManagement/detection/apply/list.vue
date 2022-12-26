@@ -1,89 +1,84 @@
 <template>
   <div class="app-container ohn">
-    <div class="lb-flex lb-flex-bw">
-      <span class="lh32">申请单列表</span>
-      <!--      <el-button-->
-      <!--        type="primary"-->
-      <!--        plain-->
-      <!--        size="small"-->
-      <!--        @click="handleCreate"-->
-      <!--      >新建申请单-->
-      <!--      </el-button>-->
+    <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
+      <el-form-item label="申请单编号">
+        <el-input
+          v-model="columnParam.cnameOrAbbr"
+          placeholder="请输入申请单编号"
+          style="width: 240px"
+          @keydown.enter.native="onSearch"
+        />
+      </el-form-item>
+      <el-form-item label="申请单位名称">
+        <el-input
+          v-model="columnParam.cnameOrAbbr"
+          placeholder="请输入申请单位名称"
+          style="width: 240px"
+          @keydown.enter.native="onSearch"
+        />
+      </el-form-item>
+      <el-form-item label="收样状态" prop="email">
+        <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 140px">
+          <el-option key="0" label="已收样" value="0" />
+          <el-option key="1" label="未收样" value="1" />
+        </el-select>
+      </el-form-item>
+      <!-- <el-form-item label="合同评审状态" prop="email">
+        <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 140px">
+          <el-option key="0" label="未支付" value="0" />
+          <el-option key="1" label="已挂账" value="1" />
+          <el-option key="2" label="已付部分" value="2" />
+          <el-option key="3" label="已全付" value="3" />
+        </el-select>
+      </el-form-item> -->
+      <el-form-item>
+        <el-button v-loading="tableLoading" type="primary" @click="onSearch">查询
+        </el-button>
+      </el-form-item>
+    </el-form>
+
+    <div class="lb-flex" style="position: relative;">
+      <el-tabs v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
+        <el-tab-pane label="全部" name="0" />
+        <el-tab-pane label="待合同评审" name="1" />
+        <el-tab-pane label="评审通过" name="2" />
+        <el-tab-pane label="评审不通过" name="3" />
+        <el-tab-pane label="已下单" name="4" />
+      </el-tabs>
     </div>
-    <el-table
-      v-loading="tableLoading"
-      :data="tableData"
-      stripe
-      border
-      style="width: 100%"
-      class="mt8"
-    >
-      <el-table-column align="center" type="index" label="#" min-width="80" />
+
+    <el-table v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
+      <el-table-column prop="applicationName" label="申请单编号" min-width="120" />
       <el-table-column prop="applicationName" label="申请单位名称" min-width="120" />
-      <el-table-column prop="applicationAddress" label="申请单位地址" min-width="120" />
-      <el-table-column prop="reportTitle" label="报告抬头" min-width="120" />
-      <el-table-column prop="sameAsApplicant" label="同申请方" min-width="120" />
-      <el-table-column prop="otherName" label="其他名称" min-width="120" />
-      <el-table-column prop="otherAddress" label="其他地址" min-width="120" />
-      <el-table-column prop="contact" label="联系人" min-width="120" />
-      <el-table-column prop="tel" label="电话" min-width="120" />
-      <el-table-column prop="fax" label="传真" min-width="120" />
-      <el-table-column prop="email" label="电邮" min-width="120" />
-      <el-table-column prop="deliveredTo" label="报告邮寄地址" min-width="120" />
-      <el-table-column prop="reportType" label="报告类型" min-width="120" />
-      <el-table-column prop="payer" label="付款方" min-width="120" />
-      <el-table-column prop="invoiceTitle" label="发票抬头" min-width="120" />
-      <el-table-column fixed="right" label="状态">
+      <el-table-column prop="reportTitle" label="申请日期" min-width="120" />
+      <el-table-column prop="sameAsApplicant" label="收样状态" min-width="120">
         <template slot-scope="scope">
-          <el-button
-            v-if="scope.row.confirmed"
-            type="success"
-            plain
-            size="small"
-            disabled
-          >已发送
-          </el-button>
-          <el-button
-            v-else
-            type="primary"
-            plain
-            size="small"
-            @click="handleAudit(scope.row)"
-          >发送
-          </el-button>
+          <span v-if="scope.row.confirmed == 1">已收样</span>
+          <span v-else-if="scope.row.confirmed == 2">未收样</span>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="220">
+      <el-table-column prop="otherName" label="样品接收日期" min-width="120" />
+      <el-table-column prop="otherAddress" label="要求完成日期" min-width="120" />
+      <el-table-column prop="contact" label="合同评审状态" min-width="120">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            @click="handleShow(scope.row)"
-          >查看
+          <span v-if="scope.row.confirmed == 1">待评审</span>
+          <span v-else-if="scope.row.confirmed == 2">评审通过</span>
+          <span v-else-if="scope.row.confirmed == 3">评审不通过</span>
+          <span v-else-if="scope.row.confirmed == 4">已下单</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="tel" label="跟进人" min-width="120" />
+      <el-table-column prop="fax" label="评审人" min-width="120" />
+      <el-table-column fixed="right" label="操作" width="300">
+        <template slot-scope="scope">
+          <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
           </el-button>
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            @click="handleEdit(scope.row)"
-          >编辑
+          <el-button type="primary" plain size="small" @click="handleEdit(scope.row)">编辑
           </el-button>
-          <!--          <el-button-->
-          <!--            type="primary"-->
-          <!--            size="small"-->
-          <!--            plain-->
-          <!--            @click="handleDelete(scope.row)"-->
-          <!--          >删除-->
-          <!--          </el-button>-->
-          <el-dropdown>
-            <el-button type="primary" size="small" plain>
-              更多
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="handleAssignCS(scope.row)">分配客服</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          <el-button type="primary" plain size="small" @click="handleCheck(scope.row)">评审
+          </el-button>
+          <el-button type="primary" plain size="small" @click="handleEdit(scope.row)">创建工作单
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -97,6 +92,25 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+
+    <!--弹窗  评审-->
+    <el-dialog :visible.sync="dialogVisible_check" title="评审">
+      <el-form ref="auditRulesForm" :model="creditInfo" :rules="auditRules" label-width="100px" label-position="left">
+        <el-form-item label="评审结果：" prop="email">
+          <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 200px">
+            <el-option key="0" label="评审通过" value="0" />
+            <el-option key="1" label="评审不通过" value="1" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因：" prop="username">
+          <el-input v-model="creditInfo.username" type="textarea" :rows="2" placeholder="请输入内容" />
+        </el-form-item>
+      </el-form>
+      <div style="text-align:right;">
+        <el-button size="small" plain @click="dialogVisible_check = false">取消</el-button>
+        <el-button type="primary" size="small" plain @click="setCreditInfo">确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -136,6 +150,9 @@ export default {
   },
   data() {
     return {
+      columnParam: [],
+      dialogVisible_check: false,
+      creditInfo: [],
       tableLoading: false,
       tableData: [],
       pagination: {
@@ -206,6 +223,9 @@ export default {
             message: "已取消删除"
           })
         })
+    },
+    handleCheck() {
+      this.dialogVisible_check = true
     },
     handleCreate() {
       this.$router.push({

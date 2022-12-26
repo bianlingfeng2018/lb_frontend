@@ -1,167 +1,143 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-    <div class="f1 pointer" @click="goBack()"><i class="el-icon-arrow-left" />检测申请单信息</div>
-    <el-divider
-      content-position="left"
-    >申请信息 Applicant Information</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" size="small" border :label-style="{'width': '150px'}" :content-style="{'width': '200px'}">
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack()">返回上一页</el-button>
+    <div class="mt20" style="background-color: #F56C6C;padding:10px">
+      <span class="mt20 mb20 ml16 ">申请单单被XX评审不通过，评审不通过原因：XXXXXXXXXXXXXXXXXXXXXXXXX(评审人：XXX 评审时间：2022-12-2 14:51)</span>
+    </div>
+    <el-divider content-position="left">申请信息</el-divider>
+    <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
-        <template slot="label">{{ "报告编号 \nReport No" }}</template>
+        <template slot="label">申请单编号</template>
         {{ postForm.reportNum }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "报告日期 \nReport Date" }}</template>
-        {{ postForm.reportDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "接收日期 \nRec Date" }}</template>
-        {{ postForm.recDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "客户名称 \nCS Name" }}</template>
-        {{ postForm.csName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "申请单位名称\nApplication Name" }}</template>
+        <template slot="label">申请单位</template>
         {{ postForm.applicationName }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "申请单位地址\nApplicant Address" }}</template>
-        {{ postForm.applicationAddress }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "报告抬头\nReport Title" }}</template>
-        {{ postForm.reportTitle }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "同申请方\nSame as applicant" }}</template>
-        {{ postForm.sameAsApplicant }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "其他名称\nOthers Name" }}</template>
-        {{ postForm.otherName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "其他地址\nOthers Address" }}</template>
+        <template slot="label">申请单位地址</template>
         {{ postForm.otherAddress }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "联系人\nContact" }}</template>
-        {{ postForm.contact }}
+        <template slot="label">报告抬头</template>
+        {{ postForm.reportTitle }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "电话\nTel" }}</template>
-        {{ postForm.tel }}
+        <template slot="label">报告抬头地址</template>
+        {{ postForm.sameAsApplicant }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "传真\nFax" }}</template>
-        {{ postForm.fax }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "电邮\nE-mail" }}</template>
-        {{ postForm.email }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "报告邮寄地址\nReport Delivered To" }}</template>
+        <template slot="label">报告邮寄地址</template>
         {{ postForm.deliveredTo }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "付款方\nPayer" }}</template>
-        {{ postForm.payer }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "发票抬头\nInvoice Title" }}</template>
+        <template slot="label">发票抬头</template>
         {{ postForm.invoiceTitle }}
       </el-descriptions-item>
-    </el-descriptions>
-    <el-divider
-      class="mb36"
-      content-position="left"
-    >样品信息Sample Information</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" size="small" border :label-style="{'width': '150px'}" :content-style="{'width': '200px'}">
       <el-descriptions-item>
-        <template slot="label">{{ "样品名称\nSample Name" }}</template>
+        <template slot="label">需要资质</template>
+        {{ postForm.payer }}
+      </el-descriptions-item>
+    </el-descriptions>
+    <el-divider class="mb36" content-position="left">样品信息</el-divider>
+    <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
+      <el-descriptions-item>
+        <template slot="label">样品名称</template>
         {{ postForm.sampleName }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "样品数量\nSample Quantity" }}</template>
+        <template slot="label">样品数量</template>
         {{ postForm.sampleQuantity }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "样品型号\nSample Model" }}</template>
+        <template slot="label">样品型号</template>
         {{ postForm.sampleModel }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "商标\nBrand" }}</template>
+        <template slot="label">样品状态</template>
         {{ postForm.brand }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "样品批号\nLot No" }}</template>
+        <template slot="label">商标</template>
+        {{ postForm.brand }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">批次</template>
         {{ postForm.lotNo }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "规格\nSpecification" }}</template>
+        <template slot="label">规格</template>
         {{ postForm.specification }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "供应商\nSupplier" }}</template>
+        <template slot="label">供应商</template>
         {{ postForm.supplier }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "订单号\nP/O No" }}</template>
-        {{ postForm.poNum }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "购买商\nBuyer" }}</template>
+        <template slot="label">购买商</template>
         {{ postForm.buyer }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "生产商\nManufacturer" }}</template>
+        <template slot="label">订单号</template>
+        {{ postForm.poNum }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">生产商</template>
         {{ postForm.manufacturer }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "出口地\nReport Type" }}</template>
+        <template slot="label">出口地</template>
         {{ postForm.exportedTo }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "生产国\nCountry of Origin" }}</template>
+        <template slot="label">生产国</template>
         {{ postForm.originCountry }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "报告格式\nReport format" }}</template>
-        {{ postForm.reportFormat }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "报告方式\nReport Type" }}</template>
-        {{ postForm.reportType }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "是否接受分包\nAgree to subcontract" }}</template>
-        {{ postForm.agreeToSubcontract }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "服务类型\nService Requested" }}</template>
-        {{ postForm.serviceType }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "测试项目及（或）要求\nTest item and(or) requirement" }}</template>
-        {{ postForm.serviceType }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "样品处理方式\nSample Treatment" }}</template>
+        <template slot="label">样品处理方式</template>
         {{ postForm.testRequirement }}
       </el-descriptions-item>
+
+    </el-descriptions>
+    <div>
+      <spn>测试项目及要求:</spn>
+      <vxe-table
+        ref="xTable"
+        border
+        show-overflow
+        class="editable-footer mb20 mt8"
+        :row-config="{ isHover: true }"
+        :export-config="{}"
+        :data="postForm.testApplicationItemList"
+      >
+        <vxe-column type="seq" width="60" :title="'序号'" align="right" />
+        <vxe-column field="testingItem" :title="'测试项目'" />
+        <vxe-column field="sampleName" :title="'单价'" />
+        <vxe-column field="sampleModel" :title="'测试点数'" />
+        <vxe-column field="sampleMaterial" :title="'测试金额'" />
+        <vxe-column field="sampleDescription" :title="'样品量'" />
+      </vxe-table>
+    </div>
+    <el-divider content-position="left">多种材料清单样品信息</el-divider>
+    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
-        <template slot="label">{{ "申请公司授权人签名\nSignature and Company Chop" }}</template>
-        {{ postForm.applicantSigCop }}
+        <template slot="label">样品部位名称</template>
+        {{ postForm.sampleName }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "申请日期\nDate" }}</template>
-        {{ postForm.applicationDate }}
+        <template slot="label">样品型号</template>
+        {{ postForm.sampleQuantity }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">材质</template>
+        {{ postForm.sampleModel }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">取样部位描述</template>
+        {{ postForm.brand }}
       </el-descriptions-item>
     </el-descriptions>
-
-    <el-divider content-position="left">多种材料清单样品明细</el-divider>
+    <spn>测试项目:</spn>
     <vxe-table
       ref="xTable"
       border
@@ -172,40 +148,15 @@
       :export-config="{}"
       :data="postForm.testApplicationItemList"
     >
-      <vxe-column type="seq" width="60" :title="'序号 Num'" align="right" />
-      <vxe-column
-        field="sampleName"
-        :title="'样品（部位）名称 (Part of)Sample Name'"
-      />
-      <vxe-column field="sampleModel" :title="'样品型号 Sample Model'" />
-      <vxe-column
-        field="sampleMaterial"
-        :title="'材质 Style/Sample Material'"
-      />
-      <vxe-column
-        field="sampleDescription"
-        :title="'样品描述 Sample Description'"
-      />
-      <vxe-column field="testingItem" :title="'测试项目 Test Item'" />
-      <vxe-column field="accordingTo" :title="'判定依据 According to'" />
-      <vxe-column field="remark" :title="'备注 Remark'" />
+      <vxe-column type="seq" width="60" :title="'序号'" align="right" />
+      <vxe-column field="testingItem" :title="'测试项目'" />
+      <vxe-column field="sampleModel" :title="'测试方法'" />
+      <vxe-column field="sampleMaterial" :title="'测试条件'" />
+      <vxe-column field="remark" :title="'备注'" />
     </vxe-table>
-    <el-divider content-position="left">其他</el-divider>
-    <my-flex-table ref="myFlexTable" :flex-obj="postForm.flexObj" />
-    <p />
-    <el-button
-      v-loading="submitLoading"
-      type="primary"
-      size="small"
-      plain
-      @click="handleDownLoad()"
-    >下载</el-button>
-    <el-button
-      type="primary"
-      size="small"
-      plain
-      @click="handlePreview()"
-    >预览</el-button>
+
+    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
+    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>
 </template>
 
@@ -286,7 +237,7 @@ export default {
             message: "文件下载失败，请稍后再试~"
           })
         })
-        .finally(() => {})
+        .finally(() => { })
     },
     fetchData: function(id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
@@ -346,6 +297,7 @@ export default {
     color: #808080;
     line-height: 20px;
   }
+
   ::v-deep .el-descriptions-item__label {
     white-space: pre-line;
   }

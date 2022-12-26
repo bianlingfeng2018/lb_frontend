@@ -88,6 +88,9 @@ const routesArr = [
     },
     children: [
       {
+        meta: { title: '组织架构', role: ['/am/organization'] }
+      },
+      {
         meta: { title: '员工管理', role: ['/am/user'] }
       },
       {
@@ -133,7 +136,7 @@ const routesArr = [
                 meta: { title: '报价单列表', role: ['/tm/detection/quotation/list'] }
               },
               {
-                meta: { title: '创建报价单', role: ['/tm/detection-quotation-create'] }
+                meta: { title: '新增报价', role: ['/tm/detection-quotation-create'] }
               },
               {
                 meta: { title: '编辑报价单', role: ['/tm/detection-quotation-edit/:id'] }
@@ -147,11 +150,11 @@ const routesArr = [
             ]
           },
           {
-            meta: { title: '申请单', role: ['/tm/detection/apply'] },
+            meta: { title: '申请单列表', role: ['/tm/detection/apply/list'] },
             children: [
-              {
-                meta: { title: '申请单列表', role: ['/tm/detection/apply/list'] }
-              },
+              // {
+              //   meta: { title: '申请单列表', role: ['/tm/detection/apply/list'] }
+              // },
               {
                 meta: { title: '创建申请单', role: ['/tm/detection-apply-create'] }
               },
@@ -165,6 +168,18 @@ const routesArr = [
                 meta: { title: '审核申请单', role: ['/tm/detection/apply/audit/:id'] }
               }
             ]
+          },
+          {
+            meta: { title: '创建申请单', role: ['/tm/detection-apply-create'] }
+          },
+          {
+            meta: { title: '编辑申请单', role: ['/tm/detection-apply-edit/:id'] }
+          },
+          {
+            meta: { title: '查看申请单', role: ['/tm/detection/apply/show/:id'] }
+          },
+          {
+            meta: { title: '审核申请单', role: ['/tm/detection/apply/audit/:id'] }
           },
           {
             meta: { title: '工作单', role: ['/tm/detection/worksheet'] },
@@ -183,6 +198,17 @@ const routesArr = [
               },
               {
                 meta: { title: '审核工作单', role: ['/tm/detection/worksheet/audit/:id'] }
+              }
+            ]
+          },
+          {
+            meta: { title: '原始记录单', role: ['/tm/detection/record'] },
+            children: [
+              {
+                meta: { title: '原始记录单列表', role: ['/tm/detection/record/list'] }
+              },
+              {
+                meta: { title: '查看原始记录单', role: ['/tm/detection/record/show/:id'] }
               }
             ]
           },

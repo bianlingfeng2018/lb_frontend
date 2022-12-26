@@ -14,6 +14,12 @@ const transactionRouter = {
   },
   children: [
     {
+      path: 'list',
+      component: () => import('@/views/transactionManagement/detection/list.vue'),
+      name: 'List',
+      meta: { title: '商机列表' }
+    },
+    {
       path: 'detection',
       component: () => import('@/views/transactionManagement/detection'),
       name: 'Detection',
@@ -25,164 +31,93 @@ const transactionRouter = {
       },
       children: [
         {
-          path: 'list',
-          component: () => import('@/views/transactionManagement/detection/list.vue'),
-          name: 'List',
-          meta: { title: '检测交易列表', role: ['/tm/detection/list'] }
+          path: 'quotation',
+          component: () => import('@/views/transactionManagement/detection/quotation/list'),
+          name: 'QuotationList',
+          meta: { title: '报价单' }
         },
         {
           path: 'create',
-          // component: () => import('@/views/transactionManagement/detection/create.vue'),
-          redirect: '/tm/detection-create',
+          component: () => import('@/views/transactionManagement/detection/quotation/create.vue'),
+          // redirect: '/tm/detection-quotation-create',
           name: 'Create',
-          meta: { title: '创建检测交易', role: ['/tm/detection-create'] }
+          meta: { title: '新增报价' },
+          hidden: true
         },
         {
           path: 'edit/:id',
-          // component: () => import('@/views/transactionManagement/detection/edit.vue'),
-          redirect: '/tm/detection-edit/:id',
+          component: () => import('@/views/transactionManagement/detection/quotation/edit.vue'),
+          // redirect: '/tm/detection-quotation-edit/:id',
           name: 'Edit',
-          meta: { title: '编辑检测交易', role: ['/tm/detection-edit/:id'] },
+          meta: { title: '编辑报价单', role: ['/tm/detection-quotation-edit/:id'] },
           hidden: true
         },
         {
           path: 'show/:id',
-          component: () => import('@/views/transactionManagement/detection/show.vue'),
-          name: 'Show',
-          meta: { title: '检测交易查看', noCache: true, role: ['/tm/detection/show/:id'] },
+          component: () => import('@/views/transactionManagement/detection/quotation/show.vue'),
+          name: 'QuotationShow',
+          meta: { title: '查看报价单', noCache: true, role: ['/tm/detection/quotation/show/:id'] },
           hidden: true
         },
         {
-          path: 'showall/:id',
-          component: () => import('@/views/transactionManagement/detection/showall.vue'),
-          name: 'ShowAll',
-          meta: { title: '检测交易查看进度', noCache: true, role: ['/tm/detection/showall/:id'] },
+          path: 'audit/:id',
+          component: () => import('@/views/transactionManagement/detection/quotation/components/QuotationAudit.vue'),
+          name: 'Audit',
+          meta: { title: '审核报价单', noCache: true, role: ['/tm/detection/quotation/audit/:id'] },
           hidden: true
         },
         {
-          path: 'as-cs',
-          component: () => import('@/views/transactionManagement/detection/as-cs.vue'),
-          name: 'AssignCS',
-          meta: { title: '检测交易分配客服', noCache: true, role: ['/tm/detection/as-cs'] },
+          path: 'result',
+          component: () => import('@/views/transactionManagement/detection/quotation/result'),
+          name: 'Result',
+          meta: { title: '审核报价单', noCache: true },
           hidden: true
-        },
-        {
-          path: 'quotation',
-          component: () => import('@/views/transactionManagement/detection/quotation/index'),
-          name: 'Quotation',
-          alwaysShow: true,
-          meta: { title: '报价单', role: ['/tm/detection/quotation'] },
-          children: [
-            {
-              path: 'list',
-              component: () => import('@/views/transactionManagement/detection/quotation/list'),
-              name: 'List',
-              meta: { title: '报价单列表', role: ['/tm/detection/quotation/list'] }
-            },
-            {
-              path: 'create',
-              // component: () => import('@/views/transactionManagement/detection/quotation/create.vue'),
-              redirect: '/tm/detection-quotation-create',
-              name: 'Create',
-              meta: { title: '创建报价单', role: ['/tm/detection-quotation-create'] },
-              hidden: true
-            },
-            {
-              path: 'edit/:id',
-              // component: () => import('@/views/transactionManagement/detection/quotation/edit.vue'),
-              redirect: '/tm/detection-quotation-edit/:id',
-              name: 'Edit',
-              meta: { title: '编辑报价单', role: ['/tm/detection-quotation-edit/:id'] },
-              hidden: true
-            },
-            {
-              path: 'show/:id',
-              component: () => import('@/views/transactionManagement/detection/quotation/show.vue'),
-              name: 'Show',
-              meta: { title: '查看报价单', noCache: true, role: ['/tm/detection/quotation/show/:id'] },
-              hidden: true
-            },
-            {
-              path: 'audit/:id',
-              component: () => import('@/views/transactionManagement/detection/quotation/components/QuotationAudit.vue'),
-              name: 'Audit',
-              meta: { title: '审核报价单', noCache: true, role: ['/tm/detection/quotation/audit/:id'] },
-              hidden: true
-            },
-            {
-              path: 'result',
-              component: () => import('@/views/transactionManagement/detection/quotation/result'),
-              name: 'Result',
-              meta: { title: '审核报价单', noCache: true },
-              hidden: true
-            }
-          ]
+
         },
         {
           path: 'apply',
-          component: () => import('@/views/transactionManagement/detection/apply/index.vue'),
-          name: 'Apply',
-          alwaysShow: true,
-          meta: { title: '申请单', role: ['/tm/detection/apply'] },
-          children: [
-            {
-              path: 'list',
-              component: () => import('@/views/transactionManagement/detection/apply/list'),
-              name: 'List',
-              meta: { title: '申请单列表', role: ['/tm/detection/apply/list'] }
-            },
-            {
-              path: 'create',
-              // component: () => import('@/views/transactionManagement/detection/apply/create'),
-              redirect: '/tm/detection-apply-create',
-              name: 'Create',
-              meta: { title: '创建申请单', role: ['/tm/detection-apply-create'] },
-              hidden: true
-            },
-            {
-              path: 'edit/:id',
-              // component: () => import('@/views/transactionManagement/detection/apply/edit.vue'),
-              redirect: '/tm/detection-apply-edit/:id',
-              name: 'Edit',
-              meta: { title: '编辑申请单', role: ['/tm/detection-apply-edit/:id'] },
-              hidden: true
-            },
-            {
-              path: 'show/:id',
-              component: () => import('@/views/transactionManagement/detection/apply/show.vue'),
-              name: 'Show',
-              meta: { title: '查看申请单', noCache: true, role: ['/tm/detection/apply/show/:id'] },
-              hidden: true
-            },
-            {
-              path: 'audit/:id',
-              component: () => import('@/views/transactionManagement/detection/apply/components/ApplyAudit.vue'),
-              name: 'Audit',
-              meta: { title: '审核申请单', noCache: true, role: ['/tm/detection/apply/audit/:id'] },
-              hidden: true
-            },
-            {
-              path: 'result',
-              component: () => import('@/views/transactionManagement/detection/apply/result'),
-              name: 'Result',
-              meta: { title: '审核申请单', noCache: true },
-              hidden: true
-            }
-          ]
+          component: () => import('@/views/transactionManagement/detection/apply/list'),
+          name: 'ApplyList',
+          meta: { title: '申请单', role: ['/tm/detection/apply/list'] }
+        },
+        // children: [
+        {
+          path: 'create',
+          component: () => import('@/views/transactionManagement/detection/apply/create'),
+          // redirect: '/tm/detection-apply-create',
+          name: 'Create',
+          meta: { title: '创建申请单' },
+          hidden: true
+        },
+        {
+          path: '/detection-apply-edit/:id',
+          component: () => import('@/views/transactionManagement/detection/apply/edit.vue'),
+          // redirect: '/tm/detection-apply-edit/:id',
+          name: 'ApplyEdit',
+          meta: { title: '编辑申请单' },
+          hidden: true
+        },
+        {
+          path: '/apply-show/:id',
+          component: () => import('@/views/transactionManagement/detection/apply/show.vue'),
+          // redirect: '/tm/detection-apply-show/:id',
+          name: 'ApplyShow',
+          meta: { title: '查看申请单', noCache: true },
+          hidden: true
+        },
+        {
+          path: 'audit/:id',
+          component: () => import('@/views/transactionManagement/detection/apply/components/ApplyAudit.vue'),
+          name: 'Audit',
+          meta: { title: '审核申请单', noCache: true },
+          hidden: true
         },
         {
           path: 'worksheet',
-          component: () => import('@/views/transactionManagement/detection/worksheet/index.vue'),
+          component: () => import('@/views/transactionManagement/detection/worksheet/list'),
           name: 'Worksheet',
-          alwaysShow: true,
-          meta: { title: '工作单', role: ['/tm/detection/worksheet'] },
+          meta: { title: '工作单', role: ['/tm/detection/worksheet/list'] },
           children: [
-            {
-              path: 'list',
-              component: () => import('@/views/transactionManagement/detection/worksheet/list'),
-              name: 'List',
-              meta: { title: '工作单列表', role: ['/tm/detection/worksheet/list'] }
-            },
             {
               path: 'create',
               // component: () => import('@/views/transactionManagement/detection/worksheet/create'),
@@ -223,18 +158,26 @@ const transactionRouter = {
           ]
         },
         {
-          path: 'report',
-          component: () => import('@/views/transactionManagement/detection/report/index'),
-          name: 'Report',
-          alwaysShow: true,
-          meta: { title: '检测报告单', role: ['/tm/detection/report'] },
+          path: 'record',
+          component: () => import('@/views/transactionManagement/detection/record/list'),
+          name: 'Record',
+          meta: { title: '原始记录单', role: ['/tm/detection/report/list'] },
           children: [
             {
-              path: 'list',
-              component: () => import('@/views/transactionManagement/detection/report/list'),
-              name: 'List',
-              meta: { title: '报告单列表', role: ['/tm/detection/report/list'] }
-            },
+              path: 'show/:id',
+              component: () => import('@/views/transactionManagement/detection/record/show.vue'),
+              name: 'Show',
+              meta: { title: '查看原始记录单', noCache: true, role: ['/tm/detection/record/show/:id'] },
+              hidden: true
+            }
+          ]
+        },
+        {
+          path: 'report',
+          component: () => import('@/views/transactionManagement/detection/report/list'),
+          name: 'Report',
+          meta: { title: '检测报告单', role: ['/tm/detection/report/list'] },
+          children: [
             {
               path: 'create',
               // component: () => import('@/views/transactionManagement/detection/report/create'),
@@ -321,10 +264,17 @@ const transactionRouter = {
       hidden: true
     },
     {
+      path: 'detection-quotation-show/:id',
+      component: () => import('@/views/transactionManagement/detection/quotation/show.vue'),
+      name: 'QuotationShow',
+      meta: { title: '查看报价单', noCache: false, role: ['/tm/detection-quotation-edit/:id'] },
+      hidden: true
+    },
+    {
       path: 'detection-quotation-create',
       component: () => import('@/views/transactionManagement/detection/quotation/create.vue'),
       name: 'QuotationCreate',
-      meta: { title: '创建报价单', role: ['/tm/detection-quotation-create'] },
+      meta: { title: '新增报价', role: ['/tm/detection-quotation-create'] },
       hidden: true
     },
     {
@@ -346,6 +296,13 @@ const transactionRouter = {
       component: () => import('@/views/transactionManagement/detection/apply/edit.vue'),
       name: 'ApplyEdit',
       meta: { title: '编辑申请单', noCache: false, role: ['/tm/detection-apply-edit/:id'] },
+      hidden: true
+    },
+    {
+      path: 'detection-apply-show/:id',
+      component: () => import('@/views/transactionManagement/detection/apply/show.vue'),
+      name: 'ApplyShow',
+      meta: { title: '查看申请单', noCache: false, role: ['/tm/detection-apply-show/:id'] },
       hidden: true
     },
     {
@@ -375,20 +332,20 @@ const transactionRouter = {
       name: 'ReportEdit',
       meta: { title: '编辑报告单', noCache: false, role: ['/tm/detection-report-edit/:id'] },
       hidden: true
-    },
-    // ************* 映射到二级菜单结束 *************
-    {
-      path: 'test',
-      component: () => import('@/views/transactionManagement/inspection/index.vue'),
-      name: 'Test',
-      meta: { title: '检验交易', icon: 'el-icon-takeaway-box', role: ['/tm/test'] }
-    },
-    {
-      path: 'certification',
-      component: () => import('@/views/transactionManagement/authentication/index.vue'),
-      name: 'Certification',
-      meta: { title: '认证交易', icon: 'el-icon-document-checked', role: ['/tm/certification'] }
     }
+    // ************* 映射到二级菜单结束 *************
+    // {
+    //   path: 'test',
+    //   component: () => import('@/views/transactionManagement/inspection/index.vue'),
+    //   name: 'Test',
+    //   meta: { title: '检验交易', icon: 'el-icon-takeaway-box', role: ['/tm/test'] }
+    // },
+    // {
+    //   path: 'certification',
+    //   component: () => import('@/views/transactionManagement/authentication/index.vue'),
+    //   name: 'Certification',
+    //   meta: { title: '认证交易', icon: 'el-icon-document-checked', role: ['/tm/certification'] }
+    // }
   ]
 }
 export default transactionRouter

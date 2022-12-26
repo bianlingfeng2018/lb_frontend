@@ -33,6 +33,24 @@ const financeRouter = {
       name: 'FinanceEdit',
       meta: { title: '记录编辑', noCache: false, role: ['/fm/pay-edit/:id'] },
       hidden: true
+    },
+    {
+      path: 'pay_list1',
+      component: () => import('@/views/financeManage/enterpriseList'),
+      name: 'EnterpriseList',
+      meta: { title: '企业应收账管理', role: ['/fm/pay'] }
+    },
+    {
+      path: 'pay_list2',
+      component: () => import('@/views/financeManage/individualList'),
+      name: 'IndividualList',
+      meta: { title: '个人账款核销', role: ['/fm/pay'] }
+    },
+    {
+      path: 'pay_list3',
+      component: () => import('@/views/financeManage/commissionSettings'),
+      name: 'CommissionSettings',
+      meta: { title: '客户佣金设置', role: ['/fm/pay'] }
     }
   ]
 }

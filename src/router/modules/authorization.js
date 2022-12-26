@@ -16,11 +16,18 @@ const authRouter = {
   },
   children: [
     {
+      path: 'organization',
+      component: () => import('@/views/authorizationManage/organization'),
+      name: 'OrganizationList',
+      meta: { title: '组织架构', icon: 'el-icon-user', role: ['/am/user'], noCache: true }
+    },
+    {
       path: 'user',
       component: () => import('@/views/authorizationManage/user'),
       name: 'UserList',
       meta: { title: '员工管理', icon: 'el-icon-user', role: ['/am/user'], noCache: true }
     },
+
     {
       path: 'role',
       component: () => import('@/views/authorizationManage/role'),

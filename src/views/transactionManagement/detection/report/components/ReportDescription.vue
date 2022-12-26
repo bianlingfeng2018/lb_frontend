@@ -1,93 +1,96 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-    <div class="f1 pointer" @click="goBack()"><i class="el-icon-arrow-left" />检测报告单信息</div>
-    <el-divider
-      content-position="left"
-    >报告单详情 Report Information</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" size="small" border :label-style="{'width': '150px'}" :content-style="{'width': '200px'}">
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack()">返回上一页</el-button>
+    <el-divider content-position="left">检测报告单</el-divider>
+    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
-        <template slot="label">{{ "报告编号\nReportNum" }}</template>
+        <template slot="label">报告编号</template>
         {{ postForm.reportNum }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "接收日期\nDate" }}</template>
-        {{ postForm.receivingDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "客户名称\nClient" }}</template>
+        <template slot="label">客户名称</template>
         {{ postForm.client }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "地址\nAddress" }}</template>
+        <template slot="label">编制人</template>
+        {{ postForm.client }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">报告日期</template>
+        {{ postForm.receivingDate | timeFormatFilter }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">线路负责人</template>
         {{ postForm.address }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "样品名称\nSampleName" }}</template>
+        <template slot="label">审核人</template>
         {{ postForm.sampleName }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "样品型号\nSampleModel" }}</template>
+        <template slot="label">审批人</template>
         {{ postForm.sampleModel }}
       </el-descriptions-item>
+    </el-descriptions>
+
+    <el-divider content-position="left">样品信息</el-divider>
+    <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
-        <template slot="label">{{ "商标\nBrand" }}</template>
-        {{ postForm.brand }}
+        <template slot="label">样品名称</template>
+        {{ postForm.receivingDate }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "供应商\nSupplier" }}</template>
-        {{ postForm.supplier }}
+        <template slot="label">样品数量</template>
+        {{ postForm.testStartDate }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "订单号\nOrderNum" }}</template>
-        {{ postForm.orderNum }}
+        <template slot="label">样品型号</template>
+        {{ postForm.testEndDate }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "购买商\nBuyer" }}</template>
-        {{ postForm.buyer }}
+        <template slot="label">样品状态</template>
+        {{ postForm.testPeriod }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "出口地\nExportPlace" }}</template>
-        {{ postForm.exportPlace }}
+        <template slot="label">商标</template>
+        {{ postForm.testRemark.test }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "生产国\nProducingCountry" }}</template>
-        {{ postForm.producingCountry }}
+        <template slot="label">批次</template>
+        {{ postForm.receivingDate }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">{{ "生产商\nProducers" }}</template>
-        {{ postForm.producers }}
+        <template slot="label">规格</template>
+        {{ postForm.testStartDate }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">供应商</template>
+        {{ postForm.testEndDate }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">购买商</template>
+        {{ postForm.testPeriod }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">订单号</template>
+        {{ postForm.testRemark.test }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">生产商</template>
+        {{ postForm.testPeriod }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">出口地</template>
+        {{ postForm.testRemark.test }}
       </el-descriptions-item>
     </el-descriptions>
     <p class="remark-content">
       以上信息由申请者提供及确认，我司对其真实性不承担责任
     </p>
-    <el-descriptions class="margin-top" title="" :column="3" size="small" border :label-style="{'width': '150px'}" :content-style="{'width': '200px'}">
-      <el-descriptions-item>
-        <template slot="label">{{ "接收日期\nReceivingDate" }}</template>
-        {{ postForm.receivingDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "检测开始日期\nStartDate" }}</template>
-        {{ postForm.testStartDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "检测结束如期\nEndDate" }}</template>
-        {{ postForm.testEndDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "检测周期\nTest Periods" }}</template>
-        {{ postForm.testPeriod }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "检测结果备注\nTest Remark" }}</template>
-        {{ postForm.testRemark.test }}
-      </el-descriptions-item>
-    </el-descriptions>
     <el-divider content-position="left">样品描述</el-divider>
     <vxe-table
       ref="xTable"
       border
-      show-footer
       show-overflow
       class="editable-footer mb20"
       :merge-footer-items="mergeFooterItems"
@@ -95,45 +98,28 @@
       :export-config="{}"
       :data="postForm.sampleDesc"
     >
-      <vxe-column type="seq" width="60" :title="'序号\nNum'" align="right" />
-      <vxe-column
-        field="sampleNum"
-        :title="'样品编号\nStyle/Item No'"
-        :edit-render="{ autofocus: '.vxe-input--inner' }"
-      >
+      <vxe-column type="seq" width="60" :title="'序号'" align="right" />
+      <vxe-column field="sampleNum" :title="'样品编号'" :edit-render="{ autofocus: '.vxe-input--inner' }">
         <template #edit="{ row }">
-          <vxe-input
-            v-model="row.sampleNum"
-            type="text"
-            @input="updateFooterEvent"
-          />
+          <vxe-input v-model="row.sampleNum" type="text" @input="updateFooterEvent" />
         </template>
       </vxe-column>
-      <vxe-column
-        field="sampleDes"
-        :title="'样品描述\nReport No'"
-        :edit-render="{}"
-      >
+      <vxe-column field="sampleDes" :title="'样品部位描述'" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input v-model="row.sampleDes" type="text" />
         </template>
       </vxe-column>
       <vxe-column
         field="sampleLocation"
-        :title="'取样部位(位置)\nProduct Description'"
+        :title="'取样部位(位置)'"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
         <template #edit="{ row }">
-          <vxe-input
-            v-model="row.sampleLocation"
-            type="text"
-            :min="1"
-            :max="120"
-          />
+          <vxe-input v-model="row.sampleLocation" type="text" :min="1" :max="120" />
         </template>
       </vxe-column>
     </vxe-table>
-    <el-divider content-position="left">检测结果</el-divider>
+    <el-divider content-position="left">测试结果</el-divider>
     <div v-for="(itemI, i) in postForm.testExperiment" :key="i">
       <p>{{ itemI.title }}</p>
       <p>{{ itemI.method }}</p>
@@ -147,12 +133,7 @@
           class="editable-footer mb10"
           :data="itemJ.testItems"
         >
-          <vxe-column
-            type="seq"
-            width="60"
-            :title="'序号\nNum'"
-            align="right"
-          />
+          <vxe-column type="seq" width="60" :title="'序号'" align="right" />
           <vxe-column
             v-for="(itemK, k) in itemJ.attrs"
             :key="k"
@@ -168,15 +149,10 @@
         <p>{{ itemJ.conclusion }}</p>
       </div>
     </div>
-    <el-divider content-position="left">样品照片</el-divider>
+    <!-- <el-divider content-position="left">样品照片</el-divider>
     <div v-for="img in imgList" :key="img.path" class="block">
-      <!--            <span class="demonstration">{{ img.name }}</span>-->
-      <el-image
-        style="width: 40%; height: auto"
-        :src="getFileBlobUrl(img)"
-        :preview-src-list="[getFileBlobUrl(img)]"
-        fit="cover"
-      />
+      <el-image style="width: 40%; height: auto" :src="getFileBlobUrl(img)" :preview-src-list="[getFileBlobUrl(img)]"
+        fit="cover" />
     </div>
     <el-divider content-position="left">其他</el-divider>
     <my-flex-table ref="myFlexTable" :flex-obj="postForm.flexObj" />
@@ -186,20 +162,9 @@
       <P style="white-space: pre-wrap">
         {{ postForm.remark }}
       </P>
-    </div>
-    <el-button
-      v-loading="submitLoading"
-      type="primary"
-      size="small"
-      plain
-      @click="handleDownLoad()"
-    >下载</el-button>
-    <el-button
-      type="primary"
-      size="small"
-      plain
-      @click="handlePreview()"
-    >预览</el-button>
+    </div> -->
+    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
+    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>
 </template>
 
@@ -367,8 +332,8 @@ export default {
             img.url = this.getFileBlobUrl(img)
           }
         })
-        .catch(() => {})
-        .finally(() => {})
+        .catch(() => { })
+        .finally(() => { })
     },
     getFileBlobUrl(file) {
       console.log(file)
@@ -430,7 +395,7 @@ export default {
             message: "文件下载失败，请稍后再试~"
           })
         })
-        .finally(() => {})
+        .finally(() => { })
     },
     fetchData: function(id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
@@ -470,9 +435,11 @@ export default {
     color: #808080;
     line-height: 20px;
   }
+
   .title-content {
     font-size: 14px;
   }
+
   ::v-deep .el-descriptions-item__label {
     white-space: pre-line;
   }

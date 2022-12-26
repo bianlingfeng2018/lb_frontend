@@ -59,6 +59,12 @@ const clientRouter = {
       meta: { title: "我的客户", role: ["/clm/m-cli-com"] }
     },
     {
+      path: "m-cli-contract",
+      component: () => import("@/views/authorizationManage/client-com/list-contract.vue"),
+      name: "contract",
+      meta: { title: "客户合同管理", role: ["/clm/m-cli-com"] }
+    },
+    {
       path: 'client-com-create',
       component: () => import('@/views/authorizationManage/client-com/create.vue'),
       name: 'ClientComDetailCreate',

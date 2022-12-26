@@ -1,6 +1,10 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
+<<<<<<< HEAD
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack()">返回上一页</el-button>
+=======
+    <el-button class="f1 pointer" @click="goBack()" icon="el-icon-arrow-left">返回上一页</el-button>
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     <el-divider content-position="left">基本信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
@@ -45,6 +49,7 @@
       </el-descriptions-item>
     </el-descriptions>
 
+<<<<<<< HEAD
     <el-tabs v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
       <el-tab-pane label="报价明细" name="0">
         <vxe-table
@@ -59,6 +64,13 @@
           :data="postForm.testQuotationItemList"
           resizable
         >
+=======
+    <el-tabs v-model="activeIndex" @tab-click="handleClick" style="width: 100%">
+      <el-tab-pane label="报价明细" name="0">
+        <vxe-table ref="xTable" border show-overflow class="editable-footer mb20" :merge-footer-items="mergeFooterItems"
+          :row-config="{ isHover: true }" :export-config="{}" :footer-method="footerMethod"
+          :data="postForm.testQuotationItemList" resizable>
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
           <vxe-column type="seq" width="60" :title="'序号\nNum'" align="right" />
           <vxe-column field="reportNum" :title="'报告编号\nReport No'" />
           <vxe-column field="productDes" :title="'产品名称\nProduct Description'" />
@@ -110,7 +122,11 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
+<<<<<<< HEAD
       <el-tab-pane label="原始记录单" name="3">
+=======
+      <el-tab-pane label="原始记录单" name="3" >
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
           <el-table-column prop="workOrderNum" label="原始记录单编号" min-width="120" />
           <el-table-column prop="gmtCreate" label="检测项目" min-width="120" />
@@ -128,7 +144,11 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
+<<<<<<< HEAD
       <el-tab-pane label="检测报告单" name="4">
+=======
+      <el-tab-pane label="检测报告单" name="4" >
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
           <el-table-column prop="workOrderNum" label="报告编号" min-width="120" />
           <el-table-column prop="gmtCreate" label="客户名称" min-width="120" />
@@ -145,6 +165,11 @@
       </el-tab-pane>
     </el-tabs>
 
+<<<<<<< HEAD
+=======
+
+   
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>
@@ -184,13 +209,13 @@ export default {
       fetch(prefix.lb +
         "/api/test/previewTestQuotation?testTradeId=" +
         this.downloadParam.testTradeId,
-      {
-        method: "GET",
-        responseType: "application/pdf",
-        headers: new Headers({
-          "token": getToken().toString()
-        })
-      }) // FETCH BLOB FROM IT
+        {
+          method: "GET",
+          responseType: "application/pdf",
+          headers: new Headers({
+            "token": getToken().toString()
+          })
+        }) // FETCH BLOB FROM IT
         .then((response) => response.blob())
         .then((blob) => { // RETRIEVE THE BLOB AND CREATE LOCAL URL
           var _url = window.URL.createObjectURL(blob)
@@ -234,7 +259,7 @@ export default {
         })
         .finally(() => { })
     },
-    fetchData: function(id) {
+    fetchData: function (id) {
       queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
         console.log(response.data)
         this.postForm = response.data.testQuotation

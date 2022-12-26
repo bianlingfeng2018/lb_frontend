@@ -1,6 +1,7 @@
 <template>
   <div class="app-container ohn">
     <el-form
+<<<<<<< HEAD
       ref="searchForm"
       :inline="true"
       :model="columnParam"
@@ -13,49 +14,99 @@
           placeholder="请输入工作单编号"
           style="width: 240px"
           @keydown.enter.native="onSearch"
+=======
+        ref="searchForm"
+        :inline="true"
+        :model="columnParam"
+        class="demo-form-inline"
+        label-width="150px"
+    >
+      <el-form-item label="工作单编号">
+        <el-input
+            v-model="columnParam.cnameOrAbbr"
+            placeholder="请输入工作单编号"
+            style="width: 240px"
+            @keydown.enter.native="onSearch"
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         />
       </el-form-item>
       <el-form-item label="检测单位名称">
         <el-input
+<<<<<<< HEAD
           v-model="columnParam.cnameOrAbbr"
           placeholder="请输入检测单位名称"
           style="width: 240px"
           @keydown.enter.native="onSearch"
+=======
+            v-model="columnParam.cnameOrAbbr"
+            placeholder="请输入检测单位名称"
+            style="width: 240px"
+            @keydown.enter.native="onSearch"
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         />
       </el-form-item>
 
       <el-form-item label="是否分包商" prop="email">
         <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 140px">
+<<<<<<< HEAD
           <el-option key="0" label="是" value="0" />
           <el-option key="1" label="否" value="1" />
+=======
+          <el-option key="0" label="是" value="0"/>
+          <el-option key="1" label="否" value="1"/>
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         </el-select>
       </el-form-item>
       <br>
       <el-form-item :label="'要求日期'">
         <el-date-picker
+<<<<<<< HEAD
           v-model="columnParam.lastTraceDate"
           type="daterange"
           value-format="yyyy-MM-dd"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           style="width: 240px"
+=======
+            v-model="columnParam.lastTraceDate"
+            type="daterange"
+            value-format="yyyy-MM-dd"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="width: 240px"
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         />
       </el-form-item>
       <el-form-item :label="'出单日期'">
         <el-date-picker
+<<<<<<< HEAD
           v-model="columnParam.lastTraceDate"
           type="daterange"
           value-format="yyyy-MM-dd"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           style="width: 240px"
+=======
+            v-model="columnParam.lastTraceDate"
+            type="daterange"
+            value-format="yyyy-MM-dd"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="width: 240px"
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         />
       </el-form-item>
       <el-form-item>
         <el-button
+<<<<<<< HEAD
           v-loading="tableLoading"
           type="primary"
           @click="onSearch"
+=======
+            v-loading="tableLoading"
+            type="primary"
+            @click="onSearch"
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         >查询
         </el-button>
 
@@ -63,6 +114,7 @@
     </el-form>
 
     <div class="lb-flex" style="position: relative;">
+<<<<<<< HEAD
       <el-tabs v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
         <el-tab-pane label="全部" name="0" />
         <el-tab-pane label="待确认" name="1" />
@@ -74,11 +126,25 @@
         size="small"
         style="position: absolute;right:10px;top:5px;"
         @click="handleEdit"
+=======
+      <el-tabs v-model="activeIndex" @tab-click="handleClick" style="width: 100%">
+        <el-tab-pane label="全部" name="0"/>
+        <el-tab-pane label="待确认" name="1"/>
+        <el-tab-pane label="已确认" name="2"/>
+      </el-tabs>
+      <el-button
+          type="primary"
+          plain
+          size="small"
+          style="position: absolute;right:10px;top:5px;"
+          @click="handleEdit"
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       >确认
       </el-button>
     </div>
 
     <el-table
+<<<<<<< HEAD
       :v-loading="tableLoading"
       :data="tableData"
       stripe
@@ -94,6 +160,23 @@
       <el-table-column prop="gmtOutput" label="出单日期" min-width="120" />
       <el-table-column prop="withdraw" label="检测单位名称" min-width="120" />
       <el-table-column prop="withdraw" label="是否分包商" min-width="120" />
+=======
+        :v-loading="tableLoading"
+        :data="tableData"
+        stripe
+        border
+        style="width: 100%"
+        class="mt8"
+    >
+      <el-table-column align="center" type="selection" min-width="80"/>
+      <el-table-column prop="workOrderNum" label="工作单编号" min-width="120"/>
+      <el-table-column prop="gmtCreate" label="开单日期" min-width="120"/>
+      <el-table-column prop="busyStatus" label="是否加急" min-width="120"/>
+      <el-table-column prop="issuer" label="要求完成日期" min-width="120"/>
+      <el-table-column prop="gmtOutput" label="出单日期" min-width="120"/>
+      <el-table-column prop="withdraw" label="检测单位名称" min-width="120"/>
+      <el-table-column prop="withdraw" label="是否分包商" min-width="120"/>
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <el-table-column fixed="right" label="状态" min-width="90">
         <template slot-scope="scope">
           <span v-if="scope.row.confirmed">已确认</span>
@@ -103,13 +186,14 @@
       <el-table-column fixed="right" label="操作" width="220">
         <template slot-scope="scope">
           <el-button
-            type="primary"
-            plain
-            size="small"
-            @click="handleShow(scope.row)"
+              type="primary"
+              plain
+              size="small"
+              @click="handleShow(scope.row)"
           >查看
           </el-button>
           <el-button
+<<<<<<< HEAD
             v-if="scope.row.confirmed == false"
             type="primary"
             plain
@@ -122,28 +206,48 @@
             size="small"
             plain
             @click="handleDelete(scope.row)"
+=======
+             v-if="scope.row.confirmed == false"
+              type="primary"
+              plain
+              size="small"
+              @click="handleEdit(scope.row)"
+          >确认
+          </el-button>
+          <el-button
+              type="primary"
+              size="small"
+              plain
+              @click="handleDelete(scope.row)"
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
           >删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      class="fr mt20"
-      :current-page="pagination.currPage"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="pagination.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pagination.pageTotal"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+        class="fr mt20"
+        :current-page="pagination.currPage"
+        :page-sizes="[10, 20, 30, 50]"
+        :page-size="pagination.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pagination.pageTotal"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
     />
 
+<<<<<<< HEAD
     <!--弹窗  确认-->
     <el-dialog :visible.sync="dialogVisible_settlement" title="确认">
+=======
+      <!--弹窗  确认-->
+      <el-dialog :visible.sync="dialogVisible_settlement" title="确认">
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       <span>是否确认所选工作单无误？</span>
       <el-form :model="creditInfo" label-width="120px" label-position="left" class="mt8">
         <el-form-item label="上传样品照片：" prop="username">
           <el-upload
+<<<<<<< HEAD
             class="avatar-uploader"
             :action="prefix.lb + '/api/certification/uploadFile'"
             :on-success="handleFileSuccess"
@@ -159,6 +263,22 @@
               比例16:9，支持jpg、jpeg、gif、png
             </div>
           </el-upload>
+=======
+          class="avatar-uploader"
+          :action="prefix.lb + '/api/certification/uploadFile'"
+          :on-success="handleFileSuccess"
+          :before-upload="beforeFlieUpload"
+          :show-file-list="false"
+          :multiple="false"
+          :headers="headers"
+          :limit="1" >
+          <img v-if="imageUrl" :src="imageUrl" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <div slot="tip" class="el-upload__tip">
+            比例16:9，支持jpg、jpeg、gif、png
+          </div>
+        </el-upload>
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -218,8 +338,13 @@ export default {
         startDate: "",
         endDate: ""
       },
+<<<<<<< HEAD
       dialogVisible_settlement: false,
       creditInfo: [],
+=======
+      dialogVisible_settlement:false,
+      creditInfo:[],
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       imageUrl: '',
       pagination: {
         currPage: 1,
@@ -239,23 +364,23 @@ export default {
         pageSize: this.pagination.pageSize
       }
       this.$store
-        .dispatch("transaction/queryTestWordOrderList", queryParam)
-        .then((res) => {
-          const { data, success, errorMessage } = res
-          if (success) {
-            console.log(data)
-            this.tableData = data.list
-            this.pagination.currPage = data.pageNum
-            this.pagination.pageTotal = data.total
-          } else {
-            this.$message.error(errorMessage)
-          }
-        })
-        .catch(() => {
-        })
-        .finally(() => {
-          this.tableLoading = false
-        })
+          .dispatch("transaction/queryTestWordOrderList", queryParam)
+          .then((res) => {
+            const { data, success, errorMessage } = res
+            if (success) {
+              console.log(data)
+              this.tableData = data.list
+              this.pagination.currPage = data.pageNum
+              this.pagination.pageTotal = data.total
+            } else {
+              this.$message.error(errorMessage)
+            }
+          })
+          .catch(() => {
+          })
+          .finally(() => {
+            this.tableLoading = false
+          })
     },
     handleDelete(row) {
       this.$confirm("是否确认删除工作单？系统会同时删除报价单下所有的工作单", "提示", {
@@ -263,48 +388,63 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       })
-        .then(() => {
-          this.$store
-            .dispatch("transaction/deleteTestWorkOrder", { testWorkOrderId: row.id })
-            .then((res) => {
-              const { data, success, errorMessage } = res
-              if (success) {
-                this.$message({
-                  message: data.msg,
-                  type: "success"
+          .then(() => {
+            this.$store
+                .dispatch("transaction/deleteTestWorkOrder", { testWorkOrderId: row.id })
+                .then((res) => {
+                  const { data, success, errorMessage } = res
+                  if (success) {
+                    this.$message({
+                      message: data.msg,
+                      type: "success"
+                    })
+                    this.handleSearchTestTradeList()
+                  } else {
+                    this.$message.error(errorMessage)
+                  }
                 })
-                this.handleSearchTestTradeList()
-              } else {
-                this.$message.error(errorMessage)
-              }
-            })
-            .catch(() => {
-            })
-            .finally(() => {
-            })
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
+                .catch(() => {
+                })
+                .finally(() => {
+                })
           })
-        })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            })
+          })
     },
     handleFileSuccess(res, file) {
+<<<<<<< HEAD
       this.imageUrl = URL.createObjectURL(file.raw)
     },
     handleClick(tab, event) {
       this.handleSearchTestTradeList()
     },
 
+=======
+        this.imageUrl = URL.createObjectURL(file.raw);
+      },
+    handleClick(tab, event) {
+      this.handleSearchTestTradeList()
+    },
+ 
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     handleShow(data) {
       this.$router.push({
         path: "/tm/detection/worksheet/show/" + data.testTradeId
       })
     },
+<<<<<<< HEAD
     // 确认
     handleEdit(data) {
       this.dialogVisible_settlement = true
+=======
+    //确认
+    handleEdit(data) {
+      this.dialogVisible_settlement=true
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
     },
     handleAudit(data) {
       this.$router.push({

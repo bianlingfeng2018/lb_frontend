@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="客户中文名称">
@@ -135,10 +136,14 @@
       </div>
     </el-dialog>
   </div>
+=======
+
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
 </template>
 
 <script>
 export default {
+<<<<<<< HEAD
   data() {
     return {
       columnParam: [],
@@ -257,3 +262,12 @@ export default {
   }
 }
 </script>
+=======
+  name: "list-contract"
+}
+</script>
+
+<style scoped>
+
+</style>
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560

@@ -2,6 +2,7 @@
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="申请单编号">
+<<<<<<< HEAD
         <el-input
           v-model="columnParam.cnameOrAbbr"
           placeholder="请输入申请单编号"
@@ -16,6 +17,14 @@
           style="width: 240px"
           @keydown.enter.native="onSearch"
         />
+=======
+        <el-input v-model="columnParam.cnameOrAbbr" placeholder="请输入申请单编号" style="width: 240px"
+          @keydown.enter.native="onSearch" />
+      </el-form-item>
+      <el-form-item label="申请单位名称">
+        <el-input v-model="columnParam.cnameOrAbbr" placeholder="请输入申请单位名称" style="width: 240px"
+          @keydown.enter.native="onSearch" />
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       </el-form-item>
       <el-form-item label="收样状态" prop="email">
         <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 140px">
@@ -38,7 +47,11 @@
     </el-form>
 
     <div class="lb-flex" style="position: relative;">
+<<<<<<< HEAD
       <el-tabs v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
+=======
+      <el-tabs v-model="activeIndex" @tab-click="handleClick" style="width: 100%">
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
         <el-tab-pane label="全部" name="0" />
         <el-tab-pane label="待合同评审" name="1" />
         <el-tab-pane label="评审通过" name="2" />
@@ -55,6 +68,7 @@
         <template slot-scope="scope">
           <span v-if="scope.row.confirmed == 1">已收样</span>
           <span v-else-if="scope.row.confirmed == 2">未收样</span>
+<<<<<<< HEAD
         </template>
       </el-table-column>
       <el-table-column prop="otherName" label="样品接收日期" min-width="120" />
@@ -71,6 +85,24 @@
       <el-table-column prop="fax" label="评审人" min-width="120" />
       <el-table-column fixed="right" label="操作" width="300">
         <template slot-scope="scope">
+=======
+        </template>
+      </el-table-column>
+      <el-table-column prop="otherName" label="样品接收日期" min-width="120" />
+      <el-table-column prop="otherAddress" label="要求完成日期" min-width="120" />
+      <el-table-column prop="contact" label="合同评审状态" min-width="120">
+        <template slot-scope="scope">
+          <span v-if="scope.row.confirmed == 1">待评审</span>
+          <span v-else-if="scope.row.confirmed == 2">评审通过</span>
+          <span v-else-if="scope.row.confirmed == 3">评审不通过</span>
+          <span v-else-if="scope.row.confirmed == 4">已下单</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="tel" label="跟进人" min-width="120" />
+      <el-table-column prop="fax" label="评审人" min-width="120" />
+      <el-table-column fixed="right" label="操作" width="300">
+        <template slot-scope="scope">
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
           </el-button>
           <el-button type="primary" plain size="small" @click="handleEdit(scope.row)">编辑
@@ -82,6 +114,7 @@
         </template>
       </el-table-column>
     </el-table>
+<<<<<<< HEAD
     <el-pagination
       class="fr mt20"
       :current-page="pagination.currPage"
@@ -92,6 +125,12 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+=======
+    <el-pagination class="fr mt20" :current-page="pagination.currPage" :page-sizes="[10, 20, 30, 50]"
+      :page-size="pagination.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pagination.pageTotal"
+      @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
 
     <!--弹窗  评审-->
     <el-dialog :visible.sync="dialogVisible_check" title="评审">
@@ -152,7 +191,11 @@ export default {
     return {
       columnParam: [],
       dialogVisible_check: false,
+<<<<<<< HEAD
       creditInfo: [],
+=======
+      creditInfo:[],
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
       tableLoading: false,
       tableData: [],
       pagination: {

@@ -97,7 +97,11 @@ export default {
     this.getDate()
   },
   methods: {
+<<<<<<< HEAD
     getDate() {
+=======
+    getDate(){
+>>>>>>> c30a03b9dc0df8344e685dbdc6d99422ee9cd560
 
     },
     // 设置授信额度

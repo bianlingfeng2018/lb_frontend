@@ -136,8 +136,8 @@ export default {
       const res = await getTreesPage({
         requestId: Math.random().toString(24)
       })
-      console.log(res)
-      this.treesDatas = [res.subOrgList[0]]
+      console.log(res.data)
+      this.treesDatas = [res.data.subOrgList[0]]
       console.log(this.treesDatas[0].orgNo)
       //把当前选择的key设置到el-tree中
       this.currentKey=this.treesDatas[0].orgNo
@@ -166,12 +166,11 @@ export default {
         pageSize: this.pagination.pageSize
       })
       console.log(res)
-      this.routes = res.dataList
-      this.pagination.pageTotal = res.total
+      this.routes = res.data.dataList
+      this.pagination.pageTotal = res.data.total
     },
     //添加子部门
     async confirmRole() {
-      console.log(this.route)
       const isEdit = this.dialogType === 'edit'
       if (isEdit) {
         await updateOrg(this.route)
@@ -190,7 +189,6 @@ export default {
     },
     // 设置负责人
     async handleConfirm() {
-      console.log(this.creditInfo)
       await updateOrg(this.creditInfo)
       await this.getListDate()
       this.dialogVisible_check = false

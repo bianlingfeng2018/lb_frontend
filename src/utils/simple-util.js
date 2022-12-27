@@ -48,3 +48,17 @@ export function appendParamsToUrl(url, params) {
   }
   return url
 }
+
+///金额过滤器  分转元
+export function changePrice2money(s) {
+  if (s == null) return '0.00';
+  if (/[^0-9\.]/.test(s)) return "0.00";
+  s = s.toString().replace(/\$|\,/g, '');
+  if (isNaN(s)) return '0.00';
+  var num = (s / 100).toFixed(4) + '';
+  var str = num.substring(0, num.lastIndexOf('.') + 3);
+  var intSum = str.substring(0, str.indexOf(".")).replace(/\B(?=(?:\d{3})+$)/g, ',');//取到整数部分
+  var dot = str.substring(str.length, str.indexOf("."))//取到小数部分
+  return intSum + dot;
+}
+

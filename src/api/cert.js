@@ -21,7 +21,7 @@ export function getCustomerList() {
 }
 export function getCustomerListWithPages() {
   return request({
-    url: '/api/uesr/queryListWithPages',
+    url: '/api/user/queryListWithPages',
     method: 'get'
   })
 }

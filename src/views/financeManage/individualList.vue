@@ -1,4 +1,5 @@
 <template>
+  <!--个人账款核销-->
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="交易名称">
@@ -192,11 +193,34 @@ export default {
     }
   },
   created() {
-    this.getDate()
+    this.getListDate()
   },
   methods: {
-    getDate() {
-
+    // 获取列表数据
+    getListDate() {
+      this.tableLoading = true
+      const queryParam = {
+        pageNum: this.pagination.currPage,
+        pageSize: this.pagination.pageSize
+      }
+      this.$store
+        .dispatch("transaction/queryTestApplicationFormList", queryParam)
+        .then((res) => {
+          const { data, success, errorMessage } = res
+          if (success) {
+            console.log(data)
+            this.tableData = data.list
+            this.pagination.currPage = data.pageNum
+            this.pagination.pageTotal = data.total
+          } else {
+            this.$message.error(errorMessage)
+          }
+        })
+        .catch(() => {
+        })
+        .finally(() => {
+          this.tableLoading = false
+        })
     },
     // 核销
     setCreditInfo() {
@@ -208,16 +232,16 @@ export default {
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val
-      this.getDate()
+      this.getListDate()
     },
     handleCurrentChange(val) {
       this.pagination.currPage = val
-      this.getDate()
+      this.getListDate()
     },
     // 搜索
     onSearch() {
       console.log('search')
-      this.getDate()
+      this.getListDate()
     },
     // 导出
     onExport() {
@@ -241,7 +265,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -19,7 +19,7 @@ const authRouter = {
       path: 'organization',
       component: () => import('@/views/authorizationManage/organization'),
       name: 'OrganizationList',
-      meta: { title: '组织架构', icon: 'el-icon-user', role: ['/am/user'], noCache: true }
+      meta: { title: '组织架构', icon: 'el-icon-files', role: ['/am/user'], noCache: true }
     },
     {
       path: 'user',

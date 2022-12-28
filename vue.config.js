@@ -37,9 +37,11 @@ module.exports = {
       errors: true
     },
     proxy: {
-      '/backend': {
+      'backend': {
         // target: 'http://localhost:8080',
-        target: 'http://192.168.23.126:8080',
+        // target: 'http://192.168.23.126:8080',
+        // target: 'http://192.168.11.135:8080',//yangjun
+        target: 'http://192.168.11.46:8080',//leizi
         changeOrigin: true,
         secure: false,
         pathRewrite: {

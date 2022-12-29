@@ -27,27 +27,27 @@
     </el-form>
 
     <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-      <el-table-column align="center" type="selection" min-width="80"/>
-      <el-table-column prop="clientId" label="客户编号" min-width="150"/>
-      <el-table-column prop="name" label="客户中文名称" min-width="150"/>
+      <el-table-column align="center" type="selection" min-width="80" />
+      <el-table-column prop="clientId" label="客户编号" min-width="150" />
+      <el-table-column prop="name" label="客户中文名称" min-width="150" />
       <el-table-column prop="creditLimit" label="授信额度" min-width="150">
         <template slot-scope="scope">
-          <span class="rflex">{{scope.row.creditLimit | changePrice2money}}</span>
+          <span class="rflex">{{ scope.row.creditLimit | changePrice2money }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="balanceAmt" label="可用额度" min-width="150">
         <template slot-scope="scope">
-          <span class="rflex">{{scope.row.balanceAmt | changePrice2money}}</span>
+          <span class="rflex">{{ scope.row.balanceAmt | changePrice2money }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="unsettledAmt" label="未核销金额" min-width="150">
         <template slot-scope="scope">
-          <span class="rflex">{{scope.row.unsettledAmt | changePrice2money}}</span>
+          <span class="rflex">{{ scope.row.unsettledAmt | changePrice2money }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="unsettledAmt" label="剩余收款金额" min-width="150">
         <template slot-scope="scope">
-          <span class="rflex">{{scope.row.unsettledAmt | changePrice2money}}</span>
+          <span class="rflex">{{ scope.row.unsettledAmt | changePrice2money }}</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="250">
@@ -67,14 +67,15 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.pageTotal"
       @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"/>
+      @current-change="handleCurrentChange"
+    />
 
     <el-dialog :visible.sync="dialogVisible" title="设置授信额度">
       <el-form :model="creditInfo" label-width="120px" label-position="left">
         <el-form-item label="客户名称">{{ creditInfo.name }}</el-form-item>
-        <el-form-item label="未核销金额">{{ creditInfo.unsettledAmt | changePrice2money}}</el-form-item>
+        <el-form-item label="未核销金额">{{ creditInfo.unsettledAmt | changePrice2money }}</el-form-item>
         <el-form-item label="授信额度" prop="creditLimit">
-          <el-input v-model="creditInfo.creditLimit" placeholder="输入授信额度" width="120"/>
+          <el-input v-model="creditInfo.creditLimit" placeholder="输入授信额度" width="120" />
           <span>注意：授信额度不能小于未核销金额</span>
         </el-form-item>
       </el-form>
@@ -88,44 +89,44 @@
 </template>
 
 <script>
-  import { changePrice2money } from "@/utils/simple-util"
-  import { setCreditLimit, getBalanceList } from "@/api/balance"
-  import { deepClone } from "../../utils"
+import { changePrice2money } from "@/utils/simple-util"
+import { setCreditLimit, getBalanceList } from "@/api/balance"
+import { deepClone } from "../../utils"
 
-  export default {
-    filters: {
-      changePrice2money
-    },
-    name: "EnterpriseList",
-    data() {
-      return {
-        tableLoading: false,
-        tableData: [],
-        dialogVisible: false,
-        creditInfo: {
-          clientId: '',
-          clientName: '',
-          unsettledAmt: '',
-          creditLimit: '',//授信额度
-          requestId: Math.random().toString(24)
-        },
-        // 搜索条件
-        columnParam: {
-          client: "",
-          startTime: "",
-          endTime: "",
-          lastTraceDate: []
-        },
-        // 分页
-        pagination: {
-          currPage: 1,
-          pageSize: 10,
-          pageTotal: 0
-        }
+export default {
+  name: "EnterpriseList",
+  filters: {
+    changePrice2money
+  },
+  data() {
+    return {
+      tableLoading: false,
+      tableData: [],
+      dialogVisible: false,
+      creditInfo: {
+        clientId: '',
+        clientName: '',
+        unsettledAmt: '',
+        creditLimit: '', // 授信额度
+        requestId: Math.random().toString(24)
+      },
+      // 搜索条件
+      columnParam: {
+        client: "",
+        startTime: "",
+        endTime: "",
+        lastTraceDate: []
+      },
+      // 分页
+      pagination: {
+        currPage: 1,
+        pageSize: 10,
+        pageTotal: 0
       }
-    },
-    created() {
-      this.getListDate()
+    }
+  },
+  created() {
+    this.getListDate()
   },
   methods: {
     getListDate() {
@@ -159,11 +160,10 @@
         .finally(() => {
           this.tableLoading = false
         })
-
     },
     // 设置授信额度
     async setCreditInfo() {
-      this.creditInfo.creditLimit = this.creditInfo.creditLimit*100
+      this.creditInfo.creditLimit = this.creditInfo.creditLimit * 100
       await setCreditLimit(this.creditInfo)
         .then((res) => {
           const { data, status } = res
@@ -189,7 +189,10 @@
     handleShow(scope) {
       this.dialogVisible = true
       this.creditInfo = deepClone(scope.row)
-      this.creditInfo.creditLimit = this.creditInfo.creditLimit/100
+      this.creditInfo.creditLimit = this.creditInfo.creditLimit / 100
+    },
+    handlePage() {
+      this.$router.push({ path: '/mall/goodsList', query: { sreachData: this.sreachData }})
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val

@@ -3,8 +3,8 @@
   <div class="app-container ohn">
     <div class="mb20">
       <el-radio-group v-model="radio">
-        <el-radio-button label="客户佣金设置" @click.native="chooseIdClick($event,1)"/>
-        <el-radio-button label="客户佣金记录" @click.native="chooseIdClick($event,2)"/>
+        <el-radio-button label="客户佣金设置" @click.native="chooseIdClick($event,1)" />
+        <el-radio-button label="客户佣金记录" @click.native="chooseIdClick($event,2)" />
       </el-radio-group>
     </div>
     <!--客户佣金设置-->
@@ -12,12 +12,13 @@
       v-if="visible1"
       ref="searchForm"
       :inline="true"
-      :model="columnParam"
+      :model="columnParam2"
       class="demo-form-inline mt8"
-      label-width="150px">
+      label-width="150px"
+    >
       <el-form-item label="客户编号">
         <el-input
-          v-model="columnParam.cnameOrAbbr"
+          v-model="columnParam2.clientId"
           placeholder="请输入客户编号"
           style="width: 240px"
           @keydown.enter.native="onSearch"
@@ -25,7 +26,7 @@
       </el-form-item>
       <el-form-item label="客户中文名称">
         <el-input
-          v-model="columnParam.cnameOrAbbr"
+          v-model="columnParam2.clientName"
           placeholder="请输入客户中文名称"
           style="width: 240px"
           @keydown.enter.native="onSearch"
@@ -43,17 +44,17 @@
 
     <div v-if="visible1" class="lb-flex" style="position: relative;">
       <el-tabs v-if="visible1" v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
-        <el-tab-pane label="全部" name="0"/>
-        <el-tab-pane label="待审核" name="1"/>
-        <el-tab-pane label="审核通过" name="2"/>
-        <el-tab-pane label="审核不通过" name="3"/>
+        <el-tab-pane label="全部" name="0" />
+        <el-tab-pane label="待审核" name="1" />
+        <el-tab-pane label="审核通过" name="2" />
+        <el-tab-pane label="审核不通过" name="3" />
       </el-tabs>
       <el-button
         type="primary"
         plain
         size="small"
         style="position: absolute;right:10px;top:5px;"
-        @click="handleCreate"
+        @click="handleCreate(2)"
       >设置客户佣金
       </el-button>
     </div>
@@ -65,17 +66,23 @@
       stripe
       border
       style="width: 100%"
-      class="mt8">
-      <el-table-column prop="clientNum" label="客户编号" min-width="150"/>
-      <el-table-column prop="name" label="客户中文名称" min-width="150"/>
-      <el-table-column prop="name" label="佣金比例" min-width="150"/>
-      <el-table-column prop="name" label="状态" min-width="150"/>
+      class="mt8"
+    >
+      <el-table-column prop="clientId" label="客户编号" min-width="150" />
+      <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
+      <el-table-column label="佣金比例" min-width="150">
+        <template v-slot="scope">
+          <span v-if="scope.row.status == 'inApprove'">{{ scope.row.rate }}% -> {{ scope.row.inreviewRate }}%</span>
+          <span v-else>{{ scope.row.rate }}%</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="状态" min-width="150" />
 
       <el-table-column fixed="right" label="操作" width="150">
         <template v-slot="scope">
-          <el-button type="primary" plain size="small" @click="handleShow(scope.row)">编辑
+          <el-button type="primary" plain size="small" @click="handleShow(scope.row,true)">编辑
           </el-button>
-          <el-button type="primary" plain size="small" @click="handleShow(scope.row)">审核
+          <el-button v-if="scope.row.status =='inApprove'" type="primary" plain size="small" @click="handleShow(scope.row,false)">审核
           </el-button>
         </template>
       </el-table-column>
@@ -92,7 +99,6 @@
       @current-change="handleCurrentChange"
     />
 
-
     <!--客户佣金记录-->
     <el-form
       v-if="visible2===true"
@@ -100,7 +106,8 @@
       :inline="true"
       :model="columnParam"
       class="demo-form-inline"
-      label-width="150px">
+      label-width="150px"
+    >
       <el-form-item label="交易名称">
         <el-input
           v-model="columnParam.cnameOrAbbr"
@@ -120,8 +127,8 @@
       <br>
       <el-form-item label="结算状态" prop="email">
         <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px">
-          <el-option key="0" label="未结算" value="0"/>
-          <el-option key="1" label="已结算" value="1"/>
+          <el-option key="0" label="未结算" value="0" />
+          <el-option key="1" label="已结算" value="1" />
         </el-select>
       </el-form-item>
 
@@ -155,7 +162,7 @@
         type="primary"
         plain
         size="small"
-        @click="handleCreate"
+        @click="handleCreate(1)"
       >标识已结算
       </el-button>
     </div>
@@ -166,14 +173,15 @@
       stripe
       border
       style="width: 100%"
-      class="mt8">
-      <el-table-column align="center" type="selection" min-width="80"/>
-      <el-table-column prop="clientNum" label="报价单编号" min-width="150"/>
-      <el-table-column prop="clientNum" label="交易名称" min-width="150"/>
-      <el-table-column prop="name" label="客户中文名称" min-width="150"/>
-      <el-table-column prop="name" :label="'交易金额\n（不含税检测费）'" min-width="150"/>
-      <el-table-column prop="name" label="佣金比例" min-width="150"/>
-      <el-table-column prop="name" label="佣金" min-width="150"/>
+      class="mt8"
+    >
+      <el-table-column align="center" type="selection" min-width="80" />
+      <el-table-column prop="clientNum" label="报价单编号" min-width="150" />
+      <el-table-column prop="clientNum" label="交易名称" min-width="150" />
+      <el-table-column prop="name" label="客户中文名称" min-width="150" />
+      <el-table-column prop="name" :label="'交易金额\n（不含税检测费）'" min-width="150" />
+      <el-table-column prop="name" label="佣金比例" min-width="150" />
+      <el-table-column prop="name" label="佣金" min-width="150" />
 
       <el-table-column prop="name" label="状态" min-width="150">
         <template slot-scope="scope">
@@ -181,7 +189,7 @@
           <span v-else-if="scope.row.status==1">审核通过</span>
           <span v-else-if="scope.row.status==2">审核不通过
             <el-tooltip class="item" effect="dark" placement="right">
-              <i class="el-icon-question" style="font-size: 16px; vertical-align: middle;"/>
+              <i class="el-icon-question" style="font-size: 16px; vertical-align: middle;" />
               <div slot="content">
                 <p>不通过原因</p>
               </div>
@@ -190,7 +198,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="结算日期" width="150"/>
+      <el-table-column prop="name" label="结算日期" width="150" />
     </el-table>
     <el-pagination
       v-if="visible2===true"
@@ -209,32 +217,32 @@
       <el-form :model="creditInfo" label-width="80px" label-position="left">
         <el-form-item label="客户名称" prop="username">
 
-          <el-input v-model="creditInfo.username" placeholder="输入客户名称" width="120"/>
+          <el-autocomplete v-model="creditInfo.clientName" :fetch-suggestions="queryClientCom" placeholder="输入客户名称" width="120" @select="handleClick" />
         </el-form-item>
-        <el-form-item label="佣金比例" prop="username">
-          <el-input v-model="creditInfo.username" width="120"/>
+        <el-form-item label="佣金比例" prop="rate">
+          <el-input-number v-model="creditInfo.rate" width="120" :max="50" />
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button size="small" plain @click="dialogVisible_set = false">取消</el-button>
 
-        <el-button type="primary" size="small" plain @click="setCreditInfo">确认</el-button>
+        <el-button type="primary" size="small" plain @click="handleSetCommission(1)">确认</el-button>
       </div>
     </el-dialog>
 
     <!--弹窗  编辑-->
     <el-dialog :visible.sync="dialogVisible_edit" title="编辑">
       <el-form :model="creditInfo" label-width="80px" label-position="left">
-        <el-form-item label="客户名称" prop="username">{{ creditInfo.name }}</el-form-item>
-        <el-form-item label="佣金比例" prop="username">
+        <el-form-item label="客户名称" prop="username">{{ creditInfo.clientName }}</el-form-item>
+        <el-form-item label="佣金比例" prop="rate">
 
-          <el-input v-model="creditInfo.username" width="120"/>
+          <el-input v-model="creditInfo.rate" width="120" />
 
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button size="small" plain @click="dialogVisible_edit = false">取消</el-button>
-        <el-button type="primary" size="small" plain @click="setCreditInfo">确认</el-button>
+        <el-button type="primary" size="small" plain @click="handleSetCommission(2)">确认</el-button>
       </div>
     </el-dialog>
 
@@ -242,18 +250,18 @@
     <el-dialog :visible.sync="dialogVisible_check" title="审核">
       <el-form ref="auditRulesForm" :model="creditInfo" :rules="auditRules" label-width="100px" label-position="left">
         <el-form-item label="审核结果：" prop="email">
-          <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="0" label="审核通过" value="0"/>
-            <el-option key="1" label="审核不通过" value="1"/>
+          <el-select v-model="creditInfo.status" placeholder="请选择" style="display: block; width: 200px">
+            <el-option key="0" label="审核通过" value="Accept" />
+            <el-option key="1" label="审核不通过" value="Reject" />
           </el-select>
         </el-form-item>
         <el-form-item label="原因：" prop="username">
-          <el-input v-model="creditInfo.username" type="textarea" :rows="2" placeholder="请输入内容"/>
+          <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button size="small" plain @click="dialogVisible_check = false">取消</el-button>
-        <el-button type="primary" size="small" plain @click="setCreditInfo">确认</el-button>
+        <el-button type="primary" size="small" plain @click="handleSetCommission(3)">确认</el-button>
       </div>
     </el-dialog>
 
@@ -283,151 +291,235 @@
 </template>
 
 <script>
-  export default {
-    name: "CommissionSettings",
-    data() {
-      return {
-        tableLoading: false,
-        tableLoading2: false,
-        tableData: [],
-        tableData2: [],
-        visible1: true,
-        visible2: false,
-        dialogVisible_set: false,
-        dialogVisible_edit: false,
-        dialogVisible_check: false,
-        dialogVisible_settlement: false,
-        creditInfo: {},
-        activeIndex: '0', // 默认全部
-        // 搜索条件
-        columnParam: {
-          cnameOrAbbr: "",
-          startDate: "",
-          endDate: ""
-        },
-        radio: '客户佣金设置',
+import { getCommissionList, getCommissionRecordList, updateCommission, setCommission, approveCommission } from "@/api/balance"
+import { queryClientComPageAll } from "@/api/clientCompany"
+import { deepClone } from "../../utils"
+export default {
+  name: "CommissionSettings",
+  data() {
+    return {
+      tableLoading: false,
+      tableLoading2: false,
+      tableData: [],
+      tableData2: [],
+      visible1: true,
+      visible2: false,
+      dialogVisible_set: false,
+      dialogVisible_edit: false,
+      dialogVisible_check: false,
+      dialogVisible_settlement: false,
+      creditInfo: {},
+      activeIndex: '0', // 默认全部
+      // 搜索条件
+      columnParam: {
+        cnameOrAbbr: "",
+        startDate: "",
+        endDate: ""
+      },
+      columnParam2: {
+        clientId: "",
+        clientName: ''
+      },
+      radio: '客户佣金设置',
 
-        // 审核
-        auditRulesForm: {
-          name: '',
-          type: '',
-          resource: ''
-        },
-        auditRules: {
-          type: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
-          resource: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }]
-        },
-        // 分页
-        pagination: {
-          currPage: 1,
-          pageSize: 10,
-          pageTotal: 0
-        },
-        // 分页2
-        pagination2: {
-          currPage: 1,
-          pageSize: 10,
-          pageTotal: 0
-        }
-
+      // 审核
+      auditRulesForm: {
+        name: '',
+        type: '',
+        resource: ''
+      },
+      auditRules: {
+        type: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
+        resource: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }]
+      },
+      // 分页
+      pagination: {
+        currPage: 1,
+        pageSize: 10,
+        pageTotal: 0
+      },
+      // 分页2
+      pagination2: {
+        currPage: 1,
+        pageSize: 10,
+        pageTotal: 0
+      },
+      restaurants: []
+    }
+  },
+  created() {
+    this.getListDate()
+  },
+  methods: {
+    // 切换头部标签==客户佣金设置/查看
+    chooseIdClick(e, val) {
+      if (e.target.tagName !== 'INPUT') {
+        return
+      }
+      if (val === 1) {
+        this.visible1 = true
+        this.visible2 = false
+      } else {
+        this.visible1 = false
+        this.visible2 = true
       }
     },
-    created() {
+    handleClick(tab, event) {
       this.getListDate()
     },
-    methods: {
-      // 切换头部标签==客户佣金设置/查看
-      chooseIdClick(e, val) {
-        if (e.target.tagName !== 'INPUT') {
-          return
-        }
-        if (val === 1) {
-          this.visible1 = true
-          this.visible2 = false
-        } else {
-          this.visible1 = false
-          this.visible2 = true
-        }
-      },
-      handleClick(tab, event) {
-        this.getListDate()
-      },
-      // 获取列表数据
-      getListDate() {
-        this.tableLoading = true
-        const queryParam = {
-          pageNum: this.pagination.currPage,
-          pageSize: this.pagination.pageSize
-        }
-        this.$store
-          .dispatch("transaction/queryTestApplicationFormList", queryParam)
-          .then((res) => {
-            const { data, success, errorMessage } = res
-            if (success) {
-              console.log(data)
-              this.tableData = data.list
-              this.pagination.currPage = data.pageNum
-              this.pagination.pageTotal = data.total
-            } else {
-              this.$message.error(errorMessage)
-            }
-          })
-          .catch(() => {
-          })
-          .finally(() => {
-            this.tableLoading = false
-          })
-      },
-      // 核销
-      setCreditInfo() {
-
-      },
-      handleShow(row) {
-        this.dialogVisible = true
-        this.creditInfo = row
-      },
-      handleSizeChange(val) {
-        this.pagination.pageSize = val
-        this.getListDate()
-      },
-      handleCurrentChange(val) {
-        this.pagination.currPage = val
-        this.getListDate()
-      },
-      handleSizeChange2(val) {
-        this.pagination2.pageSize = val
-        this.getListDate()
-      },
-      handleCurrentChange2(val) {
-        this.pagination2.currPage = val
-        this.getListDate()
-      },
-
-      // 搜索
-      onSearch() {
-        console.log('search')
-        this.getListDate()
-      },
-      // 导出
-      onExport() {
-        const colParam = deepClone(this.columnParam)
-        const range = colParam.lastTraceDate
-        if (range && range.length > 1) {
-          colParam.startDate = range[0]
-          colParam.endDate = range[1]
-        }
-        colParam.lastTraceDate = null
-        this.tableLoading = true
-        const fileName = 'export-all.xlsx'
-        const url = "/api/cli-all-export"
-        const urlWithParam = appendParamsToUrl(url, colParam)
-        this.$router.push({
-          path: "/clm/cli-com-export",
-          query: Object.assign({}, colParam, { url: urlWithParam, fileName: fileName })
-        })
+    // 获取列表数据
+    getListDate() {
+      this.tableLoading = true
+      const queryParam = {
+        pageNum: this.pagination.currPage,
+        pageSize: this.pagination.pageSize
       }
+      let columnParam = {}
+      let queryList
+      if (this.visible1) {
+        columnParam = deepClone(this.columnParam2)
+        queryList = getCommissionList
+      } else {
+        columnParam = deepClone(this.columnParam)
+        queryList = getCommissionRecordList
+      }
+
+      queryList(Object.assign({}, queryParam, columnParam))
+        .then((res) => {
+          console.log(res)
+          const { data, status } = res
+          if (status == 200) {
+            this.tableData = data.dataList
+            this.pagination.currPage = data.pageNum
+            this.pagination.pageTotal = data.total
+          } else {
+            this.$message.error(data.errMsg)
+          }
+        })
+        .catch(() => {
+        })
+        .finally(() => {
+          this.tableLoading = false
+        })
+    },
+    // 核销
+    setCreditInfo() {
+
+    },
+    handleSetCommission(state) {
+      let fuc
+      if (state == 1) {
+        this.creditInfo.clientName = "测试用名称2"
+        this.creditInfo.clientId = "LB00002"
+        fuc = setCommission
+      } else if (state == 2) {
+        fuc = updateCommission
+      } else {
+        fuc = approveCommission
+      }
+
+      fuc(this.creditInfo).then(res => {
+        if (res.status == 200) {
+          this.dialogVisible_set = false
+          this.dialogVisible_edit = false
+          this.dialogVisible_settlement = false
+          this.$notify({
+            title: '成功',
+            dangerouslyUseHTMLString: true,
+            message: `操作成功`,
+            type: 'success'
+          })
+          this.getListDate()
+        }
+      }).catch(e => {
+        this.$message.error(e)
+      }).finally(() => {
+        this.dialogVisible_set = false
+        this.dialogVisible_edit = false
+        this.dialogVisible_settlement = false
+      })
+    },
+    queryClientCom(s, cb) {
+      // const queryParam = {
+      //   cnameOrAbbr:this.creditInfo.username,
+      //   pageNum: 1,
+      //   pageSize: 10
+      // }
+      // this.restaurants = [{ "clientName": "三全鲜食（北新泾店）", "clientId": "LB00001" },
+      //   { "clientName": "Hot honey 首尔炸鸡（仙霞路）","clientId": "LB00002"  }]
+      // var restaurants = this.restaurants;
+      // var results = this.creditInfo.clientName ? restaurants.filter(()=>{
+      //   return (state)=>{
+      //     return state.clientName.toLowerCase().indexOf(this.creditInfo.clientName.toLowerCase()) === 0
+      //   }
+      // }) : restaurants;
+      // cb(results);
+      // queryClientComPageAll(queryParam)
+      // .then(res=>{
+      //   if(res?.data?.list){
+      //
+      //     var results = res?.data?.list;
+      //     cb(results);
+      //   }
+      //
+      // }).catch(() => {
+      // })
+      //   .finally(() => {
+      //   })
+    },
+    onSelect(item) {
+    },
+    handleShow(row, isEdit) {
+      // this.dialogVisible = true
+      this.creditInfo = row
+      this.dialogVisible_edit = isEdit
+      this.dialogVisible_check = !isEdit
+    },
+    handleSizeChange(val) {
+      this.pagination.pageSize = val
+      this.getListDate()
+    },
+    handleCurrentChange(val) {
+      this.pagination.currPage = val
+      this.getListDate()
+    },
+    handleSizeChange2(val) {
+      this.pagination2.pageSize = val
+      this.getListDate()
+    },
+    handleCurrentChange2(val) {
+      this.pagination2.currPage = val
+      this.getListDate()
+    },
+    handleCreate(show) {
+      show == 2 ? (this.dialogVisible_set = true) : (this.dialogVisible_set = false)
+    },
+
+    // 搜索
+    onSearch() {
+      console.log('search')
+      this.getListDate()
+    },
+    // 导出
+    onExport() {
+      const colParam = deepClone(this.columnParam)
+      const range = colParam.lastTraceDate
+      if (range && range.length > 1) {
+        colParam.startDate = range[0]
+        colParam.endDate = range[1]
+      }
+      colParam.lastTraceDate = null
+      this.tableLoading = true
+      const fileName = 'export-all.xlsx'
+      const url = "/api/cli-all-export"
+      const urlWithParam = appendParamsToUrl(url, colParam)
+      this.$router.push({
+        path: "/clm/cli-com-export",
+        query: Object.assign({}, colParam, { url: urlWithParam, fileName: fileName })
+      })
     }
   }
+}
 </script>
 
 <style scoped>

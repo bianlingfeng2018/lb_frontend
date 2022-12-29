@@ -31,10 +31,75 @@ export function updateOrg(data) {
     data
   })
 }
-//获取负责人
-export function deletePermission(id) {
+//获取报价单列表
+export function getQuotationList(data) {
   return requestsh({
-    url: `/api/permission/${id}`,
-    method: 'delete'
+    url: '/quotation/list',
+    method: 'post',
+    data
+  })
+}
+//审核报价单
+export function getQuotationExamine(data) {
+  return requestsh({
+    url: '/quotation/examine',
+    method: 'post',
+    data
+  })
+}
+//获取报价单详情
+export function getQuotationDetail(data) {
+  return requestsh({
+    url: '/quotation/detail',
+    method: 'post',
+    data
+  })
+}
+//新增报价单
+export function getQuotationCreate(data) {
+  return requestsh({
+    url: '/quotation/create',
+    method: 'post',
+    data
+  })
+}
+//获取商品列表
+export function getProductList(data) {
+  return requestsh({
+    url: '/product/list',
+    method: 'post',
+    data
+  })
+}
+//获取出口国
+export function getCountryList(data) {
+  return requestsh({
+    url: '/product/country/list',
+    method: 'post',
+    data
+  })
+}
+//获取基本检测项列表
+export function getItemList(data) {
+  return requestsh({
+    url: '/product/item/list',
+    method: 'post',
+    data
+  })
+}
+//获取标准列表
+export function getStandardList(data) {
+  return requestsh({
+    url: '/product/standard/list',
+    method: 'post',
+    data
+  })
+}
+//获取客服列表
+export function getServiceList(data) {
+  return requestsh({
+    url: '/api/user/service/list',
+    method: 'post',
+    data
   })
 }

@@ -46,31 +46,10 @@ const methods = {
     ]
   },
   quotationCreateValidate: {
-    client: [
-      { required: true, message: '请输入客户姓名', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'change' }
+    tradeName: [
+      { required: true, message: '请输入交易名称', trigger: 'blur' },
     ],
-    attn: [
-      { required: true, message: '请输入联络人', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'change' }
-    ],
-    // telClient: [
-    //   { required: true, message: '请输入客户电话', trigger: 'blur' },
-    //   { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'change' }
-    // ],
-    // faxClient: [
-    //   { required: true, message: '请输入客户传真', trigger: 'blur' },
-    //   { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
-    // ],
-    // faxCom: [
-    //   { required: true, message: '请输入公司传真', trigger: 'blur' },
-    //   { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
-    // ],
-    // email: [
-    //   { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    //   { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
-    // ],
-    gmtCreate: [
+    payType: [
       { required: true, message: '请选择报价日期', trigger: 'blur' }
     ],
     // invoiceTitle: [
@@ -81,30 +60,27 @@ const methods = {
     //   { required: true, message: '请输入公司电话', trigger: 'blur' },
     //   { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
     // ],
-    quotationNum: [
-      { required: true, message: '请输入报价单编号', trigger: 'blur' }
+    clientName: [
+      { required: true, message: '请输入客户公司', trigger: 'blur' }
     ],
-    reportType: [
-      { required: true, message: '请选择报告类型', trigger: 'blur' }
+    attn: [
+      { required: true, message: '请输入客户联系人', trigger: 'blur' }
     ],
     deliveryAddress: [
       { required: true, message: '请输入邮寄地址', trigger: 'blur' },
       { min: 2, max: 100, message: '长度在 3 到 100 个字符', trigger: 'change' }
     ],
-    testPeroid: [
-      { required: false, message: '请输入选择周期', trigger: 'change' }
+    testPeriod: [
+      { required: true, message: '请输入测试周期', trigger: 'blur' }
     ],
-    bankAccountName: [
-      { required: true, message: '请输入户名', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
+    sampleNum: [
+      { required: true, message: '请输入总样品量', trigger: 'blur' },
     ],
-    bankAccount: [
-      { required: true, message: '请输入账号', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
+    testPrice: [
+      { required: true, message: '请输入检测价格', trigger: 'blur' },
     ],
-    bankName: [
-      { required: true, message: '请输入银行名称', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+    reportTypes: [
+      { required: true, message: '请选择报告类型', trigger: 'change' },
     ],
     clientComSignature: [
       { required: true, message: '请输入公司签名', trigger: 'blur' },

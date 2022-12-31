@@ -76,7 +76,19 @@
           <span v-else>{{ scope.row.rate }}%</span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" min-width="150" />
+      <el-table-column label="状态" min-width="150">
+        <template v-slot="scope">
+          <span v-if="scope.row.status == 'inApprove'">审核中</span>
+          <span v-else-if="scope.row.status == 'Reject'">审核被拒</span>
+          <span v-else-if="scope.row.status == 'Accept'">审核通过</span>
+          <el-tooltip v-if="scope.row.status == 'Reject'" class="item" effect="dark" placement="right">
+            <i class="el-icon-question" style="font-size: 16px; vertical-align: middle;" />
+            <div slot="content">
+              <p>{{ scope.row.reason }}</p>
+            </div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
 
       <el-table-column fixed="right" label="操作" width="150">
         <template v-slot="scope">
@@ -101,7 +113,7 @@
 
     <!--客户佣金记录-->
     <el-form
-      v-if="visible2===true"
+      v-if="visible2"
       ref="searchForm"
       :inline="true"
       :model="columnParam"
@@ -167,38 +179,44 @@
       </el-button>
     </div>
     <el-table
-      v-if="visible2===true"
+      v-if="visible2"
       :v-loading="tableLoading2"
       :data="tableData2"
       stripe
       border
       style="width: 100%"
       class="mt8"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column align="center" type="selection" min-width="80" />
-      <el-table-column prop="clientNum" label="报价单编号" min-width="150" />
-      <el-table-column prop="clientNum" label="交易名称" min-width="150" />
-      <el-table-column prop="name" label="客户中文名称" min-width="150" />
-      <el-table-column prop="name" :label="'交易金额\n（不含税检测费）'" min-width="150" />
-      <el-table-column prop="name" label="佣金比例" min-width="150" />
-      <el-table-column prop="name" label="佣金" min-width="150" />
-
-      <el-table-column prop="name" label="状态" min-width="150">
-        <template slot-scope="scope">
-          <span v-if="scope.row.status==0">待审核</span>
-          <span v-else-if="scope.row.status==1">审核通过</span>
-          <span v-else-if="scope.row.status==2">审核不通过
-            <el-tooltip class="item" effect="dark" placement="right">
-              <i class="el-icon-question" style="font-size: 16px; vertical-align: middle;" />
-              <div slot="content">
-                <p>不通过原因</p>
-              </div>
-            </el-tooltip>
-          </span>
+      <el-table-column type="selection" width="55" />
+      <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
+      <el-table-column prop="tradeName" label="交易名称" min-width="150" />
+      <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
+      <el-table-column :label="'交易金额\n（不含税检测费）'" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.tradeAmt /100 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="佣金比例" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.rate }}%</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="佣金" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.amount /100 }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="结算日期" width="150" />
+      <el-table-column label="状态" min-width="150">
+        <template v-slot="scope">
+          <span v-if="scope.row.status==0">未结算</span>
+          <span v-else-if="scope.row.status==1">未核销</span>
+          <span v-else-if="scope.row.status==2">已核销</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="operTime" label="结算日期" width="150" />
     </el-table>
     <el-pagination
       v-if="visible2===true"
@@ -255,7 +273,7 @@
             <el-option key="1" label="审核不通过" value="Reject" />
           </el-select>
         </el-form-item>
-        <el-form-item label="原因：" prop="username">
+        <el-form-item v-if="creditInfo.status=='Reject'" label="原因：" prop="username">
           <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
@@ -291,7 +309,7 @@
 </template>
 
 <script>
-import { getCommissionList, getCommissionRecordList, updateCommission, setCommission, approveCommission } from "@/api/balance"
+import { getCommissionList, getCommissionRecordList, updateCommission, setCommission, approveCommission, settleCommissionRecordBatch } from "@/api/balance"
 import { queryClientComPageAll } from "@/api/clientCompany"
 import { deepClone } from "../../utils"
 export default {
@@ -344,7 +362,8 @@ export default {
         pageSize: 10,
         pageTotal: 0
       },
-      restaurants: []
+      restaurants: [],
+      selectTrade: []
     }
   },
   created() {
@@ -363,12 +382,14 @@ export default {
         this.visible1 = false
         this.visible2 = true
       }
+      this.getListDate()
     },
     handleClick(tab, event) {
       this.getListDate()
     },
     // 获取列表数据
     getListDate() {
+      this.tableData = null
       this.tableLoading = true
       const queryParam = {
         pageNum: this.pagination.currPage,
@@ -389,7 +410,11 @@ export default {
           console.log(res)
           const { data, status } = res
           if (status == 200) {
-            this.tableData = data.dataList
+            if (this.visible1) {
+              this.tableData = data.dataList
+            } else {
+              this.tableData2 = data.dataList
+            }
             this.pagination.currPage = data.pageNum
             this.pagination.pageTotal = data.total
           } else {
@@ -404,6 +429,11 @@ export default {
     },
     // 核销
     setCreditInfo() {
+      this.dialogVisible_settlement = false
+      settleCommissionRecordBatch()
+    },
+    handleSelectionChange(data) {
+      // this.selectTrade
 
     },
     handleSetCommission(state) {
@@ -492,7 +522,8 @@ export default {
       this.getListDate()
     },
     handleCreate(show) {
-      show == 2 ? (this.dialogVisible_set = true) : (this.dialogVisible_set = false)
+      this.dialogVisible_set = show == 2
+      this.dialogVisible_settlement = show == 1
     },
 
     // 搜索

@@ -54,7 +54,7 @@
         <template v-slot="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope)">设置授信额度
           </el-button>
-          <el-button type="primary" plain size="small" @click="handleShow(scope)">应收账明细
+          <el-button type="primary" plain size="small" @click="handlePage">应收账明细
           </el-button>
         </template>
       </el-table-column>
@@ -192,7 +192,7 @@ export default {
       this.creditInfo.creditLimit = this.creditInfo.creditLimit / 100
     },
     handlePage() {
-      this.$router.push({ path: '/mall/goodsList', query: { sreachData: this.sreachData }})
+      this.$router.push({ path: '/financeManage/collectiondetails/Details', query: { clientId: this.creditInfo.clientId }})
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val

@@ -86,14 +86,14 @@
     <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
 
       <el-table-column align="center" type="selection" min-width="80" />
-      <el-table-column prop="clientNum" label="报价单编号" min-width="150" />
-      <el-table-column prop="name" label="交易名称" min-width="150" />
-      <el-table-column prop="name" label="挂账金额" min-width="150" />
-      <el-table-column prop="name" label="未核销金额" min-width="150" />
-      <el-table-column prop="name" label="挂账日期" min-width="150" />
-      <el-table-column prop="name" label="最晚收款日期" min-width="150" />
-      <el-table-column prop="name" label="状态" min-width="150" />
-      <el-table-column prop="name" label="核销日期" min-width="150" />
+      <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
+      <el-table-column prop="tradeName" label="交易名称" min-width="150" />
+      <el-table-column prop="onaccountAmt" label="挂账金额" min-width="150" />
+      <el-table-column prop="unAmt" label="未核销金额" min-width="150" />
+      <el-table-column prop="startTime" label="挂账日期" min-width="150" />
+      <el-table-column prop="lastTime" label="最晚收款日期" min-width="150" />
+      <el-table-column prop="status" label="状态" min-width="150" />
+      <el-table-column prop="operTime" label="核销日期" min-width="150" />
 
     </el-table>
     <el-pagination
@@ -165,13 +165,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="clientNum" label="收款公司" min-width="150" />
-      <el-table-column prop="name" label="期初金额" min-width="150" />
-      <el-table-column prop="name" label="发生额" min-width="150" />
-      <el-table-column prop="name" label="期末余额" min-width="150" />
-      <el-table-column prop="name" label="操作人" min-width="150" />
-      <el-table-column prop="name" label="操作时间" width="150" />
-      <el-table-column prop="name" label="备注" width="150" />
+      <el-table-column prop="clientId" label="收款公司" min-width="150" />
+      <el-table-column prop="originAmount" label="期初金额" min-width="150" />
+      <el-table-column prop="operationAmount" label="发生额" min-width="150" />
+      <el-table-column prop="finalAmount" label="期末余额" min-width="150" />
+      <el-table-column prop="operUser" label="操作人" min-width="150" />
+      <el-table-column prop="operationTime" label="操作时间" width="150" />
+      <el-table-column prop="descp" label="备注" width="150" />
 
     </el-table>
     <el-pagination

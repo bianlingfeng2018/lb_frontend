@@ -75,15 +75,15 @@
     </div>
     <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
       <el-table-column align="center" type="selection" min-width="80" />
-      <el-table-column prop="clientNum" label="报价单编号" min-width="150" />
-      <el-table-column prop="name" label="交易名称" min-width="150" />
-      <el-table-column prop="name" label="客户中文名称" min-width="150" />
-      <el-table-column prop="name" label="交易金额" min-width="150" />
-      <el-table-column prop="name" label="回款金额" min-width="150" />
-      <el-table-column prop="name" label="上传水单日期" min-width="150" />
-      <el-table-column prop="name" label="实际收款日期" min-width="150" />
-      <el-table-column prop="name" label="核销日期" min-width="150" />
-      <el-table-column prop="name" label="状态" min-width="150" />
+      <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
+      <el-table-column prop="tradeName" label="交易名称" min-width="150" />
+      <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
+      <el-table-column prop="orderAmt" label="交易金额" min-width="150" />
+      <el-table-column prop="incomeAmt" label="回款金额" min-width="150" />
+      <el-table-column prop="uploadTime" label="上传水单日期" min-width="150" />
+      <el-table-column prop="incomeTime" label="实际收款日期" min-width="150" />
+      <el-table-column prop="operTime" label="核销日期" min-width="150" />
+      <el-table-column prop="status" label="状态" min-width="150" />
       <el-table-column fixed="right" label="操作" width="150">
         <template v-slot="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
@@ -107,13 +107,13 @@
     <!--核销弹窗-->
     <el-dialog :visible.sync="dialogVisible_check" title="核销">
       <el-form :model="creditInfo" label-width="80px" label-position="left">
-        <el-form-item label="客户名称">{{ creditInfo.identityId }}</el-form-item>
-        <el-form-item label="报价单编号">{{ creditInfo.identityId }}</el-form-item>
-        <el-form-item label="回款金额" prop="username">
-          <el-input v-model="creditInfo.username" placeholder="输入授信额度" width="120" />
+        <el-form-item label="客户名称">{{ creditInfo.clientName }}</el-form-item>
+        <el-form-item label="报价单编号">{{ creditInfo.tradeId }}</el-form-item>
+        <el-form-item label="回款金额" prop="incomeAmt">
+          <el-input v-model="creditInfo.creditLimit" placeholder="输入授信额度" width="120" />
         </el-form-item>
         <el-form-item label="水单" prop="username">
-          <el-input v-model="creditInfo.username" width="120" />
+          <el-input v-model="creditInfo.billPath" width="120" />
         </el-form-item>
         <el-form-item label="实际收款日期" prop="username">
           <el-date-picker

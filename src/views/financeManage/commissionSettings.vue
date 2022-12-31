@@ -188,7 +188,7 @@
       class="mt8"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="selection" min-width="55" />
       <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
       <el-table-column prop="tradeName" label="交易名称" min-width="150" />
       <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
@@ -439,8 +439,6 @@ export default {
     handleSetCommission(state) {
       let fuc
       if (state == 1) {
-        this.creditInfo.clientName = "测试用名称2"
-        this.creditInfo.clientId = "LB00002"
         fuc = setCommission
       } else if (state == 2) {
         fuc = updateCommission

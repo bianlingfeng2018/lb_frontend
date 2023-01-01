@@ -67,6 +67,7 @@
       border
       style="width: 100%"
       class="mt8"
+      key="tabel1"
     >
       <el-table-column prop="clientId" label="客户编号" min-width="150" />
       <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
@@ -187,6 +188,7 @@
       style="width: 100%"
       class="mt8"
       @selection-change="handleSelectionChange"
+      key="tabel2"
     >
       <el-table-column align="center" type="selection" min-width="80" />
       <el-table-column prop="tradeId" label="报价单编号" min-width="150" />

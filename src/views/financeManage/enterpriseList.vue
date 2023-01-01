@@ -54,7 +54,7 @@
         <template v-slot="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope)">设置授信额度
           </el-button>
-          <el-button type="primary" plain size="small" @click="handlePage">应收账明细
+          <el-button type="primary" plain size="small" @click="handlePage(scope)">应收账明细
           </el-button>
         </template>
       </el-table-column>
@@ -191,8 +191,9 @@ export default {
       this.creditInfo = deepClone(scope.row)
       this.creditInfo.creditLimit = this.creditInfo.creditLimit / 100
     },
-    handlePage() {
-      this.$router.push({ path: 'pay_list1/details', query: { clientId: this.creditInfo.clientId }})
+    handlePage(scope) {
+      let data = deepClone(scope.row);
+      this.$router.push({ path: 'pay_list1/details', query: { data:data }})
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val

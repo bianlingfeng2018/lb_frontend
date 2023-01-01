@@ -25,3 +25,39 @@ export function updatePersonalBill(data) {
   })
 }
 
+export function getAllIncomeBill(data) {
+  return requestsh({
+    url: '/bill/getAllIncomeBill',
+    method: 'post',
+    data
+  })
+}
+export function getAllOutBill(data) {
+  return requestsh({
+    url: '/bill/getAllOutBill',
+    method: 'post',
+    data
+  })
+}
+export function addOneOutBill(data) {
+  return requestsh({
+    url: '/bill/addOneOutBill',
+    method: 'post',
+    data
+  })
+}
+export function addOneIncomeBill(data) {
+  return requestsh({
+    url: '/bill/addOneIncomeBill',
+    method: 'post',
+    data
+  })
+}
+export function addOutBillBatch(data) {
+  return requestsh({
+    url: '/bill/addOutBillBatch',
+    method: 'post',
+    data
+  })
+}
+

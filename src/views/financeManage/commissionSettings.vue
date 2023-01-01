@@ -9,7 +9,7 @@
     </div>
     <!--客户佣金设置-->
     <el-form
-      v-if="visible1"
+      v-if="visible1==true"
       ref="searchForm"
       :inline="true"
       :model="columnParam2"
@@ -42,8 +42,8 @@
       </el-form-item>
     </el-form>
 
-    <div v-if="visible1" class="lb-flex" style="position: relative;">
-      <el-tabs v-if="visible1" v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
+    <div v-if="visible1==true" class="lb-flex" style="position: relative;">
+      <el-tabs v-if="visible1==true" v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
         <el-tab-pane label="全部" name="0" />
         <el-tab-pane label="待审核" name="1" />
         <el-tab-pane label="审核通过" name="2" />
@@ -60,7 +60,7 @@
     </div>
 
     <el-table
-      v-if="visible1"
+      v-if="visible1==true"
       :v-loading="tableLoading"
       :data="tableData"
       stripe
@@ -113,7 +113,7 @@
 
     <!--客户佣金记录-->
     <el-form
-      v-if="visible2"
+      v-if="visible2==true"
       ref="searchForm"
       :inline="true"
       :model="columnParam"
@@ -179,7 +179,7 @@
       </el-button>
     </div>
     <el-table
-      v-if="visible2"
+      v-if="visible2==true"
       :v-loading="tableLoading2"
       :data="tableData2"
       stripe
@@ -188,31 +188,31 @@
       class="mt8"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" min-width="55" />
+      <el-table-column align="center" type="selection" min-width="80" />
       <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
       <el-table-column prop="tradeName" label="交易名称" min-width="150" />
       <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
-      <el-table-column :label="'交易金额\n（不含税检测费）'" min-width="150">
+      <el-table-column prop="tradeAmt" :label="'交易金额\n（不含税检测费）'" min-width="150">
         <template v-slot="scope">
           <span>{{ scope.row.tradeAmt /100 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="佣金比例" min-width="150">
+      <el-table-column prop="rate" label="佣金比例" min-width="150">
         <template v-slot="scope">
           <span>{{ scope.row.rate }}%</span>
         </template>
       </el-table-column>
-      <el-table-column label="佣金" min-width="150">
+      <el-table-column prop="amount" label="佣金" min-width="150">
         <template v-slot="scope">
           <span>{{ scope.row.amount /100 }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" min-width="150">
+      <el-table-column prop="status" label="状态" min-width="150">
         <template v-slot="scope">
           <span v-if="scope.row.status==0">未结算</span>
           <span v-else-if="scope.row.status==1">未核销</span>
-          <span v-else-if="scope.row.status==2">已核销</span>
+          <span v-else>已核销</span>
         </template>
       </el-table-column>
 
@@ -290,7 +290,7 @@
         <el-form-item label="结算日期" prop="username">
           <el-date-picker
 
-            v-model="columnParam.lastTraceDate"
+            v-model="batchTime"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
@@ -363,7 +363,8 @@ export default {
         pageTotal: 0
       },
       restaurants: [],
-      selectTrade: []
+      selectTrade: [],
+      batchTime:""
     }
   },
   created() {
@@ -375,13 +376,8 @@ export default {
       if (e.target.tagName !== 'INPUT') {
         return
       }
-      if (val === 1) {
-        this.visible1 = true
-        this.visible2 = false
-      } else {
-        this.visible1 = false
-        this.visible2 = true
-      }
+      this.visible1 = val === 1
+      this.visible2 = val === 2
       this.getListDate()
     },
     handleClick(tab, event) {
@@ -389,14 +385,15 @@ export default {
     },
     // 获取列表数据
     getListDate() {
-      this.tableData = null
+      this.tableData = [];
+      this.tableData2 = [];
       this.tableLoading = true
       const queryParam = {
         pageNum: this.pagination.currPage,
         pageSize: this.pagination.pageSize
       }
       let columnParam = {}
-      let queryList
+      let queryList = null;
       if (this.visible1) {
         columnParam = deepClone(this.columnParam2)
         queryList = getCommissionList
@@ -410,13 +407,16 @@ export default {
           console.log(res)
           const { data, status } = res
           if (status == 200) {
-            if (this.visible1) {
+            if (this.visible1 == true) {
               this.tableData = data.dataList
+              this.pagination.currPage = data.pageNum
+              this.pagination.pageTotal = data.total
             } else {
               this.tableData2 = data.dataList
+              this.pagination2.currPage = data.pageNum
+              this.pagination2.pageTotal = data.total
             }
-            this.pagination.currPage = data.pageNum
-            this.pagination.pageTotal = data.total
+
           } else {
             this.$message.error(data.errMsg)
           }
@@ -429,12 +429,36 @@ export default {
     },
     // 核销
     setCreditInfo() {
-      this.dialogVisible_settlement = false
-      settleCommissionRecordBatch()
+      let sendArray = [];
+      this.selectTrade.forEach(data=>{
+        let sendData = {
+          id:data.id,
+          settleTime:this.batchTime
+        }
+        sendArray.push(sendData);
+      });
+      let param = {
+        list:sendArray
+      }
+      settleCommissionRecordBatch(param).then((res)=>{
+        if(res.status == 200){
+          this.dialogVisible_settlement = false;
+          this.$notify({
+            title: '成功',
+            dangerouslyUseHTMLString: true,
+            message: `操作成功`,
+            type: 'success'
+          })
+        this.getListDate();
+        }
+      }).catch(e=>{
+        this.$message.error(e)
+      }).finally(()=>{
+        this.dialogVisible_settlement = false;
+      });
     },
     handleSelectionChange(data) {
-      // this.selectTrade
-
+      this.selectTrade = data;
     },
     handleSetCommission(state) {
       let fuc

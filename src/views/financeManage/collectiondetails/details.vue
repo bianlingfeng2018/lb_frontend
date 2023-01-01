@@ -110,7 +110,7 @@
 
     <!--收款账-->
     <el-form
-      v-else-if="'收款账'"
+      v-if="'收款账'"
       ref="searchForm"
       :inline="true"
       :model="columnParam"

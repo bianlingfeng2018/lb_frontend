@@ -192,7 +192,7 @@ export default {
       this.creditInfo.creditLimit = this.creditInfo.creditLimit / 100
     },
     handlePage() {
-      this.$router.push({ path: '/financeManage/collectiondetails/Details', query: { clientId: this.creditInfo.clientId }})
+      this.$router.push({ path: 'pay_list1/details', query: { clientId: this.creditInfo.clientId }})
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val

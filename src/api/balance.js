@@ -61,6 +61,14 @@ export function settleCommissionRecordBatch(data) {
   })
 }
 
+export function getPersonalBillList(data) {
+  return requestsh({
+    url: '/bill/getPersonalBillList',
+    method: 'post',
+    data
+  })
+}
+
 export function addOrg(data) {
   return requestsh({
     url: '/org/create',

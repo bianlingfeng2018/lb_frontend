@@ -151,7 +151,8 @@ const transactionRouter = {
             },
             {
               path: 'show/:id',
-              component: () => import('@/views/transactionManagement/detection/apply/show.vue'),
+              // component: () => import('@/views/transactionManagement/detection/apply/show.vue'),
+              redirect: '/tm/detection-apply-show/:id',
               name: 'Show',
               meta: { title: '查看申请单', noCache: true, role: ['/tm/detection/apply/show/:id'] },
               hidden: true
@@ -363,6 +364,13 @@ const transactionRouter = {
       component: () => import('@/views/transactionManagement/detection/apply/create'),
       name: 'ApplyCreate',
       meta: { title: '创建申请单', noCache: false, role: ['/tm/detection-apply-create'] },
+      hidden: true
+    },
+    {
+      path: 'detection-apply-show/:id',
+      component: () => import('@/views/transactionManagement/detection/apply/show.vue'),
+      name: 'ApplyShow',
+      meta: { title: '查看申请单', noCache: false, role: ['/tm/detection-quotation-edit/:id'] },
       hidden: true
     },
     {

@@ -50,7 +50,7 @@ const methods = {
       { required: true, message: '请输入交易名称', trigger: 'blur' },
     ],
     payType: [
-      { required: true, message: '请选择报价日期', trigger: 'blur' }
+      { required: true, message: '请选择支付方式', trigger: 'change' }
     ],
     // invoiceTitle: [
     //   { required: true, message: '请输入发票抬头', trigger: 'blur' },
@@ -61,7 +61,7 @@ const methods = {
     //   { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
     // ],
     clientName: [
-      { required: true, message: '请输入客户公司', trigger: 'blur' }
+      { required: true, message: '请选择客户公司', trigger: 'change' }
     ],
     attn: [
       { required: true, message: '请输入客户联系人', trigger: 'blur' }

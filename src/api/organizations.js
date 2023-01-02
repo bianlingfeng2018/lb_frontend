@@ -55,6 +55,15 @@ export function getQuotationDetail(data) {
     data
   })
 }
+//根据客户姓名获取列表
+export function getSearchName(data) {
+  return requestsh({
+    url: '/customer/search/name',
+    method: 'post',
+    data
+  })
+}
+
 //新增报价单
 export function getQuotationCreate(data) {
   return requestsh({
@@ -103,3 +112,61 @@ export function getServiceList(data) {
     data
   })
 }
+//创建商品
+export function getProductCreate(data) {
+  return requestsh({
+    url: '/product/create',
+    method: 'post',
+    data
+  })
+}
+//获取费率
+export function getRate(data) {
+  return requestsh({
+    url: '/quotation/getRate',
+    method: 'post',
+    data
+  })
+}
+
+//获取申请单列表
+export function getApplicationList(data) {
+  return requestsh({
+    url: '/application/list',
+    method: 'post',
+    data
+  })
+}
+//获取申请单详情
+export function getApplicationDetail(data) {
+  return requestsh({
+    url: '/application/detail',
+    method: 'post',
+    data
+  })
+}
+//新增申请单
+export function getApplicationCreate(data) {
+  return requestsh({
+    url: '/application/create',
+    method: 'post',
+    data
+  })
+}
+//修改申请单
+export function getApplicationModify(data) {
+  return requestsh({
+    url: '/application/modify',
+    method: 'post',
+    data
+  })
+}
+//审核申请单
+export function getApplicationReview(data) {
+  return requestsh({
+    url: '/application/review',
+    method: 'post',
+    data
+  })
+}
+

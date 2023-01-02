@@ -19,12 +19,11 @@
       </el-form-item>
       <br>
       <el-form-item label="支付方式" prop="payType">
-        <el-radio-group v-model="payType" style="width: 540px">
+        <el-radio-group v-model="postForm.payType" style="width: 540px">
           <el-radio :label="1">挂账</el-radio>
           <el-radio :label="2">先付后检</el-radio>
           <el-radio :label="3">先付</el-radio>
           <el-input
-            v-model="postForm.quotationNum"
             class="short"
             style="width: 100px"/>
           <el-button type="text" style="color:black">%后检</el-button>
@@ -32,12 +31,17 @@
       </el-form-item>
       <el-divider class="mt20" content-position="left">客户公司</el-divider>
       <el-form-item label="客户公司" prop="clientName">
-        <el-input v-model="postForm.clientName" placeholder="请输入客户公司" clearable style="width: 240px"/>
+        <el-select  value-key="id" v-model="postForm.clientName" filterable placeholder="请输入后选择" @change="changeSelectName" style="width: 240px">
+          <el-option
+            v-for="item in searchNamelist"
+            :key="item.id"
+            :label="item.name"
+            :value="item">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="客户联系人" prop="attn">
-        <el-select v-model="postForm.attn" placeholder="请选择" style="width: 240px" @change="onChange">
-          <el-option v-for="item in userList" :key="item.id" :label="item.nickname" :value="item.id"/>
-        </el-select>
+        <el-input v-model="postForm.attn" placeholder="请输入客户联系人" clearable style="width: 240px"/>
       </el-form-item>
       <el-form-item label="联系电话">
         <el-input v-model="postForm.telClient" placeholder="请输入联系电话" clearable style="width: 240px"/>
@@ -69,12 +73,12 @@
           </el-button>
         </template>
       </vxe-toolbar>
-      <div v-if="checkproductlist.goodsName">
-        <el-form-item label="产品名：" prop="telClient">{{checkproductlist.goodsName}}</el-form-item>
-        <el-form-item label="HSCode：" prop="telClient">{{checkproductlist.hsCode}}</el-form-item>
-        <el-form-item label="材质：" prop="telClient">{{checkproductlist.material}}</el-form-item>
-        <el-form-item label="出口国：" prop="telClient">{{checkproductlist.export}}</el-form-item>
-        <el-form-item label="检测标准：" prop="telClient">{{checkproductlist.standard}}</el-form-item>
+      <div  v-if="gooditem.goodsId" :model="gooditem" v-for="(gooditem,index) in postForm.goods" :key="index">
+        <el-form-item label="产品名：" prop="telClient">{{gooditem.goodsName}}</el-form-item>
+        <el-form-item label="HSCode：" prop="telClient">{{gooditem.hsCode}}</el-form-item>
+        <el-form-item label="材质：" prop="telClient">{{gooditem.material}}</el-form-item>
+        <el-form-item label="出口国：" prop="telClient">{{gooditem.export}}</el-form-item>
+        <el-form-item label="检测标准：" prop="telClient">{{gooditem.standard}}</el-form-item>
         <vxe-table
           ref="xTable"
           border
@@ -83,20 +87,25 @@
           class="editable-footer mb20"
           :row-config="{ isHover: true }"
           :export-config="{}"
-          :data="checkproductlist.items"
+          :data="gooditem.items"
           :edit-config="{ trigger: 'click', mode: 'row' }"
           :edit-rules="tableRules"
           @edit-closed="editClose">
           <vxe-column field="id" width="60" :title="'序号'" align="right"/>
-          <vxe-column field="name" :title="'测试项目'" />
-          <vxe-column field="price" :title="'单价'" />
-          <vxe-column field="quantity" :title="'测试点数'" :edit-render="{ autofocus: '.vxe-input--inner' }">
+          <vxe-column field="name" :title="'测试项目'"/>
+          <vxe-column field="price" :title="'单价'"/>
+          <vxe-column field="quantity" title="测试点数" :edit-render="{ autofocus: '.vxe-input--inner' }">
             <template #edit="{ row }">
-              <vxe-input v-model="row.quantity" type="text" @input="updateFooterEvent"/>
+              <vxe-input v-model="row.quantity" type="number"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column field="price" :title="'测试金额'" />
-          <vxe-column field="quantity" :title="'样品量'" />
+
+          <vxe-column field="price2" :title="'测试金额'">
+            <template #default="{ row }">
+              <span>{{ row.price*row.quantity }} 元</span>
+            </template>
+          </vxe-column>
+          <vxe-column :title="'样品量'">1</vxe-column>
           <vxe-column title="操作" width="80">
             <template #default="{ row }">
               <el-button type="text" status="primary" @click="deleteEvent(row)">删除
@@ -105,15 +114,15 @@
           </vxe-column>
         </vxe-table>
 
-        <el-form-item label="测试周期" prop="testPeriod">
-          <el-input v-model="postForm.testPeriod" placeholder="请输入测试周期" clearable style="width: 240px"/>
+        <el-form-item label="测试周期"  prop="testPeriod" >
+          <el-input v-model="gooditem.testPeriod" placeholder="请输入测试周期" clearable style="width: 240px"/>
         </el-form-item>
         <el-form-item label="总样品量" prop="sampleNum">
-          <el-input v-model="postForm.sampleNum" placeholder="请输入总样品量" clearable style="width: 240px"/>
+          <el-input v-model="gooditem.sampleNum" placeholder="请输入总样品量" clearable style="width: 240px"/>
         </el-form-item>
         <br>
         <el-form-item label="服务类型">
-          <el-select v-model="postForm.service" placeholder="请选择" style="display: block; width: 200px">
+          <el-select v-model="gooditem.service" placeholder="请选择" style="display: block; width: 200px">
             <el-option key="0" label="标准" value="0" />
             <el-option key="1" label="加急" value="1" />
             <el-option key="2" label="特急" value="2" />
@@ -121,32 +130,35 @@
         </el-form-item>
         <el-form-item label="报告类型" prop="reportTypes">
           <el-checkbox-group v-model="postForm.reportTypes">
-            <el-checkbox label="中文纸质档"/>
-            <el-checkbox label="中文电子档"/>
-            <el-checkbox label="英文纸质档"/>
-            <el-checkbox label="英文电子档"/>
+            <el-checkbox :label="item.key" v-for="item of customerOptions" :key="item.key">{{ item.value }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <br>
-        <el-form-item :label="'检测价格（不含税）'" prop="testPrice">
-          <el-input v-model="postForm.testPrice" placeholder="请输入传真" clearable style="width: 240px"/>
+        <el-form-item label="检测价格（不含税）" prop="testPrice">
+          <el-input v-model="gooditem.testPrice" placeholder="请输入检测价格" clearable style="width: 240px"/>
         </el-form-item>
         <el-form-item :label="'报告费'">100.00</el-form-item>
         <br>
+        <el-divider content-position="left"></el-divider>
+      </div>
+      <div  v-if="postForm.goods.length>1">
         <el-form-item :label="'检测费(含税)：'">
           <span class="text-danger">100.00</span>
         </el-form-item>
-        <el-form-item :label="'报告费：'"><span class="text-danger">100.00</span></el-form-item>
-        <el-form-item :label="'快递费：'"><span class="text-danger">100.00</span></el-form-item>
-        <el-form-item :label="'总计（含税）：'"><span class="text-danger">100.00</span></el-form-item>
-        <br>
-        <el-form-item>
-          <div class="tr">
-            <el-button v-loading="formLoading" type="primary" @click="submitForm('postForm')">保存
-            </el-button>
-            <el-button @click="resetForm('postForm')">重置</el-button>
-          </div>
+        <el-form-item :label="'报告费：'">
+          <span class="text-danger">{{postForm.reportFee  | changePrice2money}}</span>
         </el-form-item>
+        <el-form-item label="快递费：">
+          <el-input v-model="postForm.postage" placeholder="请输入快递费" clearable style="width: 200px"/>
+        </el-form-item>
+        <br>
+        <el-form-item :label="'总计（含税）：'">
+          <span class="text-danger">{{postForm.totalCost | changePrice2money}}</span>
+        </el-form-item>
+        <br>
+        <el-button v-loading="formLoading" type="primary" @click="submitForm('postForm')">保存
+        </el-button>
+        <el-button @click="resetForm('postForm')">重置</el-button>
       </div>
     </el-form>
 
@@ -156,28 +168,55 @@
       <el-form v-if="radio == 1" ref="creditInfo" :model="goodsInfo" label-width="100px" label-position="left"
                :inline="true" class="mt8">
         <el-form-item label="商品名称：">
-          <el-input v-model="goodsInfo.goodsName" placeholder="请输入商品名称" style="width: 200px"/>
-        </el-form-item>
-        <el-form-item label="HSCode：">
-          <el-input v-model="goodsInfo.hsCode" placeholder="请输入HSCode" style="width: 200px"/>
-        </el-form-item>
-        <el-form-item label="出口国：">
-          <el-select v-model="goodsInfo.export" filterable placeholder="请选择" style="display: block; width: 200px">
+          <el-select v-model="goodsInfo.goodsName" placeholder="请选择" style="display: block; width: 200px"
+                     filterable
+                     remote
+                     clearable
+                     reserve-keyword
+                     @change="changeSelect"
+                     :remote-method="remoteMethod"
+                     :loading="goodsloading">
             <el-option
-              v-for="item in exportList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.name">
+              v-for="item in goodsList"
+              :key="item.goodsId"
+              :label="item.goodsName"
+              :value="item">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="检测标准：">
-          <el-input v-model="goodsInfo.standard" placeholder="请输入检测标准" style="width: 200px"/>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onGoodSearch">查询
-          </el-button>
-        </el-form-item>
+        <!--        <el-form-item label="HSCode：">-->
+        <!--          <el-select v-model="goodsInfo.hsCode" placeholder="请选择" style="display: block; width: 200px"-->
+        <!--                     multiple-->
+        <!--                     filterable-->
+        <!--                     remote-->
+        <!--                     reserve-keyword-->
+        <!--                     :loading="loading">-->
+        <!--            <el-option-->
+        <!--              v-for="item in goodsList"-->
+        <!--              :key="item.goodsId"-->
+        <!--              :label="item.hsCode"-->
+        <!--              :value="item.hsCode">-->
+        <!--            </el-option>-->
+        <!--          </el-select>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="出口国：">-->
+        <!--          <el-select v-model="goodsInfo.export" filterable placeholder="请选择" clearable-->
+        <!--                     style="display: block; width: 200px">-->
+        <!--            <el-option-->
+        <!--              v-for="item in exportList"-->
+        <!--              :key="item.id"-->
+        <!--              :label="item.name"-->
+        <!--              :value="item.name">-->
+        <!--            </el-option>-->
+        <!--          </el-select>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="检测标准：">-->
+        <!--          <el-input v-model="goodsInfo.standard" placeholder="请输入检测标准" clearable style="width: 200px"/>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item>-->
+        <!--          <el-button type="primary" @click="onGoodSearch">查询-->
+        <!--          </el-button>-->
+        <!--        </el-form-item>-->
         <br>
         <div v-if="productlist.goodsName">
           <el-form-item label="产品名：" prop="telClient">{{productlist.goodsName}}</el-form-item>
@@ -196,7 +235,7 @@
             :visible.sync="innerDialogVisible"
             append-to-body>
             <el-checkbox-group v-model="checkList">
-              <el-checkbox v-for="date in productItemlist" :label="date" :key="date.id">{{date.name}} {{date.price |
+              <el-checkbox v-for="date in productItemlist" :label="date" :key="date.id" style="margin: 5px">{{date.name}} {{date.price |
                 changePrice2money}}
               </el-checkbox>
             </el-checkbox-group>
@@ -260,10 +299,10 @@
         </el-form-item>
         <el-form-item label="检测标准：" prop="standard">
           <el-radio v-model="radioStandard" label="1" class="mt20">无标准</el-radio>
-          <el-input v-model="creditInfo.standard" placeholder="输入客户要求" style="width: 240px"/>
+          <el-input v-if="radioStandard == 1" v-model="creditInfo.standard" placeholder="输入客户要求" style="width: 240px"/>
           <br>
           <el-radio v-model="radioStandard" label="2" class="mt20">有标准</el-radio>
-          <el-select v-model="creditInfo.standard" filterable placeholder="请选择" style="width: 240px">
+          <el-select v-if="radioStandard == 2" v-model="creditInfo.standard" filterable placeholder="请选择" style="width: 240px">
             <el-option
               v-for="item in restaurants"
               :key="item.id"
@@ -330,7 +369,17 @@
   import { changePrice2money } from "@/utils/simple-util"
   import methods from "../../pub_methods/validate"
   import { queryTestTradeDetail } from "@/api/transaction"
-  import { getQuotationCreate, getCountryList, getItemList, getStandardList, getProductList } from "@/api/organizations"
+  import {
+    getQuotationDetail,
+    getQuotationCreate,
+    getCountryList,
+    getItemList,
+    getStandardList,
+    getProductList,
+    getProductCreate,
+    getRate,
+    getSearchName,
+  } from "@/api/organizations"
   import VXETable from "vxe-table"
   import { getAllUsersByRole, getUserById } from "@/api/user"
   import { deepClone } from "../../../../../utils"
@@ -345,11 +394,20 @@
     filters: {
       changePrice2money
     },
+    // setup () {
+    //   const countAmount = (row: any) => {
+    //       return row.price * row.quantity
+    //     }
+    //     return {
+    //       countAmount
+    //   }
+    // },
     data() {
       return {
         userList: [],
         formLoading: false,
-
+        goodsList: [],
+        goodsloading: false,
         rules: methods.quotationCreateValidate,
         // rules: {},
         tableRules: methods.quotationTableValidate,
@@ -368,76 +426,54 @@
         },
         auditRules: {
           export: [{ required: true, message: '请选择国家', trigger: 'change' }],
-          busType: [{ required: true,  trigger: 'change' }],
+          busType: [{ required: true, trigger: 'change' }],
           goodsName: [{ required: true, message: '请输入产品名称', trigger: 'blur' }]
         },
         exportList: [],//出口国
         restaurants: [],//标准类型列表
         productlist: [],//商品列表
         productItemlist: [],//测试项目列表
-        checkproductlist: [],//选中商品
+        searchNamelist: [],//客户公司列表
         goodsInfo: {
           requestId: Math.random().toString(24)
         },
         timeout: null,
         state: '',
         postForm: {
-          testTradeId: "",
-          client: "",
-          quotationNum: "",
-          attn: "",
-          fromCom: "",
-          telClient: "",
-          telCom: "",
-          faxClient: "",
-          faxCom: "",
-          email: "",
-          // gmtCreate: "2022-01-31 23:10:12",
-          // gmtCreate: "1664773982333",
-          gmtCreate: "",
-          invoiceTitle: "",
-          reportType: "",
+          reportTypes: [],//选择的报告类型
+
+          attn: "",//客户联系人
+          clientId: 0,
+          clientName: "",
           deliveryAddress: "",
-          // testPeroid: ["2022-01-31 23:10:12", "2022-06-31 23:10:12"],
-          testPeroid: "",
-          bankAccountName: "",
-          bankAccount: "",
-          bankName: "",
-          clientComSignature: "",
-          libiaoRepresentativeSignature: "",
-          clientComChop: "",
-          audit: "",
-          clientSignatureDate: "",
-          libiaoSignatureDate: "",
-          customer: "",
-          reportFee: 0,
-          courierFee: 0,
-          taxFee: 0,
-          discount: 0,
-          totalCost: 0,
-          serviceId: undefined,
-          testQuotationItemList: [
+          email: "",
+          faxClient: "",
+          goods: [
             {
-              reportNum: "01",
-              productDes: "烤鸭皮",
-              style: "肉类",
-              materialColor: "金黄",
-              testItem: "烤鸭皮脆不脆",
-              unitPrice: "100",
-              qty: "10",
-              amountRmb: "1000"
-            },
-            {
-              reportNum: "02",
-              productDes: "烤鸭肉",
-              style: "肉类",
-              materialColor: "金黄",
-              testItem: "烤鸭肉香不香",
-              unitPrice: "200",
-              qty: "3",
-              amountRmb: "600"
+              goodsId: null,
+              items: [
+                {
+                  itemId: '',
+                  quantity: ''
+                }
+              ],
+              reportTypes: [],//选择的报告类型
+              sampleNum: "",
+              service: '',
+              testPeriod: '',
+              testPrice: ''
             }
-          ]
+          ],
+          oriId: 0,
+          payType: 1,
+          postage: 0,
+          reportFee: 0,
+          requestId: "",
+          telClient: "",
+          totalCost: 0,
+          tradeDesc: "",
+          tradeName: "",
+          type: 0
         },
         customerOptions: [
           { key: 1, value: "中文纸质档" },
@@ -467,18 +503,10 @@
       this.postForm.testTradeId = this.tmpTestTradeId
     },
     methods: {
-      onChange: function(val) {
-        console.log(val)
-        for (const u of this.userList) {
-          if (u.id === val) {
-            this.postForm.attn = u.nickname
-            break
-          }
-        }
-      },
-      //弹出测试项目弹框
+      //选择测试项目弹框
       showDialog() {
         this.innerDialogVisible = true
+        this.checkList = []
       },
       async getUsers() {
         const res = await getAllUsersByRole({
@@ -488,7 +516,7 @@
         this.userList = res.data
       },
       fetchData: function(id) {
-        queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
+        getQuotationDetail(Object.assign({}, { quotationNum: id })).then(response => {
           console.log(response.data)
           this.postForm = response.data.testQuotation
 
@@ -504,6 +532,13 @@
 
       //获取info列表
       async getDataInfoList() {
+        //获取标准列表
+        const res0 = await getSearchName({
+          clientName: '',
+          requestId: Math.random().toString(24),
+        })
+        this.searchNamelist = res0.data.dataList
+
         //获取标准列表
         const res = await getStandardList({
           name: '',
@@ -529,11 +564,11 @@
       },
 
       async onGoodSearch() {
-        const colParam = deepClone(this.goodsInfo)
-        //获取商品列表
-        const res = await getProductList(Object.assign({}, colParam))
-        this.productlist = res.data.dataList[0]
-        console.log(this.productlist)
+        // const colParam = deepClone(this.goodsInfo)
+        // //获取商品列表
+        // const res = await getProductList(Object.assign({}, colParam))
+        // this.productlist = res.data.dataList[0]
+        // console.log(this.productlist)
       },
       //选择测试项目
       checkedConfirm(type) {
@@ -553,15 +588,70 @@
         }
 
       },
+      remoteMethod(query) {
+        console.log(query)
+        if (query !== '') {
+          this.goodsInfo.name = query
+          this.goodsloading = true;
+          console.log(this.goodsInfo)
+            const colParam = deepClone(this.goodsInfo)
+            //获取商品列表
+           getProductList(Object.assign({}, colParam))
+            .then((res) => {
+              const { data, status } = res
+              if (status == 200) {
+                this.goodsloading = false;
+                // this.productlist = res.data.dataList
+                this.goodsList = res.data.dataList.filter((item) => {
+                  return item.goodsName.toLowerCase().indexOf(query.toLowerCase()) > -1
+                })
+
+              } else {
+                this.goodsList = [];
+                // this.$message.error(res.errMsg)
+              }
+            })
+            .catch((e) => {
+              this.$message.error(e)
+            })
+            .finally(() => {
+              this.goodsloading = false
+            })
+        } else {
+          this.goodsList = [];
+        }
+      },
+      //选中商品
+      changeSelect(item) {
+        console.log(item)
+        this.productlist =item
+      },
+      //选中客户
+      changeSelectName(item) {
+        console.log(item)
+        this.postForm.clientName = item.name
+        this.postForm.clientId = item.id
+        this.postForm.attn =item.contactName
+        this.postForm.telClient =item.contactMobile
+        this.postForm.email =item.contactEmail
+        this.postForm.deliveryAddress =item.addr
+
+      },
+
       //删除本地测试项目
       deleteRow(index, rows) {
         rows.splice(index, 1)
       },
       //确认选择商品
       handleCheckConfirm() {
-        this.checkproductlist = this.productlist
+        console.log(this.productlist)
+        if (this.productlist.length !== 0) {
+          this.postForm.goods.push(this.productlist)
+        }
+        console.log(this.postForm.goods)
         this.dialogVisible = false
       },
+      //确认新增商品
       handleCheckConfirm2(formName) {
         console.log(this.creditInfo.goodsName)
         console.log(this.creditInfo.export)
@@ -573,16 +663,24 @@
           this.$message.error('请选择出口国')
           return
         }
-        this.$refs[formName].validate((valid) => {
-          console.log(valid)
-          if (valid) {
-            this.checkproductlist = this.creditInfo
-            this.dialogVisible = false
-          } else {
-            return false
-          }
-        })
+
+        if (this.creditInfo.length !== 0) {
+          this.postForm.goods.push(this.creditInfo)
+        }
+
+        console.log(this.creditInfo)
+        getProductCreate(this.creditInfo)
+          .then((res) => {
+            const { data, status } = res
+            if (status == 200) {
+              this.dialogVisible = false
+
+            } else {
+              this.$message.error(res.errMsg)
+            }
+          })
       },
+
       fetchDataAndFill: function(id) {
         queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
           console.log(response.data)
@@ -612,85 +710,46 @@
         })
       },
       setTagsViewTitle() {
-        const title = '编辑检测报价单'
-        const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.tmpTestTradeId}` })
+        const title = '新建报价单'
+        const route = Object.assign({}, this.tempRoute, { title: `${title}` })
         this.$store.dispatch('tagsView/updateVisitedView', route)
       },
       setPageTitle() {
-        const title = '编辑检测报价单'
-        document.title = `${title} - ${this.tmpTestTradeId}`
+        const title = '新建报价单'
+        document.title = `${title} `
       },
       submitForm(formName) {
+        console.log(this.postForm)
         this.$refs[formName].validate(async(valid) => {
           if (valid) {
-            // validate xTable
-            const errMap = await this.$refs.xTable
-              .validate(true)
-              .catch((errMap) => errMap)
-            if (errMap) {
-              console.log('errMap')
-              const msgList = []
-              Object.values(errMap).forEach(errList => {
-                errList.forEach(params => {
-                  const { rowIndex, column, rules } = params
-                  rules.forEach(rule => {
-                    msgList.push(`第 ${rowIndex + 1} 行 ${column.title} 校验错误：${rule.message}`)
-                  })
-                })
-              })
-              VXETable.modal.message({
-                status: 'error',
-                slots: {
-                  default() {
-                    return [
-                      // <div class='red' style='max-height: 400px;overflow: auto;'>
-                      //   {
-                      //     msgList.map(msg => <div>{msg}</div>)
-                      //   }
-                      // </div>
-                    ]
-                  }
-                }
-              })
-              return
-            } else {
-              // VXETable.modal.message({ status: 'success', content: '校验成功！' })
-            }
-            // assemble data
-            const tableData = this.$refs.xTable.getTableData()
-            this.postForm.testQuotationItemList = tableData.tableData
-            console.log(this.postForm)
-            if (this.postForm.testQuotationItemList.length === 0) {
-              this.$message.warning("请填写报价单明细")
-              return
-            }
-            // request backend
-            this.formLoading = true
-            this.$store
-              .dispatch(
-                this.isEdit ? "transaction/updateTestQuotation" : "transaction/saveTestQuotation",
-                this.postForm
-              )
-              .then((res) => {
-                const { data, success, errorMessage } = res
-                if (success) {
-                  this.resetForm(formName)
-                  this.$message.success(data.msg)
-                  this.goBack()
-                } else {
-                  this.$message.error(errorMessage)
-                }
-              })
-              .catch(() => {
-              })
-              .finally(() => {
-                this.formLoading = false
-              })
-          } else {
-            console.log("error submit!!")
-            return false
-          }
+
+        } else {
+          console.log("error submit!!")
+          return false
+        }
         })
+
+        // if (this.isEdit) {
+        //
+        // } else {
+        //   getQuotationCreate(this.postForm)
+        //     .then((res) => {
+        //       const { data, status } = res
+        //       if (status == 200) {
+        //         this.postForm = []
+        //         // this.$message.success(data.msg)
+        //         this.goBack()
+        //       } else {
+        //         this.$message.error(res.errMsg)
+        //       }
+        //     })
+        //     .catch((e) => {
+        //       this.$message.error(e)
+        //     })
+        //     .finally(() => {
+        //       this.dialogVisible_check = false
+        //     })
+        // }
       },
       resetForm(formName) {
         this.postForm.testQuotationItemList = []
@@ -728,8 +787,11 @@
           (1 - this.postForm.discount / 100.0)).toFixed(2)
       },
 
-      async insertEvent() {
+      insertEvent() {
         this.dialogVisible = true
+        this.productlist = []
+        this.goodsInfo = []
+        this.creditInfo = []
       },
       // 编辑单元格事件
       async editClose({

@@ -132,11 +132,11 @@
     <el-dialog :visible.sync="dialogVisible_check" title="审核">
       <el-form ref="creditInfo" :model="creditInfo"  status-icon :rules="auditRules" label-width="100px" label-position="left">
         <el-form-item label="审核结果：" prop="checkResult">
-          <el-select v-model="creditInfo.checkResult" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="0" label="审核通过" value="1" />
-            <el-option key="1" label="审核不通过" value="0" />
-          </el-select>
-        </el-form-item>
+        <el-select v-model="creditInfo.checkResult" placeholder="请选择" style="display: block; width: 200px">
+          <el-option key="0" label="审核通过" value="1" />
+          <el-option key="1" label="审核不通过" value="0" />
+        </el-select>
+      </el-form-item>
         <el-form-item label="原因：" prop="reason" :rules="creditInfo.checkResult == '0'?auditRules.reason:[{required:false}]" >
           <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>

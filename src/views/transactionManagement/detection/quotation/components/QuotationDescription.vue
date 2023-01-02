@@ -48,102 +48,109 @@
 
     <el-tabs v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
       <el-tab-pane label="报价明细" name="0">
-        <el-form
-          ref="postForm"
-          v-loading="formLoading"
-          :inline="true"
-          :model="postForm.goods"
-          status-icon
-          :rules="rules"
-          label-width="150px"
-          class="mt20">
-          <el-form-item label="产品名：" prop="telClient">{{ postForm.goods.goodsName}}</el-form-item>
-          <el-form-item label="HSCode：" prop="telClient">{{ postForm.goods.hsCode}}</el-form-item>
-          <el-form-item label="材质：" prop="telClient">{{ postForm.goods.material}}</el-form-item>
-          <el-form-item label="出口国：" prop="telClient">{{ postForm.goods.exportCountry}}</el-form-item>
-          <el-form-item label="检测标准：" prop="telClient">{{ postForm.goods.standard}}</el-form-item>
-          <vxe-table
-            ref="xTable"
-            border
-            show-overflow
-            class="editable-footer mb20"
-            :merge-footer-items="mergeFooterItems"
-            :row-config="{ isHover: true }"
-            :export-config="{}"
-            :footer-method="footerMethod"
-            :data="postForm.goods.items"
-            resizable>
-            <vxe-column type="seq" width="60" :title="'序号'" align="right"/>
-            <vxe-column field="testItem" :title="'测试项目'" :edit-render="{ autofocus: '.vxe-input--inner' }">
-              <template #edit="{ row }">
-                <vxe-input v-model="row.testItem" type="text" @input="updateFooterEvent"/>
-              </template>
-            </vxe-column>
-            <vxe-column field="unitPrice" :title="'单价'" :edit-render="{ autofocus: '.vxe-input--inner' }">
-              <template #edit="{ row }">
-                <vxe-input v-model="row.unitPrice" type="text" @input="updateFooterEvent"/>
-              </template>
-            </vxe-column>
-            <vxe-column field="qty" :title="'测试点数'" :edit-render="{ autofocus: '.vxe-input--inner' }">
-              <template #edit="{ row }">
-                <vxe-input v-model="row.quantity" type="text" @input="updateFooterEvent"/>
-              </template>
-            </vxe-column>
-            <vxe-column field="amountRmb" :title="'测试金额'" :edit-render="{ autofocus: '.vxe-input--inner' }">
-              <template #edit="{ row }">
-                <vxe-input v-model="row.amountRmb" type="text" @input="updateFooterEvent"/>
-              </template>
-            </vxe-column>
-            <vxe-column field="amountRmb" :title="'样品量'" :edit-render="{ autofocus: '.vxe-input--inner' }">
-              <template #edit="{ row }">
-                <vxe-input v-model="row.sampleQty" type="text" @input="updateFooterEvent"/>
-              </template>
-            </vxe-column>
-            <vxe-column title="操作" width="80">
-              <template #default="{ row }">
-                <el-button type="text" status="primary" @click="deleteEvent(row)">删除
-                </el-button>
-              </template>
-            </vxe-column>
-          </vxe-table>
+        <div  v-for="postForm in postForm.goods">
+          <div class="parent">
+            <el-form
+                    class="left mt20"
+                    ref="postForm"
+                    :inline="true"
+                    :model="postForm.goods"
+                    status-icon
+                    label-width="150px"
+                   >
+              <el-form-item label="产品名：" prop="telClient">{{ postForm.goods.goodsName}}</el-form-item>
+              <el-form-item label="HSCode：" prop="telClient">{{ postForm.goods.hsCode}}</el-form-item>
+              <el-form-item label="材质：" prop="telClient">{{ postForm.goods.material}}</el-form-item>
+              <el-form-item label="出口国：" prop="telClient">{{ postForm.goods.exportCountry}}</el-form-item>
+              <el-form-item label="检测标准：" prop="telClient">{{ postForm.goods.standard}}</el-form-item>
+              <vxe-table
+                      ref="xTable"
+                      border
+                      show-overflow
+                      class="editable-footer mb20"
+                      :merge-footer-items="mergeFooterItems"
+                      :row-config="{ isHover: true }"
+                      :export-config="{}"
+                      :footer-method="footerMethod"
+                      :data="postForm.goods.items"
+                      resizable>
+                <vxe-column type="seq" width="60" :title="'序号'" align="right"/>
+                <vxe-column field="testItem" :title="'测试项目'" :edit-render="{ autofocus: '.vxe-input--inner' }">
+                  <template #edit="{ row }">
+                    <vxe-input v-model="row.testItem" type="text" @input="updateFooterEvent"/>
+                  </template>
+                </vxe-column>
+                <vxe-column field="unitPrice" :title="'单价'" :edit-render="{ autofocus: '.vxe-input--inner' }">
+                  <template #edit="{ row }">
+                    <vxe-input v-model="row.unitPrice" type="text" @input="updateFooterEvent"/>
+                  </template>
+                </vxe-column>
+                <vxe-column field="qty" :title="'测试点数'" :edit-render="{ autofocus: '.vxe-input--inner' }">
+                  <template #edit="{ row }">
+                    <vxe-input v-model="row.quantity" type="text" @input="updateFooterEvent"/>
+                  </template>
+                </vxe-column>
+                <vxe-column field="amountRmb" :title="'测试金额'" :edit-render="{ autofocus: '.vxe-input--inner' }">
+                  <template #edit="{ row }">
+                    <vxe-input v-model="row.amountRmb" type="text" @input="updateFooterEvent"/>
+                  </template>
+                </vxe-column>
+                <vxe-column field="amountRmb" :title="'样品量'" :edit-render="{ autofocus: '.vxe-input--inner' }">
+                  <template #edit="{ row }">
+                    <vxe-input v-model="row.sampleQty" type="text" @input="updateFooterEvent"/>
+                  </template>
+                </vxe-column>
+                <vxe-column title="操作" width="80">
+                  <template #default="{ row }">
+                    <el-button type="text" status="primary" @click="deleteEvent(row)">删除
+                    </el-button>
+                  </template>
+                </vxe-column>
+              </vxe-table>
 
-          <el-form-item label="测试周期" >{{postForm.goods.testPeriod}}</el-form-item>
-          <el-form-item label="总样品量" >{{postForm.goods.sampleNum}}</el-form-item>
-          <el-form-item label="服务类型">{{postForm.goods.service}}</el-form-item>
-          <br>
-          <el-form-item label="报告类型">{{postForm.goods.reportTypes}}</el-form-item>
-          <el-form-item label="报告费">{{postForm.goods.reportAmt}}</el-form-item>
-          <el-form-item label="检测价格（不含税）" >{{postForm.goods.amount}}</el-form-item>
-          <br>
-          <!--加测项-->
-          <!--            v-if="postForm.alist"-->
-          <el-divider content-position="left">加测项 报价单编号：</el-divider>
-          <vxe-table
-            ref="xTable"
-            border
-            show-overflow
-            class="editable-footer mb20"
-            :merge-footer-items="mergeFooterItems"
-            :row-config="{ isHover: true }"
-            :export-config="{}"
-            :footer-method="footerMethod"
-            :data="postForm.alist.goods"
-            resizable>
-            <vxe-column type="seq" width="60" :title="'序号'" align="right"/>
-            <vxe-column field="testItem"  :title="'测试项目'" align="right"/>
-            <vxe-column field="unitPrice"  :title="'单价'" align="right"/>
-            <vxe-column field="quantity" :title="'测试点数'" align="right"/>
-            <vxe-column field="name" :title="'测试金额'" align="right"/>
-            <vxe-column field="amountRmb" :title="'样品量'" align="right"/>
-          </vxe-table>
-          <el-form-item label="测试周期" >{{postForm.alist.goods.testPeriod}}</el-form-item>
-          <el-form-item label="总样品量" >{{postForm.alist.goods.sampleNum}}</el-form-item>
-          <el-form-item label="服务类型">{{postForm.alist.goods.service}}</el-form-item>
-          <br>
-        </el-form>
+              <el-form-item label="测试周期" >{{postForm.goods.testPeriod}}</el-form-item>
+              <el-form-item label="总样品量" >{{postForm.goods.sampleNum}}</el-form-item>
+              <el-form-item label="服务类型">{{postForm.goods.service}}</el-form-item>
+              <br>
+              <el-form-item label="报告类型">{{postForm.goods.reportTypes}}</el-form-item>
+              <el-form-item label="报告费">{{postForm.goods.reportAmt}}</el-form-item>
+              <el-form-item label="检测价格（不含税）" >{{postForm.goods.amount}}</el-form-item>
+              <br>
+              <!--加测项-->
+              <!--            v-if="postForm.alist"-->
+              <el-divider content-position="left">加测项 报价单编号：</el-divider>
+              <vxe-table
+                      ref="xTable"
+                      border
+                      show-overflow
+                      class="editable-footer mb20"
+                      :merge-footer-items="mergeFooterItems"
+                      :row-config="{ isHover: true }"
+                      :export-config="{}"
+                      :footer-method="footerMethod"
+                      :data="postForm.alist.goods"
+                      resizable>
+                <vxe-column type="seq" width="60" :title="'序号'" align="right"/>
+                <vxe-column field="testItem" :title="'测试项目'" align="right"/>
+                <vxe-column field="unitPrice" :title="'单价'" align="right"/>
+                <vxe-column field="quantity" :title="'测试点数'" align="right"/>
+                <vxe-column field="name" :title="'测试金额'" align="right"/>
+                <vxe-column field="amountRmb" :title="'样品量'" align="right"/>
+              </vxe-table>
+              <el-form-item label="测试周期">{{postForm.alist.goods.testPeriod}}</el-form-item>
+              <el-form-item label="总样品量">{{postForm.alist.goods.sampleNum}}</el-form-item>
+              <el-form-item label="服务类型">{{postForm.alist.goods.service}}</el-form-item>
+              <br>
+            </el-form>
+            <div class="right">
+              <el-button type="primary" size="small" plain @click="insertEvent">加测
+              </el-button>
+            </div>
+          </div>
+        </div>
       </el-tab-pane>
       <el-tab-pane label="申请单" name="1">
-        <el-table v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
+        <el-table :data="tableData" stripe border style="width: 100%" class="mt8">
           <el-table-column prop="applicationName" label="申请单编号" min-width="120"/>
           <el-table-column prop="reportTitle" label="申请日期" min-width="120"/>
           <el-table-column prop="sameAsApplicant" label="收样状态" min-width="120">
@@ -167,14 +174,14 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="工作单" name="2">
-        <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-          <el-table-column prop="workOrderNum" label="工作单编号" min-width="120" />
-          <el-table-column prop="gmtCreate" label="开单日期" min-width="120" />
-          <el-table-column prop="busyStatus" label="是否加急" min-width="120" />
-          <el-table-column prop="issuer" label="要求完成日期" min-width="120" />
-          <el-table-column prop="gmtOutput" label="出单日期" min-width="120" />
-          <el-table-column prop="withdraw" label="检测单位名称" min-width="120" />
-          <el-table-column prop="withdraw" label="是否分包商" min-width="120" />
+        <el-table :data="tableData" stripe border style="width: 100%" class="mt8">
+          <el-table-column prop="workOrderNum" label="工作单编号" min-width="120"/>
+          <el-table-column prop="gmtCreate" label="开单日期" min-width="120"/>
+          <el-table-column prop="busyStatus" label="是否加急" min-width="120"/>
+          <el-table-column prop="issuer" label="要求完成日期" min-width="120"/>
+          <el-table-column prop="gmtOutput" label="出单日期" min-width="120"/>
+          <el-table-column prop="withdraw" label="检测单位名称" min-width="120"/>
+          <el-table-column prop="withdraw" label="是否分包商" min-width="120"/>
           <el-table-column fixed="right" label="状态" min-width="90">
             <template slot-scope="scope">
               <span v-if="scope.row.confirmed">已确认</span>
@@ -222,6 +229,7 @@
 
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
+    <el-button type="primary" size="small" plain @click="handleCreate()">创建申请单</el-button>
   </div>
 </template>
 
@@ -257,6 +265,10 @@
       this.downloadParam.testTradeId = this.tempRoute.params.id
     },
     methods: {
+      //创建申请单
+      handleCreate() {
+        this.$router.push({path: '/tm/detection/apply/create', query: { applyForm: this.postForm }})
+      },
       handlePreview() {
       fetch(prefix.lb +
         "/api/test/previewTestQuotation?testTradeId=" +
@@ -377,5 +389,19 @@
   ::v-deep .el-descriptions-item__label {
     white-space: pre-line;
   }
+}
+
+.parent {
+  width: 100%;
+  display: flex;
+}
+
+.left {
+  width: 28%;
+  padding: 15px;
+}
+
+.right {
+  width: 100%; /*右侧初始化宽度*/
 }
 </style>

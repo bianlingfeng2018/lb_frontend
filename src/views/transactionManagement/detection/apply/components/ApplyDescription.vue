@@ -8,7 +8,7 @@
     <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
         <template slot="label">申请单编号</template>
-        {{ postForm.reportNum }}
+        {{ postForm.applicationNum }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">申请单位</template>
@@ -16,15 +16,15 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">申请单位地址</template>
-        {{ postForm.otherAddress }}
+        {{ postForm.comAddrCn}}({{postForm.comAddrEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">报告抬头</template>
-        {{ postForm.reportTitle }}
+        {{ postForm.reportTitleCn}}({{postForm.reportTitleEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">报告抬头地址</template>
-        {{ postForm.sameAsApplicant }}
+        {{ postForm.reportAddressCn}}({{postForm.reportAddressEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">报告邮寄地址</template>
@@ -36,14 +36,14 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">需要资质</template>
-        {{ postForm.payer }}
+        {{ postForm.credentials }}
       </el-descriptions-item>
     </el-descriptions>
     <el-divider class="mb36" content-position="left">样品信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
         <template slot="label">样品名称</template>
-        {{ postForm.sampleName }}
+        {{ postForm.sampleNameCn}}({{postForm.sampleNameEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">样品数量</template>
@@ -51,39 +51,39 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">样品型号</template>
-        {{ postForm.sampleModel }}
+        {{ postForm.sampleModelCn}}({{postForm.sampleModelEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">样品状态</template>
-        {{ postForm.brand }}
+        {{ postForm.sampleStatusCn}}({{postForm.sampleStatusEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">商标</template>
-        {{ postForm.brand }}
+        {{ postForm.brandCn}}({{postForm.brandEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">批次</template>
-        {{ postForm.lotNo }}
+        {{ postForm.lotNoCn}}({{postForm.lotNoEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">规格</template>
-        {{ postForm.specification }}
+        {{ postForm.specificationCn}}({{postForm.specificationEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">供应商</template>
-        {{ postForm.supplier }}
+        {{ postForm.supplierCn}}({{postForm.supplierEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">购买商</template>
-        {{ postForm.buyer }}
+        {{ postForm.buyerCn}}({{postForm.buyerEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">订单号</template>
-        {{ postForm.poNum }}
+        {{ postForm.orderNo }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">生产商</template>
-        {{ postForm.manufacturer }}
+        {{ postForm.manufacturerCn}}({{postForm.manufacturerEn}})
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">出口地</template>
@@ -95,75 +95,67 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">样品处理方式</template>
-        {{ postForm.testRequirement }}
+        {{ postForm.sampleDeal }}
       </el-descriptions-item>
 
     </el-descriptions>
-    <div>
-      <spn>测试项目及要求:</spn>
+    <div>测试项目及要求:
+      <el-table  :data="tableData" stripe border style="width: 100%" class="mt8">
+        <el-table-column type="seq" label="序号"  width="60"/>
+        <el-table-column prop="testItem" label="测试项目" min-width="120"/>
+        <el-table-column prop="unitPrice" label="单价" min-width="120"/>
+        <el-table-column prop="applicationDate" label="测试点数" min-width="120"/>
+        <el-table-column prop="quantity" label="测试金额" min-width="120"/>
+        <el-table-column prop="sampleStatus" label="样品量" min-width="120"/>
+      </el-table>
+    </div>
+    <el-divider content-position="left">多种材料清单样品信息</el-divider>
+    <div :model="sampleitem" v-for="(sampleitem,index) in postForm.sampleList" :key="index">
+      <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
+        <el-descriptions-item>
+          <template slot="label">样品部位名称</template>
+          {{ sampleitem.sampleName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">样品型号</template>
+          {{ sampleitem.sampleModel }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">材质</template>
+          {{ sampleitem.sampleMaterial }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">取样部位描述</template>
+          {{ sampleitem.sampleDescription }}
+        </el-descriptions-item>
+      </el-descriptions>
+
+      <div>测试项目:</div>
+
       <vxe-table
         ref="xTable"
         border
+        show-footer
         show-overflow
         class="editable-footer mb20 mt8"
         :row-config="{ isHover: true }"
         :export-config="{}"
-        :data="postForm.testApplicationItemList"
-      >
-        <vxe-column type="seq" width="60" :title="'序号'" align="right" />
-        <vxe-column field="testingItem" :title="'测试项目'" />
-        <vxe-column field="sampleName" :title="'单价'" />
-        <vxe-column field="sampleModel" :title="'测试点数'" />
-        <vxe-column field="sampleMaterial" :title="'测试金额'" />
-        <vxe-column field="sampleDescription" :title="'样品量'" />
+        :data="sampleitem.itemList">
+        <vxe-column type="seq" width="60" :title="'序号'" align="right"/>
+        <vxe-column field="itemName" :title="'测试项目'"/>
+        <vxe-column field="testMethod" :title="'测试方法'"/>
+        <vxe-column field="testCase" :title="'测试条件'"/>
+        <vxe-column field="remark" :title="'备注'"/>
       </vxe-table>
     </div>
-    <el-divider content-position="left">多种材料清单样品信息</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
-      <el-descriptions-item>
-        <template slot="label">样品部位名称</template>
-        {{ postForm.sampleName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">样品型号</template>
-        {{ postForm.sampleQuantity }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">材质</template>
-        {{ postForm.sampleModel }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">取样部位描述</template>
-        {{ postForm.brand }}
-      </el-descriptions-item>
-    </el-descriptions>
-    <spn>测试项目:</spn>
-
-    <vxe-table
-      ref="xTable"
-      border
-      show-footer
-      show-overflow
-      class="editable-footer mb20"
-      :row-config="{ isHover: true }"
-      :export-config="{}"
-      :data="postForm.testApplicationItemList"
-    >
-      <vxe-column type="seq" width="60" :title="'序号'" align="right" />
-      <vxe-column field="testingItem" :title="'测试项目'" />
-      <vxe-column field="sampleModel" :title="'测试方法'" />
-      <vxe-column field="sampleMaterial" :title="'测试条件'" />
-      <vxe-column field="remark" :title="'备注'" />
-    </vxe-table>
-
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>
 </template>
 
 <script>
-import { queryTestTradeDetail } from "@/api/transaction"
-import { getToken } from "@/utils/auth"
+  import { getApplicationDetail } from "@/api/organizations"
+  import { getToken } from "@/utils/auth"
 import config from "@/utils/config"
 import { timeFormatFilter } from "@/utils/simple-util"
 import MyFlexTable from "@/views/components/MyFlexTable"
@@ -183,9 +175,7 @@ export default {
       downloadParam: {
         testTradeId: -1
       },
-      postForm: {
-        flexObj: []
-      },
+      postForm: {},
       mergeFooterItems: [{ row: 0, col: 0, rowspan: 0, colspan: 8 }]
     }
   },
@@ -243,9 +233,13 @@ export default {
         })
     },
     fetchData: function(id) {
-      queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
+      const queryParam = {
+        requestId: Math.random().toString(24),
+        applicationNum: id
+      }
+      getApplicationDetail(Object.assign({}, queryParam)).then(response => {
         console.log(response.data)
-        this.postForm = response.data.testApplicationForm
+        this.postForm = response.data
 
         // set tagsview title
         this.setTagsViewTitle()

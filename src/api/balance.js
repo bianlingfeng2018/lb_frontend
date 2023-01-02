@@ -26,7 +26,7 @@ export function getCommissionList(data) {
 }
 export function getCommissionRecordList(data) {
   return requestsh({
-    url: '/balance/getCommissionList',
+    url: '/balance/getCommissionRecordList',
     method: 'post',
     data
   })
@@ -53,6 +53,22 @@ export function approveCommission(data) {
     data
   })
 }
+export function settleCommissionRecordBatch(data) {
+  return requestsh({
+    url: '/balance/settleCommissionRecordBatch',
+    method: 'post',
+    data
+  })
+}
+
+export function getPersonalBillList(data) {
+  return requestsh({
+    url: '/bill/getPersonalBillList',
+    method: 'post',
+    data
+  })
+}
+
 export function addOrg(data) {
   return requestsh({
     url: '/org/create',

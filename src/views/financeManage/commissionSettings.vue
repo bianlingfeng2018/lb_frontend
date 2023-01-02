@@ -9,7 +9,7 @@
     </div>
     <!--客户佣金设置-->
     <el-form
-      v-if="visible1"
+      v-if="visible1==true"
       ref="searchForm"
       :inline="true"
       :model="columnParam2"
@@ -42,8 +42,8 @@
       </el-form-item>
     </el-form>
 
-    <div v-if="visible1" class="lb-flex" style="position: relative;">
-      <el-tabs v-if="visible1" v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
+    <div v-if="visible1==true" class="lb-flex" style="position: relative;">
+      <el-tabs v-if="visible1==true" v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
         <el-tab-pane label="全部" name="0" />
         <el-tab-pane label="待审核" name="1" />
         <el-tab-pane label="审核通过" name="2" />
@@ -60,13 +60,14 @@
     </div>
 
     <el-table
-      v-if="visible1"
+      v-if="visible1==true"
       :v-loading="tableLoading"
       :data="tableData"
       stripe
       border
       style="width: 100%"
       class="mt8"
+      key="tabel1"
     >
       <el-table-column prop="clientId" label="客户编号" min-width="150" />
       <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
@@ -76,7 +77,19 @@
           <span v-else>{{ scope.row.rate }}%</span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" min-width="150" />
+      <el-table-column label="状态" min-width="150">
+        <template v-slot="scope">
+          <span v-if="scope.row.status == 'inApprove'">审核中</span>
+          <span v-else-if="scope.row.status == 'Reject'">审核被拒</span>
+          <span v-else-if="scope.row.status == 'Accept'">审核通过</span>
+          <el-tooltip v-if="scope.row.status == 'Reject'" class="item" effect="dark" placement="right">
+            <i class="el-icon-question" style="font-size: 16px; vertical-align: middle;" />
+            <div slot="content">
+              <p>{{ scope.row.reason }}</p>
+            </div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
 
       <el-table-column fixed="right" label="操作" width="150">
         <template v-slot="scope">
@@ -101,7 +114,7 @@
 
     <!--客户佣金记录-->
     <el-form
-      v-if="visible2===true"
+      v-if="visible2==true"
       ref="searchForm"
       :inline="true"
       :model="columnParam"
@@ -167,38 +180,45 @@
       </el-button>
     </div>
     <el-table
-      v-if="visible2===true"
+      v-if="visible2==true"
       :v-loading="tableLoading2"
       :data="tableData2"
       stripe
       border
       style="width: 100%"
       class="mt8"
+      @selection-change="handleSelectionChange"
+      key="tabel2"
     >
       <el-table-column align="center" type="selection" min-width="80" />
-      <el-table-column prop="clientNum" label="报价单编号" min-width="150" />
-      <el-table-column prop="clientNum" label="交易名称" min-width="150" />
-      <el-table-column prop="name" label="客户中文名称" min-width="150" />
-      <el-table-column prop="name" :label="'交易金额\n（不含税检测费）'" min-width="150" />
-      <el-table-column prop="name" label="佣金比例" min-width="150" />
-      <el-table-column prop="name" label="佣金" min-width="150" />
-
-      <el-table-column prop="name" label="状态" min-width="150">
-        <template slot-scope="scope">
-          <span v-if="scope.row.status==0">待审核</span>
-          <span v-else-if="scope.row.status==1">审核通过</span>
-          <span v-else-if="scope.row.status==2">审核不通过
-            <el-tooltip class="item" effect="dark" placement="right">
-              <i class="el-icon-question" style="font-size: 16px; vertical-align: middle;" />
-              <div slot="content">
-                <p>不通过原因</p>
-              </div>
-            </el-tooltip>
-          </span>
+      <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
+      <el-table-column prop="tradeName" label="交易名称" min-width="150" />
+      <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
+      <el-table-column prop="tradeAmt" :label="'交易金额\n（不含税检测费）'" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.tradeAmt /100 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="rate" label="佣金比例" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.rate }}%</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="amount" label="佣金" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.amount /100 }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="结算日期" width="150" />
+      <el-table-column prop="status" label="状态" min-width="150">
+        <template v-slot="scope">
+          <span v-if="scope.row.status==0">未结算</span>
+          <span v-else-if="scope.row.status==1">未核销</span>
+          <span v-else>已核销</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="operTime" label="结算日期" width="150" />
     </el-table>
     <el-pagination
       v-if="visible2===true"
@@ -255,7 +275,7 @@
             <el-option key="1" label="审核不通过" value="Reject" />
           </el-select>
         </el-form-item>
-        <el-form-item label="原因：" prop="username">
+        <el-form-item v-if="creditInfo.status=='Reject'" label="原因：" prop="username">
           <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
@@ -272,7 +292,7 @@
         <el-form-item label="结算日期" prop="username">
           <el-date-picker
 
-            v-model="columnParam.lastTraceDate"
+            v-model="batchTime"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
@@ -291,7 +311,7 @@
 </template>
 
 <script>
-import { getCommissionList, getCommissionRecordList, updateCommission, setCommission, approveCommission } from "@/api/balance"
+import { getCommissionList, getCommissionRecordList, updateCommission, setCommission, approveCommission, settleCommissionRecordBatch } from "@/api/balance"
 import { queryClientComPageAll } from "@/api/clientCompany"
 import { deepClone } from "../../utils"
 export default {
@@ -344,7 +364,9 @@ export default {
         pageSize: 10,
         pageTotal: 0
       },
-      restaurants: []
+      restaurants: [],
+      selectTrade: [],
+      batchTime:""
     }
   },
   created() {
@@ -356,26 +378,24 @@ export default {
       if (e.target.tagName !== 'INPUT') {
         return
       }
-      if (val === 1) {
-        this.visible1 = true
-        this.visible2 = false
-      } else {
-        this.visible1 = false
-        this.visible2 = true
-      }
+      this.visible1 = val === 1
+      this.visible2 = val === 2
+      this.getListDate()
     },
     handleClick(tab, event) {
       this.getListDate()
     },
     // 获取列表数据
     getListDate() {
+      this.tableData = [];
+      this.tableData2 = [];
       this.tableLoading = true
       const queryParam = {
         pageNum: this.pagination.currPage,
         pageSize: this.pagination.pageSize
       }
       let columnParam = {}
-      let queryList
+      let queryList = null;
       if (this.visible1) {
         columnParam = deepClone(this.columnParam2)
         queryList = getCommissionList
@@ -389,9 +409,16 @@ export default {
           console.log(res)
           const { data, status } = res
           if (status == 200) {
-            this.tableData = data.dataList
-            this.pagination.currPage = data.pageNum
-            this.pagination.pageTotal = data.total
+            if (this.visible1 == true) {
+              this.tableData = data.dataList
+              this.pagination.currPage = data.pageNum
+              this.pagination.pageTotal = data.total
+            } else {
+              this.tableData2 = data.dataList
+              this.pagination2.currPage = data.pageNum
+              this.pagination2.pageTotal = data.total
+            }
+
           } else {
             this.$message.error(data.errMsg)
           }
@@ -404,13 +431,40 @@ export default {
     },
     // 核销
     setCreditInfo() {
-
+      let sendArray = [];
+      this.selectTrade.forEach(data=>{
+        let sendData = {
+          id:data.id,
+          settleTime:this.batchTime
+        }
+        sendArray.push(sendData);
+      });
+      let param = {
+        list:sendArray
+      }
+      settleCommissionRecordBatch(param).then((res)=>{
+        if(res.status == 200){
+          this.dialogVisible_settlement = false;
+          this.$notify({
+            title: '成功',
+            dangerouslyUseHTMLString: true,
+            message: `操作成功`,
+            type: 'success'
+          })
+        this.getListDate();
+        }
+      }).catch(e=>{
+        this.$message.error(e)
+      }).finally(()=>{
+        this.dialogVisible_settlement = false;
+      });
+    },
+    handleSelectionChange(data) {
+      this.selectTrade = data;
     },
     handleSetCommission(state) {
       let fuc
       if (state == 1) {
-        this.creditInfo.clientName = "测试用名称2"
-        this.creditInfo.clientId = "LB00002"
         fuc = setCommission
       } else if (state == 2) {
         fuc = updateCommission
@@ -492,7 +546,8 @@ export default {
       this.getListDate()
     },
     handleCreate(show) {
-      show == 2 ? (this.dialogVisible_set = true) : (this.dialogVisible_set = false)
+      this.dialogVisible_set = show == 2
+      this.dialogVisible_settlement = show == 1
     },
 
     // 搜索

@@ -41,6 +41,13 @@ const financeRouter = {
       meta: { title: '企业应收账管理', role: ['/fm/pay'] }
     },
     {
+      path: 'pay_list1/details',
+      component: () => import('@/views/financeManage/collectiondetails/details'),
+      name: 'details',
+      meta: { title: '账目明细', role: ['/fm/pay'] },
+      hidden: true
+    },
+    {
       path: 'pay_list2',
       component: () => import('@/views/financeManage/individualList'),
       name: 'IndividualList',

@@ -532,7 +532,7 @@
 
       //获取info列表
       async getDataInfoList() {
-        //获取标准列表
+        //获取客户列表
         const res0 = await getSearchName({
           clientName: '',
           requestId: Math.random().toString(24),

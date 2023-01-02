@@ -158,6 +158,9 @@
         pageSize: this.pagination.pageSize
       }
       const colParam = deepClone(this.columnParam)
+      if(this.columnParam.contractStatus=='-1'){
+        colParam.contractStatus = ""
+      }
       getApplicationList(Object.assign({}, queryParam, colParam))
         .then((res) => {
           console.log(res)

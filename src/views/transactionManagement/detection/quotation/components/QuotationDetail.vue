@@ -89,7 +89,6 @@
           :export-config="{}"
           :data="gooditem.items"
           :edit-config="{ trigger: 'click', mode: 'row' }"
-          :edit-rules="tableRules"
           @edit-closed="editClose">
           <vxe-column field="id" width="60" :title="'序号'" align="right"/>
           <vxe-column field="name" :title="'测试项目'"/>

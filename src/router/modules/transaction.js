@@ -204,7 +204,8 @@ const transactionRouter = {
             },
             {
               path: 'show/:id',
-              component: () => import('@/views/transactionManagement/detection/worksheet/show.vue'),
+              // component: () => import('@/views/transactionManagement/detection/worksheet/show.vue'),
+              redirect: '/tm/detection-worksheet-show/:id',
               name: 'Show',
               meta: { title: '查看工作单', noCache: true, role: ['/tm/detection/worksheet/show/:id'] },
               hidden: true
@@ -392,6 +393,13 @@ const transactionRouter = {
       component: () => import('@/views/transactionManagement/detection/worksheet/edit.vue'),
       name: 'WorksheetEdit',
       meta: { title: '编辑工作单', noCache: false, role: ['/tm/detection-worksheet-edit/:id'] },
+      hidden: true
+    },
+    {
+      path: 'detection-worksheet-show/:id',
+      component: () => import('@/views/transactionManagement/detection/worksheet/show.vue'),
+      name: 'WorksheetShow',
+      meta: { title: '查看工作单', noCache: false, role: ['/tm/detection-worksheet-edit/:id'] },
       hidden: true
     },
     {

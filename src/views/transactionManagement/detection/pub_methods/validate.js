@@ -52,14 +52,7 @@ const methods = {
     payType: [
       { required: true, message: '请选择支付方式', trigger: 'change' }
     ],
-    // invoiceTitle: [
-    //   { required: true, message: '请输入发票抬头', trigger: 'blur' },
-    //   { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
-    // ],
-    // telCom: [
-    //   { required: true, message: '请输入公司电话', trigger: 'blur' },
-    //   { min: 2, max: 20, message: '长度在 3 到 5 个字符', trigger: 'change' }
-    // ],
+
     clientName: [
       { required: true, message: '请选择客户公司', trigger: 'change' }
     ],
@@ -134,9 +127,30 @@ const methods = {
     ]
   },
   applyCreateValidate: {
-    reportNum: [
-      { required: true, message: '请选择联系人', trigger: 'blur' }
-    ]
+    comAddrCn: [
+      { required: true, message: '请输入申请单位地址', trigger: 'blur' }
+    ],
+    radioStandard: [
+      { required: true, message: '请选择报告抬头', trigger: 'blur' }
+    ],
+    invoiceTitle: [
+      { required: true, message: '请输入发票抬头', trigger: 'blur' }
+    ],
+    sampleNameCn: [
+      { required: true, message: '请输入样品名称', trigger: 'blur' }
+    ],
+    sampleQuantity: [
+      { required: true, message: '请输入样品数量', trigger: 'blur' }
+    ],
+    sampleModelCn: [
+      { required: true, message: '请输入样品型号', trigger: 'blur' }
+    ],
+    sampleName: [
+      { required: true, message: '请输入样品部位名称', trigger: 'blur' }
+    ],
+    sampleDescription: [
+      { required: true, message: '请输入取样部位描述', trigger: 'blur' }
+    ],
   },
   worksheetCreateValidate: {
     testId: [

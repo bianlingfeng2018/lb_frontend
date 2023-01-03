@@ -1,7 +1,7 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
 
-    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack()">返回上一页</el-button>
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
     <el-divider content-position="left">工作单信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>

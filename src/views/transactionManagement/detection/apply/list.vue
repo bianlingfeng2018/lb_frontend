@@ -84,8 +84,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.pageTotal"
       @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+      @current-change="handleCurrentChange"/>
     <!--弹窗  评审-->
     <el-dialog :visible.sync="dialogVisible_check" title="评审">
       <el-form ref="creditInfo" :model="creditInfo" status-icon :rules="auditRules" label-width="100px" label-position="left">

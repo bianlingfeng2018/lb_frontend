@@ -1,81 +1,80 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack()">返回上一页</el-button>
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
     <el-divider content-position="left">工作单信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
         <template slot="label">客户</template>
-        {{ postForm.customer }}
+        {{ postForm.clientName }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">检测公司名称</template>
-        {{ postForm.issuer }}
+        {{ postForm.comName }}
       </el-descriptions-item>
       <br>
       <el-descriptions-item>
         <template slot="label">开单人</template>
-        {{ postForm.employee }}
+        {{ postForm.createName }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">开单时间</template>
-        {{ postForm.gmtCreate | timeFormatFilter }}
+        {{ postForm.orderDate | timeFormatFilter }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">加急情况</template>
-        {{ postForm.busyStatus }}
+        {{ postForm.service }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">出单时间</template>
-        {{ postForm.gmtOutput | timeFormatFilter }}
+        {{ postForm.outputDate | timeFormatFilter }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">是否退样</template>
-        {{ postForm.withdraw }}
+        {{ postForm.sampleStatus }}
       </el-descriptions-item>
     </el-descriptions>
     <el-divider content-position="left">样品单明细</el-divider>
 
-    <div v-for="(item, index) in postForm" :key="index">
+    <div v-for="(item, index) in postForm.itemList" :key="index">
 
       <el-descriptions
         class="margin-top"
         title=""
         :column="3"
         :content-style="{ 'width': '200px' }"
-        :style="{ 'margin-top': '20px' }"
-      >
+        :style="{ 'margin-top': '20px' }">
         <el-descriptions-item>
           <template slot="label">样品部位名称</template>
-          {{ item.customer }}
+          {{ item.sampleLocation }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品型号</template>
-          {{ item.issuer }}
+          {{ item.sampleModel }}
         </el-descriptions-item>
         <br>
         <el-descriptions-item>
           <template slot="label">材质</template>
-          {{ item.employee }}
+          {{ item.sampleMaterial }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">取样部位描述</template>
-          {{ item.gmtCreate | timeFormatFilter }}
+          {{ item.sampleDesc }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">测试项目</template>
-          {{ item.busyStatus }}
+          {{ item.testItem }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">测试方法</template>
-          {{ item.gmtOutput }}
+          {{ item.testItemMethod }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">测试条件</template>
-          {{ postForm.withdraw }}
+          {{ postForm.testItemCase }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">备注</template>
-          {{ postForm.withdraw }}
+          {{ postForm.remark }}
         </el-descriptions-item>
       </el-descriptions>
 
@@ -84,8 +83,8 @@
     <div class="mt36">样品照片</div>
     <div class="flex-direction">
 
-      <div v-for="fit in fits" :key="fit" class="block">
-        <el-image class="img" :src="url" />
+      <div v-for="item in postForm.fileNameList" :key="item" class="block">
+        <el-image class="img" :src='item'/>
       </div>
     </div>
 
@@ -95,18 +94,19 @@
 </template>
 
 <script>
-import { queryTestTradeDetail } from "@/api/transaction"
-import { getToken } from "@/utils/auth"
-import config from "@/utils/config"
-import { getUserById } from "@/api/user"
-import { timeFormatFilter } from "@/utils/simple-util"
-import MyFlexTable from "@/views/components/MyFlexTable"
-const { prefix } = config[process.env.NODE_ENV]
+  import { getworkDetail } from "@/api/worksheet"
+  import { getToken } from "@/utils/auth"
+  import config from "@/utils/config"
+  import { getUserById } from "@/api/user"
+  import { timeFormatFilter } from "@/utils/simple-util"
+  import MyFlexTable from "@/views/components/MyFlexTable"
 
-export default {
-  components: {
-    MyFlexTable
-  },
+  const { prefix } = config[process.env.NODE_ENV]
+
+  export default {
+    components: {
+      MyFlexTable
+    },
   filters: {
     timeFormatFilter
   },
@@ -119,14 +119,7 @@ export default {
         testTradeId: -1
       },
       postForm: {
-        flexObj: []
       },
-      tmpForm: {
-        editor: '',
-        reviewer: '',
-        approver: ''
-      },
-      mergeFooterItems: [{ row: 0, col: 0, rowspan: 0, colspan: 8 }]
     }
   },
   created() {
@@ -179,41 +172,16 @@ export default {
         .finally(() => { })
     },
     fetchData: function(id) {
-      queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
-        console.log(response.data)
-        this.postForm = response.data.testWorkOrder
-        const uid1 = this.postForm.editorId
-        const uid2 = this.postForm.reviewerId
-        const uid3 = this.postForm.approverId
-        const postForm = this.tmpForm
-        getUserById({ id: uid1 })
-          .then(res => {
-            const { data } = res
-            console.log(data)
-            postForm.editor = data.nickname
+      getworkDetail(Object.assign({}, { id: id })).then(response => {
+        this.postForm = response.data
+        if(this.postForm.fileNameList.length>0){
+          let newList = [];
+          this.postForm.fileNameList.forEach(item => {
+            item = prefix.lb + '/workOrder/download?' + item
+            newList.push(item)
           })
-          .catch(reason => {
-            console.log(reason)
-          })
-        getUserById({ id: uid2 })
-          .then(res => {
-            const { data } = res
-            console.log(data)
-            postForm.reviewer = data.nickname
-          })
-          .catch(reason => {
-            console.log(reason)
-          })
-        getUserById({ id: uid3 })
-          .then(res => {
-            const { data } = res
-            console.log(data)
-            postForm.approver = data.nickname
-          })
-          .catch(reason => {
-            console.log(reason)
-          })
-
+          this.postForm.fileNameList = newList
+        }
         // set tagsview title
         this.setTagsViewTitle()
 
@@ -232,11 +200,6 @@ export default {
       const title = '查看工作单'
       document.title = `${title} - ${this.tempRoute.params.id}`
     },
-    goBack() {
-      this.$router.push({
-        path: "/tm/detection/worksheet/list"
-      })
-    }
   }
 }
 </script>

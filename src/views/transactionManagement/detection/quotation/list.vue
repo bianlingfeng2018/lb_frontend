@@ -149,25 +149,24 @@
 
     <!--弹窗  上传水单-->
     <el-dialog :visible.sync="dialogVisible_settlement" title="上传水单">
-      <el-form :model="uoploadInfo" label-width="120px" label-position="left" class="mt8">
-        <el-form-item label="支付金额" prop="username">
-          <el-input v-model="uoploadInfo.username" width="120" />
+      <el-form :model="uploadInfo" label-width="120px" status-icon label-position="left" class="mt8">
+        <el-form-item label="支付金额" prop="incomeAmt">
+          <el-input v-model="uploadInfo.incomeAmt" width="120"/>
         </el-form-item>
-        <el-form-item label="上传样品照片：" prop="username">
-
+        <el-form-item label="支付凭证：" prop="username">
           <el-upload
-            class="avatar-uploader"
-            :action="prefix.lb + '/api/certification/uploadFile'"
-            :on-success="handleFileSuccess"
-            :before-upload="beforeFlieUpload"
-            :show-file-list="false"
-            :multiple="false"
-            :headers="headers"
-            :limit="1"
-          >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-
+                  ref="upload1"
+                  accept=".jpg,.jpeg,.png,.JPG,.JPEG,.gif,.pdf"
+                  action=""
+                  :on-change="uploadChange"
+                  :on-success="onSuccess"
+                  :on-error="onError"
+                  :limit="1"
+                  :http-request="submitFile"
+                  :on-exceed="exceed"
+                  :file-list="multpartfile"
+                  :auto-upload="false">
+            <el-button slot="trigger" size="small">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">
               支持jpg、jpeg、gif、png、pdf
             </div>
@@ -184,120 +183,197 @@
 
 <script>
   import { changePrice2money } from "@/utils/simple-util"
-import config from "@/utils/config"
-const { prefix } = config[process.env.NODE_ENV]
-import { deepClone } from "../../../../utils"
-import { getQuotationList,getServiceList,getQuotationExamine } from "@/api/organizations"
-export default {
-  filters: {
-    changePrice2money
-  },
-  data() {
-    return {
-      prefix: prefix,
-      dialogVisible_check: false,
-      dialogVisible_settlement: false,
-      tableLoading: false,
-      tableData: [],
-      comList:[],
-      // 搜索条件
-      columnParam: {},
-      uoploadInfo:{},
-      creditInfo: {
-        checkResult:'',
-        quotationNum:'',
-        reason:'',
-        requestId: Math.random().toString(24),
-      },
-      auditRules: {
-        checkResult: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
-        reason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
-      },
-      activeIndex:'',
-      imageUrl:'',
-      pagination: {
-        currPage: 1,
-        pageSize: 10,
-        pageTotal: 0
-      }
-    }
-  },
-  created() {
-    this.getListDate()
-    this.getComListDate()
-  },
-  methods: {
-    getListDate() {
-      this.tableLoading = true
-      const queryParam = {
-        requestId: Math.random().toString(24),
-        page: this.pagination.currPage,
-        pageSize: this.pagination.pageSize
-      }
-      const colParam = deepClone(this.columnParam)
-      getQuotationList(Object.assign({}, queryParam, colParam))
-        .then((res) => {
-          console.log(res)
-          const { data, status } = res
-          if (status == 200) {
-            this.tableData = data.dataList
-            this.pagination.pageTotal = data.total
-          } else {
-            this.$message.error(data.errMsg)
-          }
-        })
-        .catch(() => {
-        })
-        .finally(() => {
-          this.tableLoading = false
-        })
-    },
-    //获取跟进人列表
-    async getComListDate() {
-      const res = await getServiceList({
-      })
-      console.log(res)
-      this.comList = res.data.dataList
-      console.log(this.comList)
-    },
-    //点击切换type
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    setCreditInfo(){
+  import config from "@/utils/config"
 
-    },
-    // 上传水单
-    handleDelete(row) {
-      this.dialogVisible_settlement = true
-    },
-    handleCreate() {
-      this.$router.push({
-        path: "/tm/detection/quotation/create"
-      })
-    },
-    // 查看
-    handleShow(data) {
-      this.$router.push({
-        path: "/tm/detection/quotation/show/" + data.quotationNum
-      })
-    },
-    // 编辑
-    handleEdit(data) {
-      this.$router.push({
-        path: "/tm/detection/quotation/edit/" + data.quotationNum
-      })
-    },
+  const { prefix } = config[process.env.NODE_ENV]
+  import { deepClone } from "../../../../utils"
+  import {
+    getQuotationList,
+    getServiceList,
+    getQuotationExamine,
+    getQuotationUpload,
+    getQuotationConfirm
+  } from "@/api/organizations"
 
-    // 审核
-    async handleCheckConfirm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          getQuotationExamine(this.creditInfo)
-            .then((res) => {
-              const { data, status } = res
-              if (status == 200) {
-                this.dialogVisible_check = false
+  export default {
+    filters: {
+      changePrice2money
+    },
+    data() {
+      return {
+        prefix: prefix,
+        dialogVisible_check: false,
+        dialogVisible_settlement: false,
+        tableLoading: false,
+        tableData: [],
+        comList: [],
+        // 搜索条件
+        columnParam: {},
+        uploadInfo: {
+          incomeAmt: '',
+          quotationNum: '',
+          requestId: Math.random().toString(24),
+        },
+        creditInfo: {
+          checkResult: '',
+          quotationNum: '',
+          reason: '',
+          requestId: Math.random().toString(24),
+        },
+        auditRules: {
+          checkResult: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
+          reason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
+        },
+        activeIndex: '',
+        imageUrl: '',
+        uploadForm: new FormData(),
+        multpartfile: [],
+        pagination: {
+          currPage: 1,
+          pageSize: 10,
+          pageTotal: 0
+        }
+      }
+    },
+    created() {
+      this.getListDate()
+      this.getComListDate()
+    },
+    methods: {
+      getListDate() {
+        this.tableLoading = true
+        const queryParam = {
+          requestId: Math.random().toString(24),
+          page: this.pagination.currPage,
+          pageSize: this.pagination.pageSize
+        }
+        const colParam = deepClone(this.columnParam)
+        getQuotationList(Object.assign({}, queryParam, colParam))
+                .then((res) => {
+                  console.log(res)
+                  const { data, status } = res
+                  if (status == 200) {
+                    this.tableData = data.dataList
+                    this.pagination.pageTotal = data.total
+                  } else {
+                    this.$message.error(data.errMsg)
+                  }
+                })
+                .catch(() => {
+                })
+                .finally(() => {
+                  this.tableLoading = false
+                })
+      },
+      //获取跟进人列表
+      async getComListDate() {
+        const res = await getServiceList({})
+        console.log(res)
+        this.comList = res.data.dataList
+        console.log(this.comList)
+      },
+      //点击切换type
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
+      // 上传水单
+      handleDelete(data) {
+        this.dialogVisible_settlement = true
+        this.uploadInfo.quotationNum = data.quotationNum
+      },
+      setCreditInfo() {
+        console.log(this.uploadInfo.incomeAmt)
+        if (this.uploadInfo.incomeAmt == "") {
+          this.$message.error('请输入支付金额');
+          return
+        }
+        if (this.multpartfile.length !== 0) {
+          //文件
+          this.$refs.upload1.submit();
+          getQuotationUpload(this.uploadForm).then((res) => {
+            const { data, status } = res
+            if (status == 200) {
+              console.log("上传成功")
+              this.uploadInfo.billPath = res.data
+              const colParam = deepClone(this.uploadInfo)
+              getQuotationConfirm(Object.assign({}, colParam)).then((res) => {
+                const { data, status } = res
+                if (status == 200) {
+                  this.dialogVisible_settlement = false
+                  this.$notify({
+                    title: '成功',
+                    dangerouslyUseHTMLString: true,
+                    message: `操作成功`,
+                    type: 'success'
+                  })
+                  this.getListDate();
+                } else {
+                  this.$message.error(res.errMsg)
+                }
+              })
+                      .catch((e) => {
+                        this.$message.error(e)
+                      })
+                      .finally(() => {
+                        this.dialogVisible_settlement = false
+                      })
+
+            } else {
+              this.$message.error(res.errMsg)
+            }
+          })
+        } else {
+          this.$message.error('请上传支付凭证');
+        }
+      },
+
+      uploadChange(file, fileList) {
+        this.multpartfile = fileList;
+      },
+      onSuccess(response, file) {
+        this.$message({
+          showClose: true,
+          message: '提交成功',
+          type: 'success'
+        });
+        this.multpartfile = [];
+      },
+      onError(err, file, multpartfile) {
+        this.$message({ showClose: true, message: err, type: 'error' });
+      },
+      exceed() {
+        this.$message({ showClose: true, message: '请先删除已选中文件', type: 'error' });
+      },
+      submitFile(file) {
+        this.uploadForm.append("file", file.file);
+      },
+      handleCreate() {
+        this.$router.push({
+          path: "/tm/detection/quotation/create"
+        })
+      },
+      // 查看
+      handleShow(data) {
+        this.$router.push({
+          path: "/tm/detection/quotation/show/" + data.quotationNum
+        })
+      },
+      // 编辑
+      handleEdit(data) {
+        this.$router.push({
+          path: "/tm/detection/quotation/edit/" + data.quotationNum
+        })
+      },
+
+      // 审核
+      async handleCheckConfirm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            getQuotationExamine(this.creditInfo)
+                    .then((res) => {
+                      const { data, status } = res
+                      if (status == 200) {
+                        this.dialogVisible_check = false
                 this.$notify({
                   title: '成功',
                   dangerouslyUseHTMLString: true,

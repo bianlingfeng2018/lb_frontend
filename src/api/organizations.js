@@ -63,7 +63,22 @@ export function getSearchName(data) {
     data
   })
 }
-
+//上传水单文件
+export function getQuotationUpload(data) {
+  return requestsh({
+    url: '/quotation/upload',
+    method: 'post',
+    data
+  })
+}
+//上传水单
+export function getQuotationConfirm(data) {
+  return requestsh({
+    url: '/quotation/confirm',
+    method: 'post',
+    data
+  })
+}
 //新增报价单
 export function getQuotationCreate(data) {
   return requestsh({
@@ -169,4 +184,14 @@ export function getApplicationReview(data) {
     data
   })
 }
+
+//获取检测方法和检测条件
+export function getItemById(data) {
+  return requestsh({
+    url: '/test/getItemById',
+    method: 'post',
+    data
+  })
+}
+
 

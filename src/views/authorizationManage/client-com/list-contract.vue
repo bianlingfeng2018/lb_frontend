@@ -128,7 +128,7 @@
           <el-upload
             ref="upload1"
             accept=".pdf"
-            :action="actions"
+            action=""
             :on-change="uploadChange"
             :on-success="onSuccess"
             :on-error="onError"
@@ -281,8 +281,10 @@
         if (this.columnParam.contractStatus == '-1') {
           columnParam.contractStatus = ""
         }
-        columnParam.contractStartDate = this.operTime[0]
-        columnParam.contractEndDate = this.operTime[1]
+        if(this.operTime !== null) {
+          columnParam.contractStartDate = this.operTime[0]
+          columnParam.contractEndDate = this.operTime[1]
+        }
         getContractList(Object.assign({}, queryParam, columnParam)).then(res => {
           const { data, status } = res
           if (status == 200) {

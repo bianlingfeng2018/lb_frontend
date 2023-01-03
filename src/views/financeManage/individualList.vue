@@ -11,11 +11,13 @@
         />
       </el-form-item>
       <el-form-item label="客户中文名称">
-        <el-input
-          v-model="columnParam.clientId"
+        <el-autocomplete
+          v-model="columnParam.clientName"
+          :fetch-suggestions="queryClientCom"
           placeholder="请输入客户中文名称"
           style="width: 240px"
-          @keydown.enter.native="onSearch"
+          clearable
+          @select="onSelect"
         />
       </el-form-item>
       <el-form-item label="核销状态" prop="email">
@@ -73,7 +75,7 @@
       >批量核销
       </el-button>
     </div>
-    <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8"    @selection-change="handleSelectionChange">
+    <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8" @selection-change="handleSelectionChange">
       <el-table-column align="center" type="selection" min-width="80" />
       <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
       <el-table-column prop="tradeName" label="交易名称" min-width="150" />
@@ -107,7 +109,7 @@
     <!--核销弹窗-->
     <el-dialog :visible.sync="dialogVisible_check" title="核销">
       <el-form :model="creditInfo" label-width="80px" label-position="left">
-        <el-form-item label="客户名称" label-width="150px" >{{ creditInfo.clientName }}</el-form-item>
+        <el-form-item label="客户名称" label-width="150px">{{ creditInfo.clientName }}</el-form-item>
         <el-form-item label="报价单编号" label-width="150px">{{ creditInfo.tradeId }}</el-form-item>
         <el-form-item label="回款金额" prop="incomeAmt" label-width="150px">
           <el-input v-model="creditInfo.incomeAmt" placeholder="输入回款金额" width="120" />
@@ -147,7 +149,7 @@
     <!--弹窗  批量核销-->
     <el-dialog :visible.sync="dialogVisible_checkall" title="批量核销">
       <span>是否确认所选报价单收款金额无误？</span>
-      <el-form  label-width="80px" label-position="left">
+      <el-form label-width="80px" label-position="left">
         <el-form-item label="实际收款日期" prop="username" label-width="200px">
           <el-date-picker
             v-model="batchTime"
@@ -167,8 +169,9 @@
 </template>
 
 <script>
-import { getPersonalBillList,updatePersonalBillBatch,updatePersonalBill} from "@/api/bill"
-import {deepClone} from "@/utils";
+import { getPersonalBillList, updatePersonalBillBatch, updatePersonalBill } from "@/api/bill"
+import { deepClone } from "@/utils"
+import { getClientByName } from "@/api/clientCompany"
 export default {
   name: "IndividualList",
   data() {
@@ -179,18 +182,18 @@ export default {
       dialogVisible_checkall: false,
       dialogVisible_look: false,
       creditInfo: [],
-      statusList: ["未结算","未核销","已核销"],
-      uploadTime:[],
-      truelyTime:[],
-      selectData:[],
-      batchTime:'',
+      statusList: ["未结算", "未核销", "已核销"],
+      uploadTime: [],
+      truelyTime: [],
+      selectData: [],
+      batchTime: '',
       // 搜索条件
       columnParam: {
-        tradeId:"",
-        clientId:"",
-        status:"",
-        uploadStartTime:"",
-        uploadEndTime:"",
+        tradeId: "",
+        clientId: "",
+        status: "",
+        uploadStartTime: "",
+        uploadEndTime: "",
         lastTraceDate: "",
         startTime: "",
         endTime: ""
@@ -209,13 +212,13 @@ export default {
   methods: {
     // 获取列表数据
     getListDate() {
-      this.tableData=[];
+      this.tableData = []
       this.tableLoading = true
       const colParam = deepClone(this.columnParam)
-      colParam.uploadStartTime = this.uploadTime[0];
-      colParam.uploadEndTime = this.uploadTime[1];
-      colParam.startTime = this.truelyTime[0];
-      colParam.endTime = this.truelyTime[1];
+      colParam.uploadStartTime = this.uploadTime[0]
+      colParam.uploadEndTime = this.uploadTime[1]
+      colParam.startTime = this.truelyTime[0]
+      colParam.endTime = this.truelyTime[1]
       const queryParam = {
         pageNum: this.pagination.currPage,
         pageSize: this.pagination.pageSize
@@ -243,13 +246,37 @@ export default {
           this.tableLoading = false
         })
     },
+    queryClientCom(s, cb) {
+      this.columnParam.clientId = ''
+      const params = {
+        clientName: s
+      }
+      getClientByName(params).then(res => {
+        if (res.status == 200) {
+          this.restaurants = res.data.dataList
+          const cliets = []
+          this.restaurants.forEach(client => {
+            var mer = {}
+            mer.value = client.name
+            mer.clientId = client.clientNum
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    onSelect(item) {
+      this.columnParam.clientId = item.clientId
+    },
     // 核销
     setCreditInfo() {
-      let param = deepClone(this.creditInfo);
-      updatePersonalBill(param).then((res)=>{
+      const param = deepClone(this.creditInfo)
+      updatePersonalBill(param).then((res) => {
         const { data, status } = res
-        if(status == 200){
-          this.dialogVisible_check = false;
+        if (status == 200) {
+          this.dialogVisible_check = false
           this.$notify({
             title: '成功',
             dangerouslyUseHTMLString: true,
@@ -267,30 +294,29 @@ export default {
 
     // 核销
     setCreditInfoBatch() {
-
-      let sendArray = [];
-      this.selectData.forEach(data=>{
-        let sendData = {
-          id:data.id,
-          clientId:data.clientId,
-          incomeTime:this.batchTime
+      const sendArray = []
+      this.selectData.forEach(data => {
+        const sendData = {
+          id: data.id,
+          clientId: data.clientId,
+          incomeTime: this.batchTime
         }
-        sendArray.push(sendData);
-      });
-      let param = {
-        list:sendArray
+        sendArray.push(sendData)
+      })
+      const param = {
+        list: sendArray
       }
-      updatePersonalBillBatch(param).then((res)=>{
+      updatePersonalBillBatch(param).then((res) => {
         const { data, status } = res
-        if(status == 200){
-          this.dialogVisible_checkall = false;
+        if (status == 200) {
+          this.dialogVisible_checkall = false
           this.$notify({
             title: '成功',
             dangerouslyUseHTMLString: true,
             message: `操作成功`,
             type: 'success'
           })
-          this.getListDate();
+          this.getListDate()
         }
       }).catch((e) => {
         this.$message.error(e)
@@ -298,18 +324,17 @@ export default {
         .finally(() => {
           this.dialogVisible_checkall = false
         })
-
     },
-    handleSelectionChange(data){
+    handleSelectionChange(data) {
       console.log(data)
-      this.selectData = data;
+      this.selectData = data
     },
     handleCreate() {
-      this.dialogVisible_checkall = true;
+      this.dialogVisible_checkall = true
     },
-    handleShow(row,state) {
-      this.dialogVisible_look = state ==1
-      this.dialogVisible_check = state ==2
+    handleShow(row, state) {
+      this.dialogVisible_look = state == 1
+      this.dialogVisible_check = state == 2
       this.creditInfo = row
     },
     handleSizeChange(val) {

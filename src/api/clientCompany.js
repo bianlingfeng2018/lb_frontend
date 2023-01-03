@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import requestsh from '@/utils/request-sh'
 
 export function queryClientComPage(params) {
   return request({
@@ -128,6 +129,13 @@ export function checkContactNameExist(params) {
 export function checkContactPhoneNumExist(params) {
   return request({
     url: '/api/check-contact-phone-num-exist',
+    method: 'post',
+    data: params
+  })
+}
+export function getClientByName(params) {
+  return requestsh({
+    url: '/customer/search/name',
     method: 'post',
     data: params
   })

@@ -3,11 +3,19 @@
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="客户中文名称">
-        <el-input
-          v-model="columnParam.client"
+        <!--        <el-input-->
+        <!--          v-model="columnParam.client"-->
+        <!--          placeholder="请输入客户中文名称"-->
+        <!--          style="width: 240px"-->
+        <!--          @keydown.enter.native="onSearch"-->
+        <!--        />-->
+        <el-autocomplete
+          v-model="columnParam.clientName"
+          :fetch-suggestions="queryClientCom"
           placeholder="请输入客户中文名称"
           style="width: 240px"
-          @keydown.enter.native="onSearch"
+          clearable
+          @select="onSelect"
         />
       </el-form-item>
       <el-form-item :label="'合同结束日期'">
@@ -92,6 +100,7 @@
 import { changePrice2money } from "@/utils/simple-util"
 import { setCreditLimit, getBalanceList } from "@/api/balance"
 import { deepClone } from "../../utils"
+import { getClientByName } from "@/api/clientCompany"
 
 export default {
   name: "EnterpriseList",
@@ -186,14 +195,38 @@ export default {
           this.dialogVisible = false
         })
     },
+    queryClientCom(s, cb) {
+      this.columnParam.client = ''
+      const params = {
+        clientName: s
+      }
+      getClientByName(params).then(res => {
+        if (res.status == 200) {
+          this.restaurants = res.data.dataList
+          const cliets = []
+          this.restaurants.forEach(client => {
+            var mer = {}
+            mer.value = client.name
+            mer.clientId = client.clientNum
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    onSelect(item) {
+      this.columnParam.client = item.clientId
+    },
     handleShow(scope) {
       this.dialogVisible = true
       this.creditInfo = deepClone(scope.row)
       this.creditInfo.creditLimit = this.creditInfo.creditLimit / 100
     },
     handlePage(scope) {
-      let data = deepClone(scope.row);
-      this.$router.push({ path: 'pay_list1/details', query: { data:data }})
+      const data = deepClone(scope.row)
+      this.$router.push({ path: 'pay_list1/details', query: { data: data }})
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val

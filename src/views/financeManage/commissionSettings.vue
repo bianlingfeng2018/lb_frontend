@@ -25,11 +25,19 @@
         />
       </el-form-item>
       <el-form-item label="客户中文名称">
-        <el-input
+        <!--        <el-input
           v-model="columnParam2.clientName"
           placeholder="请输入客户中文名称"
           style="width: 240px"
           @keydown.enter.native="onSearch"
+        />-->
+        <el-autocomplete
+          v-model="columnParam2.clientName"
+          :fetch-suggestions="queryClientCom"
+          placeholder="请输入客户中文名称"
+          clearable
+          style="width: 240px"
+          @select="onSelect"
         />
       </el-form-item>
       <el-form-item>
@@ -61,13 +69,13 @@
 
     <el-table
       v-if="visible1==true"
+      key="tabel1"
       :v-loading="tableLoading"
       :data="tableData"
       stripe
       border
       style="width: 100%"
       class="mt8"
-      key="tabel1"
     >
       <el-table-column prop="clientId" label="客户编号" min-width="150" />
       <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
@@ -130,11 +138,13 @@
         />
       </el-form-item>
       <el-form-item label="客户中文名称">
-        <el-input
-          v-model="columnParam.cnameOrAbbr"
+        <el-autocomplete
+          v-model="columnParam2.clientName"
+          :fetch-suggestions="queryClientCom"
           placeholder="请输入客户中文名称"
           style="width: 240px"
-          @keydown.enter.native="onSearch"
+          clearable
+          @select="onSelect"
         />
       </el-form-item>
       <br>
@@ -181,6 +191,7 @@
     </div>
     <el-table
       v-if="visible2==true"
+      key="tabel2"
       :v-loading="tableLoading2"
       :data="tableData2"
       stripe
@@ -188,7 +199,6 @@
       style="width: 100%"
       class="mt8"
       @selection-change="handleSelectionChange"
-      key="tabel2"
     >
       <el-table-column align="center" type="selection" min-width="80" />
       <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
@@ -312,7 +322,7 @@
 
 <script>
 import { getCommissionList, getCommissionRecordList, updateCommission, setCommission, approveCommission, settleCommissionRecordBatch } from "@/api/balance"
-import { queryClientComPageAll } from "@/api/clientCompany"
+import { getClientByName } from "@/api/clientCompany"
 import { deepClone } from "../../utils"
 export default {
   name: "CommissionSettings",
@@ -338,7 +348,8 @@ export default {
       },
       columnParam2: {
         clientId: "",
-        clientName: ''
+        clientName: '',
+        status: ''
       },
       radio: '客户佣金设置',
 
@@ -366,7 +377,7 @@ export default {
       },
       restaurants: [],
       selectTrade: [],
-      batchTime:""
+      batchTime: ""
     }
   },
   created() {
@@ -383,19 +394,33 @@ export default {
       this.getListDate()
     },
     handleClick(tab, event) {
+      console.log(this.activeIndex)
+      let status = ''
+      switch (this.activeIndex) {
+        case "1":
+          status = 'inApprove'
+          break
+        case "2":
+          status = 'Accept'
+          break
+        case "3":
+          status = 'Reject'
+          break
+      }
+      this.columnParam2.status = status
       this.getListDate()
     },
     // 获取列表数据
     getListDate() {
-      this.tableData = [];
-      this.tableData2 = [];
+      this.tableData = []
+      this.tableData2 = []
       this.tableLoading = true
       const queryParam = {
         pageNum: this.pagination.currPage,
         pageSize: this.pagination.pageSize
       }
       let columnParam = {}
-      let queryList = null;
+      let queryList = null
       if (this.visible1) {
         columnParam = deepClone(this.columnParam2)
         queryList = getCommissionList
@@ -418,7 +443,6 @@ export default {
               this.pagination2.currPage = data.pageNum
               this.pagination2.pageTotal = data.total
             }
-
           } else {
             this.$message.error(data.errMsg)
           }
@@ -431,36 +455,36 @@ export default {
     },
     // 核销
     setCreditInfo() {
-      let sendArray = [];
-      this.selectTrade.forEach(data=>{
-        let sendData = {
-          id:data.id,
-          settleTime:this.batchTime
+      const sendArray = []
+      this.selectTrade.forEach(data => {
+        const sendData = {
+          id: data.id,
+          settleTime: this.batchTime
         }
-        sendArray.push(sendData);
-      });
-      let param = {
-        list:sendArray
+        sendArray.push(sendData)
+      })
+      const param = {
+        list: sendArray
       }
-      settleCommissionRecordBatch(param).then((res)=>{
-        if(res.status == 200){
-          this.dialogVisible_settlement = false;
+      settleCommissionRecordBatch(param).then((res) => {
+        if (res.status == 200) {
+          this.dialogVisible_settlement = false
           this.$notify({
             title: '成功',
             dangerouslyUseHTMLString: true,
             message: `操作成功`,
             type: 'success'
           })
-        this.getListDate();
+          this.getListDate()
         }
-      }).catch(e=>{
+      }).catch(e => {
         this.$message.error(e)
-      }).finally(()=>{
-        this.dialogVisible_settlement = false;
-      });
+      }).finally(() => {
+        this.dialogVisible_settlement = false
+      })
     },
     handleSelectionChange(data) {
-      this.selectTrade = data;
+      this.selectTrade = data
     },
     handleSetCommission(state) {
       let fuc
@@ -494,34 +518,34 @@ export default {
       })
     },
     queryClientCom(s, cb) {
-      // const queryParam = {
-      //   cnameOrAbbr:this.creditInfo.username,
-      //   pageNum: 1,
-      //   pageSize: 10
-      // }
-      // this.restaurants = [{ "clientName": "三全鲜食（北新泾店）", "clientId": "LB00001" },
-      //   { "clientName": "Hot honey 首尔炸鸡（仙霞路）","clientId": "LB00002"  }]
-      // var restaurants = this.restaurants;
-      // var results = this.creditInfo.clientName ? restaurants.filter(()=>{
-      //   return (state)=>{
-      //     return state.clientName.toLowerCase().indexOf(this.creditInfo.clientName.toLowerCase()) === 0
-      //   }
-      // }) : restaurants;
-      // cb(results);
-      // queryClientComPageAll(queryParam)
-      // .then(res=>{
-      //   if(res?.data?.list){
-      //
-      //     var results = res?.data?.list;
-      //     cb(results);
-      //   }
-      //
-      // }).catch(() => {
-      // })
-      //   .finally(() => {
-      //   })
+      const params = {
+        clientName: s
+      }
+      getClientByName(params).then(res => {
+        if (res.status == 200) {
+          this.restaurants = res.data.dataList
+          const cliets = []
+          this.restaurants.forEach(client => {
+            var mer = {}
+            mer.value = client.name
+            mer.clientId = client.clientNum
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
     },
     onSelect(item) {
+      if (this.dialogVisible_set) {
+        this.creditInfo.clientId = item.clientId
+        this.creditInfo.clientName = item.value
+      } else if (this.visible1) {
+        this.columnParam2.clientId = item.clientId
+      } else {
+        this.columnParam.clientId = item.clientId
+      }
     },
     handleShow(row, isEdit) {
       // this.dialogVisible = true

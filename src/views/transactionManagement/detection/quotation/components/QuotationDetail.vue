@@ -21,10 +21,11 @@
       <br>
       <el-form-item label="支付方式" prop="payType">
         <el-radio-group v-model="postForm.payType" style="width: 540px">
-          <el-radio :label="1">挂账</el-radio>
-          <el-radio :label="2">先付后检</el-radio>
-          <el-radio :label="3">先付</el-radio>
+          <el-radio :label="0">挂账</el-radio>
+          <el-radio :label="100">先付后检</el-radio>
+          <el-radio :label="50">先付</el-radio>
           <el-input
+            v-model="payType"
             class="short"
             style="width: 100px"
           />
@@ -439,7 +440,7 @@ export default {
       rules: methods.quotationCreateValidate,
       // rules: {},
       tableRules: methods.quotationTableValidate,
-      payType: '1',
+      payType: 50,
       checkList: [], // 报告类型
       radio: "1",
       radioStandard: "1",
@@ -779,10 +780,13 @@ export default {
             this.$message.error(massage)
             return false
           }
+          if (form.payType != 0 && form.payType != 100) {
+            form.payType = this.payType
+          }
           getQuotationCreate(form).then(res => {
             const { data, status } = res
             if (status == 200) {
-
+              this.$router.go(-1)
             } else {
               this.$message.error(res.errMsg)
             }

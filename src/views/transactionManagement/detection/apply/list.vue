@@ -41,7 +41,7 @@
     </div>
 
     <el-table v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-      <el-table-column prop="applicationNum" label="申请单编号" min-width="120"/>
+      <el-table-column prop="applicationNum" label="申请单编号" min-width="130"/>
       <el-table-column prop="applicationName" label="申请单位名称" min-width="120"/>
       <el-table-column prop="applicationDate" label="申请日期" min-width="120"/>
       <el-table-column prop="sampleStatus" label="收样状态" min-width="120">
@@ -268,13 +268,6 @@
     handleAudit(data) {
       this.$router.push({
         path: "/tm/detection/apply/audit/" + data.applicationNum
-      })
-    },
-    handleAssignCS(data) {
-      console.log('HandleAssignCS')
-      this.$router.push({
-        path: "/tm/detection/as-cs",
-        query: { testTradeId: data.testTradeId }
       })
     },
     handleSizeChange(val) {

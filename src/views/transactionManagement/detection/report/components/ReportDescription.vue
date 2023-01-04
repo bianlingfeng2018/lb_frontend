@@ -89,38 +89,15 @@
     </p>
     <el-divider content-position="left">样品描述</el-divider>
 
-    <vxe-table
-      ref="xTable"
-      border
-      show-overflow
-      class="editable-footer mb20"
-      :merge-footer-items="mergeFooterItems"
-      :row-config="{ isHover: true }"
-      :export-config="{}"
-      :data="postForm.sampleDesc"
-    >
-      <vxe-column type="seq" width="60" :title="'序号'" align="right" />
-      <vxe-column field="sampleNum" :title="'样品编号'" :edit-render="{ autofocus: '.vxe-input--inner' }">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.sampleNum" type="text" @input="updateFooterEvent" />
-        </template>
-      </vxe-column>
-      <vxe-column field="sampleDes" :title="'样品部位描述'" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.sampleDes" type="text" />
-        </template>
-      </vxe-column>
+    <el-table  :data="tableData" stripe border style="width: 100%" class="mt8">
+      <el-table-column type="seq" label="序号"  width="60"/>
+      <el-table-column prop="testItem" label="测试项目" min-width="120"/>
+      <el-table-column prop="unitPrice" label="单价" min-width="120"/>
+      <el-table-column prop="applicationDate" label="测试点数" min-width="120"/>
+      <el-table-column prop="quantity" label="测试金额" min-width="120"/>
+      <el-table-column prop="sampleStatus" label="样品量" min-width="120"/>
+    </el-table>
 
-      <vxe-column
-        field="sampleLocation"
-        :title="'取样部位(位置)'"
-        :edit-render="{ autofocus: '.vxe-input--inner' }"
-      >
-        <template #edit="{ row }">
-          <vxe-input v-model="row.sampleLocation" type="text" :min="1" :max="120" />
-        </template>
-      </vxe-column>
-    </vxe-table>
     <el-divider content-position="left">测试结果</el-divider>
     <div v-for="(itemI, i) in postForm.testExperiment" :key="i">
       <p>{{ itemI.title }}</p>
@@ -152,20 +129,7 @@
         <p>{{ itemJ.conclusion }}</p>
       </div>
     </div>
-    <!-- <el-divider content-position="left">样品照片</el-divider>
-    <div v-for="img in imgList" :key="img.path" class="block">
-      <el-image style="width: 40%; height: auto" :src="getFileBlobUrl(img)" :preview-src-list="[getFileBlobUrl(img)]"
-        fit="cover" />
-    </div>
-    <el-divider content-position="left">其他</el-divider>
-    <my-flex-table ref="myFlexTable" :flex-obj="postForm.flexObj" />
 
-    <el-divider content-position="left">备注</el-divider>
-    <div class="remark-content">
-      <P style="white-space: pre-wrap">
-        {{ postForm.remark }}
-      </P>
-    </div> -->
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>

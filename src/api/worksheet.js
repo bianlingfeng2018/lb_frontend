@@ -45,4 +45,41 @@ export function getworkUpload(data) {
   })
 }
 
+// 原始记录单列表
+export function getoriList(data) {
+  return requestsh({
+    url: '/ori/list',
+    method: 'post',
+    data
+  })
+}
+
+// 原始记录单详情
+export function getoriDetail(data) {
+  return requestsh({
+    url: '/ori/detail',
+    method: 'post',
+    data
+  })
+}
+
+// 审核原始记录单
+export function getoriReview(data) {
+  return requestsh({
+    url: '/ori/review',
+    method: 'post',
+    data
+  })
+}
+
+// 上传文件
+export function getoriUpload(data) {
+  return requestsh({
+    url: '/ori/upload',
+    method: 'post',
+    data
+  })
+}
+
+
 

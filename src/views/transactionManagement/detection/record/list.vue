@@ -2,46 +2,46 @@
     <div class="app-container ohn">
       <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
         <el-form-item label="原始记录单编号">
-          <el-input v-model="columnParam.cnameOrAbbr" placeholder="请输入原始记录单编号" style="width: 240px"
+          <el-input v-model="columnParam.recordNum" placeholder="请输入原始记录单编号" style="width: 240px"
                     @keydown.enter.native="onSearch" />
         </el-form-item>
         <el-form-item>
-          <el-button v-loading="tableLoading" type="primary" @click="onSearch">查询
+          <el-button type="primary" @click="onSearch">查询
           </el-button>
 
         </el-form-item>
       </el-form>
 
       <div class="lb-flex" style="position: relative;">
-        <el-tabs v-model="activeIndex" @tab-click="handleClick" style="width: 100%">
-          <el-tab-pane label="全部" name="0" />
-          <el-tab-pane label="未完成" name="1" />
-          <el-tab-pane label="待审核" name="2" />
+        <el-tabs v-model="columnParam.status" @tab-click="handleClick" style="width: 100%">
+          <el-tab-pane label="全部" name="-1"/>
+          <el-tab-pane label="未完成" name="0" />
+          <el-tab-pane label="待审核" name="1" />
           <el-tab-pane label="审核通过" name="2" />
-          <el-tab-pane label="审核不通过" name="2" />
+          <el-tab-pane label="审核不通过" name="3" />
         </el-tabs>
-        <el-button type="primary" plain size="small" style="position: absolute;right:10px;top:5px;" @click="handleUpload">分配
-        </el-button>
+<!--        <el-button type="primary" plain size="small" style="position: absolute;right:10px;top:5px;" @click="handleUpload">分配-->
+<!--        </el-button>-->
       </div>
 
       <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
         <el-table-column align="center" type="selection" min-width="80" />
-        <el-table-column prop="workOrderNum" label="原始记录单编号" min-width="120" />
+        <el-table-column prop="recordNum" label="原始记录单编号" min-width="120" />
         <el-table-column prop="workOrderNum" label="工作单编号" min-width="120" />
-        <el-table-column prop="workOrderNum" label="报告单编号" min-width="120" />
-        <el-table-column prop="gmtCreate" label="检测项目" min-width="120" />
-        <el-table-column prop="busyStatus" label="检测实验室" min-width="120" />
-        <el-table-column prop="issuer" label="检测设备号" min-width="120" />
-        <el-table-column prop="gmtOutput" label="测试人员" min-width="120" />
-        <el-table-column prop="gmtOutput" label="创建日期" min-width="120" />
-        <el-table-column prop="gmtOutput" label="要求日期" min-width="120" />
-        <el-table-column prop="gmtOutput" label="报告日期" min-width="120" />
-        <el-table-column fixed="right" label="状态" min-width="90">
+        <el-table-column prop="reportNum" label="报告单编号" min-width="120" />
+        <el-table-column prop="testItem" label="检测项目" min-width="120" />
+        <el-table-column prop="testLab" label="检测实验室" min-width="120" />
+        <el-table-column prop="testDeviceNo" label="检测设备号" min-width="120" />
+        <el-table-column prop="testPerson" label="测试人员" min-width="120" />
+        <el-table-column prop="createTime" label="创建日期" min-width="120" />
+        <el-table-column prop="planDate" label="要求日期" min-width="120" />
+        <el-table-column prop="reportDate" label="报告日期" min-width="120" />
+        <el-table-column fixed="status" label="状态" min-width="90">
           <template slot-scope="scope">
-            <span v-if="scope.row.confirmed == 1">待审核</span>
-            <span v-else-if="scope.row.confirmed == 2">审核通过</span>
-            <span v-else-if="scope.row.confirmed == 3">审核不通过</span>
-            <span v-else-if="scope.row.confirmed == 4">未完成</span>
+            <span v-if="scope.row.status == 1">待审核</span>
+            <span v-else-if="scope.row.status == 2">审核通过</span>
+            <span v-else-if="scope.row.status == 3">审核不通过</span>
+            <span v-else-if="scope.row.status == 0">未完成</span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="220">
@@ -50,7 +50,7 @@
             </el-button>
             <el-button type="primary" size="small" plain @click="handleDelete(scope.row)">编辑结果
             </el-button>
-            <el-button v-if="scope.row.confirmed == false" type="primary" plain size="small" @click="handleEdit(scope.row)">审核
+            <el-button v-if="scope.row.status == 1" type="primary" plain size="small" @click="handleEdit(scope.row)">审核
             </el-button>
             <el-button type="primary" size="small" plain @click="handleDelete(scope.row)">上传结果
             </el-button>
@@ -126,8 +126,7 @@
             :show-file-list="false"
             :multiple="false"
             :headers="headers"
-            :limit="1"
-          >
+            :limit="1" >
             <img v-if="imageUrl" :src="imageUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
             <div slot="tip" class="el-upload__tip">
@@ -166,8 +165,7 @@
             :show-file-list="false"
             :multiple="false"
             :headers="headers"
-            :limit="1"
-          >
+            :limit="1" >
             <img v-if="imageUrl" :src="imageUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
             <div slot="tip" class="el-upload__tip">
@@ -211,8 +209,7 @@
             :show-file-list="false"
             :multiple="false"
             :headers="headers"
-            :limit="1"
-          >
+            :limit="1" >
             <img v-if="imageUrl" :src="imageUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
             <div slot="tip" class="el-upload__tip">
@@ -232,6 +229,8 @@
 <script>
 import config from "@/utils/config"
 const { prefix } = config[process.env.NODE_ENV]
+import { deepClone } from "../../../../utils"
+import { getoriList, getoriDetail, getoriReview, getoriUpload } from "@/api/worksheet"
 export default {
   data() {
     return {
@@ -245,12 +244,9 @@ export default {
       creditInfo: [],
       tableData: [],
 
-      activeIndex: '0', // 默认全部
       // 搜索条件
       columnParam: {
-        cnameOrAbbr: "",
-        startDate: "",
-        endDate: ""
+        status: '-1'// 默认全部
       },
       dialogVisible_settlement: false,
       creditInfo: [],
@@ -269,17 +265,20 @@ export default {
     handleSearchTestTradeList() {
       this.tableLoading = true
       const queryParam = {
-        pageNum: this.pagination.currPage,
+        requestId: Math.random().toString(24),
+        page: this.pagination.currPage,
         pageSize: this.pagination.pageSize
       }
-      this.$store
-        .dispatch("transaction/queryTestWordOrderList", queryParam)
+      const colParam = deepClone(this.columnParam)
+      if (this.columnParam.status == '-1') {
+        colParam.status = ""
+      }
+      getoriList(Object.assign({}, queryParam,colParam))
         .then((res) => {
-          const { data, success, errorMessage } = res
-          if (success) {
+          const { data, status } = res
+          if (status == 200) {
             console.log(data)
-            this.tableData = data.list
-            this.pagination.currPage = data.pageNum
+            this.tableData = data.dataList
             this.pagination.pageTotal = data.total
           } else {
             this.$message.error(errorMessage)
@@ -300,13 +299,15 @@ export default {
     handleFileSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
-    handleClick(tab, event) {
+    handleClick(tab) {
+      this.columnParam.contractStatus = tab.name
+      this.pagination.currPage = 1
       this.handleSearchTestTradeList()
     },
 
     handleShow(data) {
       this.$router.push({
-        path: "/tm/detection/record/show/" + data.testTradeId
+        path: "/tm/detection/record/show/" + data.id
       })
     },
     // 确认
@@ -315,7 +316,7 @@ export default {
     },
     handleAudit(data) {
       this.$router.push({
-        path: "/tm/detection/record/audit/" + data.testTradeId
+        path: "/tm/detection/record/audit/" + data.id
       })
     },
     handleSizeChange(val) {
@@ -325,7 +326,10 @@ export default {
     handleCurrentChange(val) {
       this.pagination.currPage = val
       this.handleSearchTestTradeList()
-    }
+    },
+    onSearch() {
+      this.handleSearchTestTradeList()
+    },
   }
 }
 </script>

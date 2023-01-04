@@ -92,22 +92,26 @@
           @edit-closed="editClose">
           <vxe-column field="id" width="60" :title="'序号'" align="right"/>
           <vxe-column field="name" :title="'测试项目'"/>
-          <vxe-column field="price" :title="'单价'"/>
+          <vxe-column field="price" :title="'单价'">
+            <template #default="{ row }">
+              <span>{{ row.price  | changePrice2money}} 元</span>
+            </template>
+          </vxe-column>
           <vxe-column field="quantity" title="测试点数" :edit-render="{ autofocus: '.vxe-input--inner' }">
             <template #edit="{ row }">
-              <vxe-input v-model="row.quantity" type="number"></vxe-input>
+              <vxe-input v-model="row.quantity" type="number" @change="testInputChange(gooditem,index)"></vxe-input>
             </template>
           </vxe-column>
 
           <vxe-column field="price2" :title="'测试金额'">
             <template #default="{ row }">
-              <span>{{ row.price*row.quantity }} 元</span>
+              <span>{{ (row.price*row.quantity)  | changePrice2money}} 元</span>
             </template>
           </vxe-column>
           <vxe-column :title="'样品量'">1</vxe-column>
           <vxe-column title="操作" width="80">
-            <template #default="{ row }">
-              <el-button type="text" status="primary" @click="deleteEvent(row)">删除
+            <template slot-scope="scope">
+              <el-button size="small" plain @click.native.prevent="deleteRow(scope.$index, gooditem.items)">删除
               </el-button>
             </template>
           </vxe-column>
@@ -127,28 +131,30 @@
             <el-option key="2" label="特急" value="2" />
           </el-select>
         </el-form-item>
-        <el-form-item label="报告类型" prop="reportTypes">
-          <el-checkbox-group v-model="postForm.reportTypes">
-            <el-checkbox :label="item.key" v-for="item of customerOptions" :key="item.key">{{ item.value }}</el-checkbox>
-          </el-checkbox-group>
+        <el-form-item label="报告类型"  prop="reportTypes">
+            <el-checkbox-group v-model="checkedGoodsReportTypes[index]" @change="testInputChange(gooditem,index)">
+              <el-checkbox :label="item.key" v-for="item of customerOptions" :key="item.key" >{{ item.value }}</el-checkbox>
+            </el-checkbox-group>
         </el-form-item>
         <br>
         <el-form-item label="检测价格（不含税）" prop="testPrice">
-          <el-input v-model="gooditem.testPrice" placeholder="请输入检测价格" clearable style="width: 240px"/>
+          <label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;检测价格（不含税）：</label>
+          <el-input v-model="gooditem.testPriceShow" :placeholder="gooditem.testPrice /100" clearable style="width: 240px" @change="testInputChange(gooditem,index)"/>
+          <span class="lb-error" v-if="gooditem.testPriceShow && ((gooditem.testPriceShow *100)<gooditem.testPrice)">{{ (((gooditem.testPriceShow *100)/gooditem.testPrice) *10).toFixed(2)}} 折</span>
         </el-form-item>
-        <el-form-item :label="'报告费'">100.00</el-form-item>
+        <el-form-item :label="'报告费'">{{gooditem.reportFee | changePrice2money}} 元</el-form-item>
         <br>
         <el-divider content-position="left"></el-divider>
       </div>
-      <div  v-if="postForm.goods.length>1">
+      <div  v-if="postForm.goods.length">
         <el-form-item :label="'检测费(含税)：'">
-          <span class="text-danger">100.00</span>
+          <span class="text-danger">{{postForm.testFee  | changePrice2money}}</span>
         </el-form-item>
         <el-form-item :label="'报告费：'">
           <span class="text-danger">{{postForm.reportFee  | changePrice2money}}</span>
         </el-form-item>
         <el-form-item label="快递费：">
-          <el-input v-model="postForm.postage" placeholder="请输入快递费" clearable style="width: 200px"/>
+          <el-input v-model="postForm.postage" placeholder="请输入快递费" clearable style="width: 200px" @change="postageChange"/>
         </el-form-item>
         <br>
         <el-form-item :label="'总计（含税）：'">
@@ -430,39 +436,38 @@
         },
         exportList: [],//出口国
         restaurants: [],//标准类型列表
-        productlist: [],//商品列表
+        productlist: {
+          goodsId: null,
+          items: [
+            {
+              itemId: '',
+              quantity: ''
+            }
+          ],
+          reportTypes: [],//选择的报告类型
+          sampleNum: "",
+          service: '',
+          testPeriod: '',
+          testPrice: '',
+          totalPrice:0
+        },//商品列表
         productItemlist: [],//测试项目列表
         searchNamelist: [],//客户公司列表
+        checkedGoodsReportTypes: [],//选中的商品报告
         goodsInfo: {
           requestId: Math.random().toString(24)
         },
         timeout: null,
         state: '',
         postForm: {
-          reportTypes: [],//选择的报告类型
-
+          reportTypes: {},//选择的报告类型
           attn: "",//客户联系人
           clientId: 0,
           clientName: "",
           deliveryAddress: "",
           email: "",
           faxClient: "",
-          goods: [
-            {
-              goodsId: null,
-              items: [
-                {
-                  itemId: '',
-                  quantity: ''
-                }
-              ],
-              reportTypes: [],//选择的报告类型
-              sampleNum: "",
-              service: '',
-              testPeriod: '',
-              testPrice: ''
-            }
-          ],
+          goods: [],
           oriId: 0,
           payType: 1,
           postage: 0,
@@ -472,14 +477,16 @@
           totalCost: 0,
           tradeDesc: "",
           tradeName: "",
+          testFee:0,
           type: 0
         },
         customerOptions: [
-          { key: 1, value: "中文纸质档" },
-          { key: 2, value: "中文电子档" },
-          { key: 3, value: "英文电子档" },
-          { key: 4, value: "英文纸质档" }
-        ]
+          { key: 1, value: "中文纸质档" ,price:10000 },
+          { key: 2, value: "中文电子档" ,price:0},
+          { key: 3, value: "英文电子档" ,price:0},
+          { key: 4, value: "英文纸质档" ,price:10000}
+        ],
+        feeRate:0
       }
     },
     created() {
@@ -513,6 +520,9 @@
         })
         console.log(res)
         this.userList = res.data
+        const rateResp = await getRate();
+        console.log(rateResp,"getRate");
+        this.feeRate = 10/100;
       },
       fetchData: function(id) {
         getQuotationDetail(Object.assign({}, { quotationNum: id })).then(response => {
@@ -640,15 +650,20 @@
       //删除本地测试项目
       deleteRow(index, rows) {
         rows.splice(index, 1)
+        this.calTotalCost();
       },
       //确认选择商品
       handleCheckConfirm() {
         console.log(this.productlist)
-        if (this.productlist.length !== 0) {
+        if (this.productlist) {
           this.postForm.goods.push(this.productlist)
         }
         console.log(this.postForm.goods)
+        this.postForm.goods.forEach((good,idx)=>{
+          this.checkedGoodsReportTypes[idx] = [];
+        })
         this.dialogVisible = false
+        this.calTotalCost();
       },
       //确认新增商品
       handleCheckConfirm2(formName) {
@@ -721,6 +736,40 @@
         console.log(this.postForm)
         this.$refs[formName].validate(async(valid) => {
           if (valid) {
+            let isPass = true;
+            let massage = "";
+            let form = deepClone(this.postForm);
+            form.testPrice = form.testPriceShow;
+            form.goods.forEach(goodsItem=>{
+              if(!goodsItem.testPeriod){
+                isPass = false;
+                massage = "请输入商品检测周期"
+              }else if(!goodsItem.testPrice){
+                isPass = false;
+                massage = "请输入商品检测费用"
+              }else if(!goodsItem.sampleNum){
+                isPass = false;
+                massage = "请输入检测样品数量"
+              }else if(!goodsItem.reportTypes||!goodsItem.reportTypes.length){
+                isPass = false;
+                massage = "请勾选报告类型"
+              }
+            })
+            if(!isPass){
+              this.$message.error(massage);
+              return false;
+            }
+            getQuotationCreate(form).then(res=>{
+              const { data, status } = res
+              if (status == 200) {
+
+              } else {
+                this.$message.error(res.errMsg)
+              }
+            }).catch(err => {
+              this.$message.error(err);
+            })
+
 
         } else {
           console.log("error submit!!")
@@ -781,15 +830,62 @@
         return count
       },
       calTotalCost() {
-        this.postForm.totalCost = ((Number(this.tmpTotalTestCost) + Number(this.postForm.reportFee) + Number(this.postForm.courierFee)) *
-          (1 + this.postForm.taxFee / 100.0) *
-          (1 - this.postForm.discount / 100.0)).toFixed(2)
+        let total = 0;
+        this.postForm.reportFee = 0;
+        this.postForm.totalCost = 0;
+        this.postForm.testFee = 0;
+        this.postForm.goods.forEach(good=>{
+          let testFee = 0;
+            good.items?.forEach(item=>{
+              console.log(item)
+              let price = Number(item.price);
+              console.log((isNaN(price)?0:price))
+              let quantity = Number(item.quantity);
+              testFee += (isNaN(price)?0:price)* (isNaN(quantity)?0:quantity);
+            })
+            good.testPrice = testFee;
+            if(good.testPriceShow){
+              testFee = good.testPriceShow *100;
+            }
+            this.postForm.testFee +=testFee;
+            total +=testFee;
+            if(this.feeRate){
+              total = total*(1+this.feeRate);
+            }
+          let postage =0;
+          if(good.reportTypes?.length>=2){
+            postage = 10000;
+            good.reportTypes.forEach(type=>{
+              postage+= this.customerOptions[type-1].price;
+            })
+          }
+          good.reportFee =postage;
+
+          total+=postage;
+          this.postForm.reportFee +=good.reportFee;
+        });
+        this.postForm.totalCost = total;
+        if(this.postForm.postage){
+          this.postForm.totalCost +=(this.postForm.postage*100);
+        }
+
+
+        // this.postForm.totalCost = ((Number(this.tmpTotalTestCost) + Number(this.postForm.reportFee) + Number(this.postForm.courierFee)) *
+        //   (1 + this.postForm.taxFee / 100.0) *
+        //   (1 - this.postForm.discount / 100.0)).toFixed(2)
+      },
+      testInputChange(e,index){
+        e.reportTypes = this.checkedGoodsReportTypes[index];
+        this.calTotalCost();
       },
 
+      postageChange(){
+        this.calTotalCost();
+      },
       insertEvent() {
         this.dialogVisible = true
         this.productlist = []
-        this.goodsInfo = []
+        this.goodsInfo = {}
         this.creditInfo = []
       },
       // 编辑单元格事件

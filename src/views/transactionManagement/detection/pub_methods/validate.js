@@ -63,15 +63,15 @@ const methods = {
       { required: true, message: '请输入邮寄地址', trigger: 'blur' },
       { min: 2, max: 100, message: '长度在 3 到 100 个字符', trigger: 'change' }
     ],
-    testPeriod: [
-      { required: true, message: '请输入测试周期', trigger: 'blur' }
-    ],
-    sampleNum: [
-      { required: true, message: '请输入总样品量', trigger: 'blur' },
-    ],
-    testPrice: [
-      { required: true, message: '请输入检测价格', trigger: 'blur' },
-    ],
+    // testPeriod: [
+    //   { required: true, message: '请输入测试周期', trigger: 'blur' }
+    // ],
+    // sampleNum: [
+    //   { required: true, message: '请输入总样品量', trigger: 'blur' },
+    // ],
+    // testPrice: [
+    //   { required: true, message: '请输入检测价格', trigger: 'blur' },
+    // ],
     reportTypes: [
       { required: true, message: '请选择报告类型', trigger: 'change' },
     ],

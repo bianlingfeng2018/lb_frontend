@@ -36,7 +36,7 @@
         <el-table-column prop="createTime" label="创建日期" min-width="120" />
         <el-table-column prop="planDate" label="要求日期" min-width="120" />
         <el-table-column prop="reportDate" label="报告日期" min-width="120" />
-        <el-table-column fixed="status" label="状态" min-width="90">
+        <el-table-column prop="status" label="状态" min-width="90">
           <template slot-scope="scope">
             <span v-if="scope.row.status == 1">待审核</span>
             <span v-else-if="scope.row.status == 2">审核通过</span>
@@ -84,20 +84,20 @@
 
     <!--弹窗  审核-->
     <el-dialog :visible.sync="dialogVisible_check" title="审核">
-      <el-form ref="auditRulesForm" :model="creditInfo" :rules="auditRules" label-width="100px" label-position="left">
-        <el-form-item label="审核结果：" prop="email">
-          <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="0" label="审核通过" value="0" />
-            <el-option key="1" label="审核不通过" value="1" />
+      <el-form ref="creditInfo" :model="creditInfo"  status-icon :rules="auditRules" label-width="100px" label-position="left">
+        <el-form-item label="审核结果：" prop="status">
+          <el-select v-model="creditInfo.status" placeholder="请选择" style="display: block; width: 200px">
+            <el-option key="0" label="审核通过" value="2" />
+            <el-option key="1" label="审核不通过" value="3" />
           </el-select>
         </el-form-item>
-        <el-form-item label="原因：" prop="username">
-          <el-input v-model="creditInfo.username" type="textarea" :rows="2" placeholder="请输入内容" />
+        <el-form-item label="原因：" prop="reviewReason" :rules="creditInfo.checkResult == '3'?auditRules.reviewReason:[{required:false}]" >
+          <el-input v-model="creditInfo.reviewReason" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button size="small" plain @click="dialogVisible_check = false">取消</el-button>
-        <el-button type="primary" size="small" plain @click="setCreditInfo">确认</el-button>
+        <el-button type="primary" size="small" plain @click="handleCheckConfirm('creditInfo')">确认</el-button>
       </div>
     </el-dialog>
 
@@ -109,8 +109,9 @@
         </el-form-item>
         <el-form-item label="选择分类" prop="email">
           <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="0" label="审核通过" value="0" />
-            <el-option key="1" label="审核不通过" value="1" />
+            <el-option key="0" label="A类" value="0" />
+            <el-option key="1" label="B类" value="1" />
+            <el-option key="2" label="C类" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item label="测试结果" prop="username">
@@ -119,16 +120,18 @@
         </el-form-item>
         <el-form-item label="上传纸质原始记录表" prop="username">
           <el-upload
-            class="avatar-uploader"
-            :action="prefix.lb + '/api/certification/uploadFile'"
-            :on-success="handleFileSuccess"
-            :before-upload="beforeFlieUpload"
-            :show-file-list="false"
-            :multiple="false"
-            :headers="headers"
-            :limit="1" >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            ref="upload1"
+            accept=".jpg,.jpeg,.png,.JPG,.JPEG,.gif,.pdf"
+            action=""
+            :on-change="uploadChange"
+            :on-success="onSuccess"
+            :on-error="onError"
+            :limit="1"
+            :http-request="submitFile"
+            :on-exceed="exceed"
+            :file-list="multpartfile"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">
               支持jpg、jpeg、gif、png、pdf
             </div>
@@ -158,16 +161,18 @@
         </el-form-item>
         <el-form-item label="上传纸质原始记录表" prop="username">
           <el-upload
-            class="avatar-uploader"
-            :action="prefix.lb + '/api/certification/uploadFile'"
-            :on-success="handleFileSuccess"
-            :before-upload="beforeFlieUpload"
-            :show-file-list="false"
-            :multiple="false"
-            :headers="headers"
-            :limit="1" >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            ref="upload1"
+            accept=".jpg,.jpeg,.png,.JPG,.JPEG,.gif,.pdf"
+            action=""
+            :on-change="uploadChange"
+            :on-success="onSuccess"
+            :on-error="onError"
+            :limit="1"
+            :http-request="submitFile"
+            :on-exceed="exceed"
+            :file-list="multpartfile"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">
               支持jpg、jpeg、gif、png、pdf
             </div>
@@ -202,16 +207,18 @@
         </el-form-item>
         <el-form-item label="上传纸质原始记录表" prop="username">
           <el-upload
-            class="avatar-uploader"
-            :action="prefix.lb + '/api/certification/uploadFile'"
-            :on-success="handleFileSuccess"
-            :before-upload="beforeFlieUpload"
-            :show-file-list="false"
-            :multiple="false"
-            :headers="headers"
-            :limit="1" >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            ref="upload1"
+            accept=".jpg,.jpeg,.png,.JPG,.JPEG,.gif,.pdf"
+            action=""
+            :on-change="uploadChange"
+            :on-success="onSuccess"
+            :on-error="onError"
+            :limit="1"
+            :http-request="submitFile"
+            :on-exceed="exceed"
+            :file-list="multpartfile"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">
               支持jpg、jpeg、gif、png、pdf
             </div>
@@ -240,17 +247,26 @@ export default {
       dialogVisible_result: false,
       dialogVisible_result3: false,
       dialogVisible_result4: false,
+      uploadForm: new FormData(),
+      multpartfile: [],
       columnParam: [],
-      creditInfo: [],
       tableData: [],
-
       // 搜索条件
       columnParam: {
         status: '-1'// 默认全部
       },
       dialogVisible_settlement: false,
-      creditInfo: [],
       imageUrl: '',
+      creditInfo: {
+        status: '',
+        id: '',
+        reviewReason: '',
+        requestId: Math.random().toString(24),
+      },
+      auditRules: {
+        status: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
+        reviewReason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
+      },
       pagination: {
         currPage: 1,
         pageSize: 10,
@@ -296,6 +312,71 @@ export default {
       // this.dialogVisible_result3 = true
       this.dialogVisible_result4 = true
     },
+    setCreditInfo() {
+      console.log(this.uploadInfo.incomeAmt)
+      if (this.uploadInfo.incomeAmt == "") {
+        this.$message.error('请输入支付金额');
+        return
+      }
+      if (this.multpartfile.length !== 0) {
+        //文件
+        this.$refs.upload1.submit();
+        getoriUpload(this.uploadForm).then((res) => {
+          const { data, status } = res
+          if (status == 200) {
+            console.log("上传成功")
+            this.uploadInfo.billPath = res.data
+            const colParam = deepClone(this.uploadInfo)
+            getQuotationConfirm(Object.assign({}, colParam)).then((res) => {
+              const { data, status } = res
+              if (status == 200) {
+                this.dialogVisible_settlement = false
+                this.$notify({
+                  title: '成功',
+                  dangerouslyUseHTMLString: true,
+                  message: `操作成功`,
+                  type: 'success'
+                })
+                this.getListDate();
+              } else {
+                this.$message.error(res.errMsg)
+              }
+            })
+              .catch((e) => {
+                this.$message.error(e)
+              })
+              .finally(() => {
+                this.dialogVisible_settlement = false
+              })
+
+          } else {
+            this.$message.error(res.errMsg)
+          }
+        })
+      } else {
+        this.$message.error('请上传纸质原始记录表');
+      }
+    },
+    uploadChange(file, fileList) {
+      this.multpartfile = fileList;
+    },
+    onSuccess(response, file) {
+      this.$message({
+        showClose: true,
+        message: '提交成功',
+        type: 'success'
+      });
+      this.multpartfile = [];
+    },
+    onError(err, file, multpartfile) {
+      this.$message({ showClose: true, message: err, type: 'error' });
+    },
+    exceed() {
+      this.$message({ showClose: true, message: '请先删除已选中文件', type: 'error' });
+    },
+    submitFile(file) {
+      this.uploadForm.append("file", file.file);
+    },
     handleFileSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
@@ -310,9 +391,39 @@ export default {
         path: "/tm/detection/record/show/" + data.id
       })
     },
-    // 确认
-    handleEdit(data) {
+    // 审核
+    handleEdit(row) {
       this.dialogVisible_check = true
+      this.creditInfo = deepClone(row)
+    },
+    async handleCheckConfirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          getoriReview(this.creditInfo)
+            .then((res) => {
+              const { data, status } = res
+              if (status == 200) {
+                this.dialogVisible_check = false
+                this.$notify({
+                  title: '成功',
+                  dangerouslyUseHTMLString: true,
+                  message: `操作成功`,
+                  type: 'success'
+                })
+              } else {
+                this.$message.error(res.errMsg)
+              }
+            })
+            .catch((e) => {
+              this.$message.error(e)
+            })
+            .finally(() => {
+              this.dialogVisible_check = false
+            })
+        } else {
+          return false;
+        }
+      });
     },
     handleAudit(data) {
       this.$router.push({

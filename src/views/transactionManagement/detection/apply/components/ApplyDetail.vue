@@ -151,7 +151,7 @@
       <el-divider content-position="left">多种材料清单样品信息</el-divider>
 
       <div :model="gooditem" v-for="(gooditem,index) in postForm.sampleList" :key="index">
-        <el-form-item label="样品部位名称：">
+        <el-form-item label="样品部位名称："><label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;样品部位名称：</label>
           <el-input v-model="gooditem.sampleName" placeholder="请输入样品部位名称" clearable style="width: 240px"/>
         </el-form-item>
         <el-form-item label="样品型号：" >
@@ -162,11 +162,11 @@
                     style="width: 240px"/>
         </el-form-item>
         <br>
-        <el-form-item label="样品描述：">
+        <el-form-item label="取样部位描述："><label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;取样部位描述：</label>
           <el-input v-model="gooditem.sampleDescription" placeholder="请输入样品描述" clearable style="width: 480px"/>
         </el-form-item>
         <br>
-        <el-form-item label="测试项目：">
+        <el-form-item label="测试项目："><label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;测试项目：</label>
           <el-button type="text" @click="showDialog(gooditem)">选择测试项目</el-button>
         </el-form-item>
         <el-dialog
@@ -377,7 +377,13 @@
         sampleModel: "",
         sampleName: ""
       } // 数据
-      this.postForm.sampleList.push(item)
+      if (this.postForm.sampleList) {
+        this.postForm.sampleList.push(item)
+      } else {
+        this.postForm.sampleList = []
+        this.postForm.sampleList.push(item)
+      }
+
     },
     setTagsViewTitle() {
       const title = '创建申请单'
@@ -394,57 +400,78 @@
           let that = this
           console.log(this.postForm)
           const colParam = deepClone(this.postForm)
-          if(this.isEdit){
-            getApplicationModify(Object.assign({}, colParam))
-              .then((res) => {
-                const { data, status } = res
-                if (status == 200) {
-                  this.postForm.sampleList = []
-                  this.postForm = []
-                  this.$notify({
-                    title: '成功',
-                    dangerouslyUseHTMLString: true,
-                    message: `操作成功`,
-                    type: 'success'
-                  })
-                  this.$router.go(-1)
-                } else {
-                  this.$message.error(res.errMsg)
-                }
-              })
-              .catch((e) => {
-                this.$message.error(e)
-              })
-              .finally(() => {
-              })
-          }else{
-            getApplicationCreate(Object.assign({}, colParam))
-              .then((res) => {
-                const { data, status } = res
-                if (status == 200) {
-                  this.postForm.sampleList = []
-                  this.postForm = []
-                  this.$notify({
-                    title: '成功',
-                    dangerouslyUseHTMLString: true,
-                    message: `操作成功`,
-                    type: 'success'
-                  })
-                  this.$router.go(-1)
-                } else {
-                  this.$message.error(res.errMsg)
-                }
-              })
-              .catch((e) => {
-                this.$message.error(e)
-              })
-              .finally(() => {
-              })
+          let isOk = true
+          for (let i = 0; i < this.postForm.sampleList.length; i++) {
+            let item = this.postForm.sampleList[i]
+            if (item.sampleName == null || item.sampleName == '' || item.sampleName === undefined) {
+              this.$message.error('请输入样品部位名称')
+              isOk = false
+              return
+            }
+            if (item.sampleDescription == null || item.sampleDescription == '' || item.sampleDescription === undefined) {
+              this.$message.error('请输入取样部位描述')
+              isOk = false
+              return
+            }
+            if (item.itemList == null || item.itemList.length == 0) {
+              this.$message.error('请选择测试项目')
+              isOk = false
+              return
+            }
           }
-
+          if (isOk) {
+            if (this.isEdit) {
+              getApplicationModify(Object.assign({}, colParam))
+                .then((res) => {
+                  const { data, status } = res
+                  if (status == 200) {
+                    this.postForm.sampleList = []
+                    this.postForm = []
+                    this.$notify({
+                      title: '成功',
+                      dangerouslyUseHTMLString: true,
+                      message: `操作成功`,
+                      type: 'success'
+                    })
+                    this.$router.go(-1)
+                  } else {
+                    this.$message.error(res.errMsg)
+                  }
+                })
+                .catch((e) => {
+                  this.$message.error(e)
+                })
+                .finally(() => {
+                })
+            } else {
+              getApplicationCreate(Object.assign({}, colParam))
+                .then((res) => {
+                  const { data, status } = res
+                  if (status == 200) {
+                    this.postForm.sampleList = []
+                    this.postForm = []
+                    this.$notify({
+                      title: '成功',
+                      dangerouslyUseHTMLString: true,
+                      message: `操作成功`,
+                      type: 'success'
+                    })
+                    this.$router.go(-1)
+                  } else {
+                    this.$message.error(res.errMsg)
+                  }
+                })
+                .catch((e) => {
+                  this.$message.error(e)
+                })
+                .finally(() => {
+                })
+            }
+          }
         } else {
 
         }
+
       })
     },
     resetForm(formName) {

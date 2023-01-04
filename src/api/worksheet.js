@@ -82,4 +82,14 @@ export function getoriUpload(data) {
 }
 
 
+//检测报告单列表
+export function getReportList(data) {
+  return requestsh({
+    url: '/report/list',
+    method: 'post',
+    data
+  })
+}
+
+
 

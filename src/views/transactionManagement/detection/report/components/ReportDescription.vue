@@ -17,7 +17,7 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">报告日期</template>
-        {{ postForm.receivingDate | timeFormatFilter }}
+        {{ postForm.receivingDate  }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">线路负责人</template>
@@ -91,44 +91,32 @@
 
     <el-table  :data="tableData" stripe border style="width: 100%" class="mt8">
       <el-table-column type="seq" label="序号"  width="60"/>
-      <el-table-column prop="testItem" label="测试项目" min-width="120"/>
-      <el-table-column prop="unitPrice" label="单价" min-width="120"/>
-      <el-table-column prop="applicationDate" label="测试点数" min-width="120"/>
-      <el-table-column prop="quantity" label="测试金额" min-width="120"/>
-      <el-table-column prop="sampleStatus" label="样品量" min-width="120"/>
+      <el-table-column prop="testItem" label="样品编号" min-width="120"/>
+
+      <el-table-column prop="applicationDate" label="取样部位描述" min-width="120"/>
+      <el-table-column prop="quantity" label="取样部位（位置）" min-width="120"/>
     </el-table>
 
     <el-divider content-position="left">测试结果</el-divider>
-    <div v-for="(itemI, i) in postForm.testExperiment" :key="i">
-      <p>{{ itemI.title }}</p>
-      <p>{{ itemI.method }}</p>
-      <div v-for="(itemJ, j) in itemI.result" :key="j">
-        <p>{{ itemJ.resultDetail }}</p>
 
-        <vxe-table
-          :ref="getRef(i, j)"
-          border
-          show-footer
-          show-overflow
-          class="editable-footer mb10"
-          :data="itemJ.testItems"
-        >
-          <vxe-column type="seq" width="60" :title="'序号'" align="right" />
-          <vxe-column
-            v-for="(itemK, k) in itemJ.attrs"
-            :key="k"
-            :field="itemK.name"
-            :title="itemK.desc"
-            :edit-render="{}"
-          >
-            <template #edit="{ row }">
-              <vxe-input v-model="row[itemK.name]" type="text" />
-            </template>
-          </vxe-column>
-        </vxe-table>
-        <p>{{ itemJ.conclusion }}</p>
-      </div>
-    </div>
+    <el-table  :data="tableData" stripe border style="width: 100%" class="mt8"  default-expand-all
+               :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+      <el-table-column type="seq" label="序号"  width="60"/>
+      <el-table-column prop="testItem" label="测试项目" min-width="120"/>
+      <el-table-column prop="testItem" label="测试数值" min-width="120"/>
+      <el-table-column prop="testItem" label="限值" min-width="120"/>
+      <el-table-column prop="testItem" label="测试结果" min-width="120">
+        <template slot-scope="scope">
+          <span v-if="scope.row.state == 1">合格</span>
+          <span v-else-if="scope.row.state == 2" style="color:red">不合格</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="testItem" label="测试人员" min-width="120"/>
+      <el-table-column prop="testItem" label="报告时间" min-width="120"/>
+
+      <el-table-column prop="applicationDate" label="取样部位描述" min-width="120"/>
+      <el-table-column prop="quantity" label="取样部位（位置）" min-width="120"/>
+    </el-table>
 
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
@@ -137,10 +125,6 @@
 
 <script>
 import { getTestReportImages, queryTestTradeDetail } from "@/api/transaction"
-import { getToken } from "@/utils/auth"
-import config from "@/utils/config"
-import { timeFormatFilter } from "@/utils/simple-util"
-const { prefix } = config[process.env.NODE_ENV]
 import MyFlexTable from "@/views/components/MyFlexTable"
 
 export default {
@@ -148,7 +132,7 @@ export default {
     MyFlexTable
   },
   filters: {
-    timeFormatFilter
+    changePrice2money
   },
   data() {
     return {

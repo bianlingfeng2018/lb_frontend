@@ -10,7 +10,7 @@
       status-icon
       :rules="rules"
       label-width="150px">
-      <el-form-item v-if="isEdit" label="申请单编号" >{{postForm.quotationNum}}</el-form-item>
+      <el-form-item v-if="isEdit" label="申请单编号">{{postForm.applicationNum}}</el-form-item>
       <el-form-item label="申请单位">{{postForm.applicationName}}</el-form-item>
       <br>
       <el-form-item :label="'申请单位地址'" prop="comAddrCn">
@@ -20,8 +20,8 @@
       <br>
       <el-form-item :label="'报告抬头'" prop="radioStandard">
         <el-radio-group v-model="postForm.radioStandard" style="width: 240px">
-          <el-radio :label="1" class="mt20">同申请方</el-radio>
-          <el-radio :label="2" class="mt20">自定义</el-radio>
+          <el-radio label="1" class="mt20">同申请方</el-radio>
+          <el-radio label="2" class="mt20">自定义</el-radio>
         </el-radio-group>
         <el-input v-if="postForm.radioStandard == 2" v-model="postForm.reportTitleCn" placeholder="输入自定义报告抬头（中文）"
                   clearable
@@ -52,18 +52,17 @@
       <el-form-item :label="'发票抬头'" prop="invoiceTitle">
         <el-input v-model="postForm.invoiceTitle" placeholder="请输入发票抬头" clearable style="width: 240px"/>
       </el-form-item>
-      <el-form-item :label="'需要资质'">
-        <el-radio-group v-model="postForm.credentials" style="width: 240px">
-          <el-radio label="CNAS"/>
-          <el-radio label="CMA"/>
-        </el-radio-group>
+      <el-form-item label="需要资质">
+        <el-checkbox-group v-model="postForm.credentials">
+          <el-checkbox :label="item.value" v-for="(item,index) in listArr" :key="index">{{item.label}}</el-checkbox>
+        </el-checkbox-group>
       </el-form-item>
       <el-divider class="mb36" content-position="left">样品信息</el-divider>
       <el-form-item :label="'样品名称'" prop="sampleNameCn">
         <el-input v-model="postForm.sampleNameCn" placeholder="请输入样品名称" clearable style="width: 240px"/>
         <el-input v-model="postForm.sampleNameEn" placeholder="英文" clearable style="width: 240px; margin-left: 20px;"/>
       </el-form-item>
-      <el-form-item :label="'样品数量'"  prop="sampleQuantity">
+      <el-form-item :label="'样品数量'" prop="sampleQuantity">
         <el-input v-model="postForm.sampleQuantity" placeholder="请输入样品数量" clearable style="width: 240px"/>
       </el-form-item>
       <br>
@@ -97,8 +96,8 @@
         <el-input v-model="postForm.buyerCn" placeholder="请输入购买商" clearable style="width: 240px"/>
         <el-input v-model="postForm.buyerEn" placeholder="英文" clearable style="width: 240px; margin-left: 20px;"/>
       </el-form-item>
-      <el-form-item :label="'订单号'" prop="quotationNum">
-        <el-input v-model="postForm.quotationNum" placeholder="请输入订单号" clearable style="width: 240px"/>
+      <el-form-item :label="'订单号'" prop="orderNo">
+        <el-input v-model="postForm.orderNo" placeholder="请输入订单号" clearable style="width: 240px"/>
       </el-form-item>
       <br>
       <el-form-item :label="'生产商'" prop="manufacturerCn">
@@ -133,8 +132,8 @@
       <br>
       <el-form-item :label="'样品处理方式'" prop="sampleDeal">
         <el-radio-group v-model="postForm.sampleDeal">
-          <el-radio label="退还样品(邮费自付)"/>
-          <el-radio label="留样（3 个月）"/>
+          <el-radio :label="1" class="mt20">退还样品(邮费自付)</el-radio>
+          <el-radio :label="2" class="mt20">留样（3 个月）</el-radio>
         </el-radio-group>
       </el-form-item>
       <br>
@@ -152,7 +151,7 @@
       <el-divider content-position="left">多种材料清单样品信息</el-divider>
 
       <div :model="gooditem" v-for="(gooditem,index) in postForm.sampleList" :key="index">
-        <el-form-item label="样品部位名称：" prop="sampleName">
+        <el-form-item label="样品部位名称："><label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;样品部位名称：</label>
           <el-input v-model="gooditem.sampleName" placeholder="请输入样品部位名称" clearable style="width: 240px"/>
         </el-form-item>
         <el-form-item label="样品型号：" >
@@ -163,11 +162,11 @@
                     style="width: 240px"/>
         </el-form-item>
         <br>
-        <el-form-item label="样品描述：" prop="sampleDescription">
+        <el-form-item label="取样部位描述："><label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;取样部位描述：</label>
           <el-input v-model="gooditem.sampleDescription" placeholder="请输入样品描述" clearable style="width: 480px"/>
         </el-form-item>
         <br>
-        <el-form-item label="测试项目：">
+        <el-form-item label="测试项目："><label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;测试项目：</label>
           <el-button type="text" @click="showDialog(gooditem)">选择测试项目</el-button>
         </el-form-item>
         <el-dialog
@@ -233,6 +232,7 @@
 <script>
   import { changePrice2money } from "@/utils/simple-util"
   import methods from "../../pub_methods/validate"
+  import { deepClone } from "../../../../../utils"
   import {
     getApplicationDetail,
     getApplicationCreate,
@@ -243,15 +243,20 @@
   } from "@/api/organizations"
 
   export default {
+    props: {
+      isEdit: {
+        type: Boolean,
+        default: false
+      }
+    },
     filters: {
       changePrice2money
     },
     data() {
       return {
         rules: methods.applyCreateValidate,
-        isEdit: false,
-        radioStandard: "1",
         postForm: {
+          credentials: [],
           sampleList: [],
         },
         applyForm: [],
@@ -262,15 +267,17 @@
         productItemlist: [],//测试项目列表
         testOptions: [],
         testCases: [],
+        listArr:[
+          { label: "CNAS", value: 1 },
+          { label: "CMA", value: 2 },
+          ],
       }
     },
 
     created() {
       this.tempRoute = Object.assign({}, this.$route)
-      this.applyForm = this.$route.query.applyForm
-      this.postForm.applicationName = this.applyForm.clientName
-      this.postForm.comAddrCn = this.applyForm.deliveryAddress
-      console.log(this.applyForm)
+
+      console.log(this.isEdit)
       if (this.isEdit) {
         // edit
         const id = this.$route.params && this.$route.params.id
@@ -278,6 +285,11 @@
         this.fetchData(id)
       } else {
         // create
+        this.applyForm = this.$route.query.applyForm
+        this.postForm.applicationName = this.applyForm.clientName
+        this.postForm.quotationNum = this.applyForm.quotationNum
+        this.postForm.comAddrCn = this.applyForm.deliveryAddress
+        console.log(this.applyForm)
         this.setTagsViewTitle()
         this.setPageTitle()
       }
@@ -289,14 +301,15 @@
         requestId: Math.random().toString(24),
         applicationNum: id
       }
+      let that = this
       getApplicationDetail(Object.assign({}, queryParam)).then(response => {
-        console.log(response.data)
-        this.postForm = response.data
-
-        // set tagsview title
-        this.setTagsViewTitle()
-        // set page title
-        this.setPageTitle()
+        that.postForm = response.data
+        console.log(that.postForm)
+        if(that.postForm.reportAddressCn){
+          that.postForm.radioStandard="2"
+        }else{
+          that.postForm.radioStandard="1"
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -364,7 +377,13 @@
         sampleModel: "",
         sampleName: ""
       } // 数据
-      this.postForm.sampleList.push(item)
+      if (this.postForm.sampleList) {
+        this.postForm.sampleList.push(item)
+      } else {
+        this.postForm.sampleList = []
+        this.postForm.sampleList.push(item)
+      }
+
     },
     setTagsViewTitle() {
       const title = '创建申请单'
@@ -378,32 +397,87 @@
     submitForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-            console.log(this.postForm)
+          let that = this
+          console.log(this.postForm)
+          const colParam = deepClone(this.postForm)
+          let isOk = true
+          for (let i = 0; i < this.postForm.sampleList.length; i++) {
+            let item = this.postForm.sampleList[i]
+            if (item.sampleName == null || item.sampleName == '' || item.sampleName === undefined) {
+              this.$message.error('请输入样品部位名称')
+              isOk = false
+              return
+            }
+            if (item.sampleDescription == null || item.sampleDescription == '' || item.sampleDescription === undefined) {
+              this.$message.error('请输入取样部位描述')
+              isOk = false
+              return
+            }
+            if (item.itemList == null || item.itemList.length == 0) {
+              this.$message.error('请选择测试项目')
+              isOk = false
+              return
+            }
+          }
+          if (isOk) {
+            if (this.isEdit) {
+              getApplicationModify(Object.assign({}, colParam))
+                .then((res) => {
+                  const { data, status } = res
+                  if (status == 200) {
+                    this.postForm.sampleList = []
+                    this.postForm = []
+                    this.$notify({
+                      title: '成功',
+                      dangerouslyUseHTMLString: true,
+                      message: `操作成功`,
+                      type: 'success'
+                    })
+                    this.$router.go(-1)
+                  } else {
+                    this.$message.error(res.errMsg)
+                  }
+                })
+                .catch((e) => {
+                  this.$message.error(e)
+                })
+                .finally(() => {
+                })
+            } else {
+              getApplicationCreate(Object.assign({}, colParam))
+                .then((res) => {
+                  const { data, status } = res
+                  if (status == 200) {
+                    this.postForm.sampleList = []
+                    this.postForm = []
+                    this.$notify({
+                      title: '成功',
+                      dangerouslyUseHTMLString: true,
+                      message: `操作成功`,
+                      type: 'success'
+                    })
+                    this.$router.go(-1)
+                  } else {
+                    this.$message.error(res.errMsg)
+                  }
+                })
+                .catch((e) => {
+                  this.$message.error(e)
+                })
+                .finally(() => {
+                })
+            }
+          }
         } else {
 
         }
+
       })
     },
     resetForm(formName) {
+      this.postForm.sampleList = []
       this.$refs[formName].resetFields()
     },
-
-    deleteEvent(row) {
-      this.$confirm("您确定要删除该数据, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.$refs.xTable.remove(row)
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          })
-        })
-    }
   }
 }
 </script>

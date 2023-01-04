@@ -41,7 +41,7 @@
     </div>
 
     <el-table v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-      <el-table-column prop="applicationNum" label="申请单编号" min-width="120"/>
+      <el-table-column prop="applicationNum" label="申请单编号" min-width="130"/>
       <el-table-column prop="applicationName" label="申请单位名称" min-width="120"/>
       <el-table-column prop="applicationDate" label="申请日期" min-width="120"/>
       <el-table-column prop="sampleStatus" label="收样状态" min-width="120">
@@ -90,8 +90,8 @@
       <el-form ref="creditInfo" :model="creditInfo" status-icon :rules="auditRules" label-width="100px" label-position="left">
         <el-form-item label="评审结果：" prop="reviewResult">
           <el-select v-model="creditInfo.reviewResult" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="1" label="审核通过" value="1" />
-            <el-option key="2" label="审核不通过" value="2" />
+            <el-option key="1" label="评审通过" value="1" />
+            <el-option key="2" label="评审不通过" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item label="原因：" prop="reason" :rules="creditInfo.reviewResult == '2'?auditRules.reason:[{required:false}]" >
@@ -128,8 +128,8 @@
           requestId: Math.random().toString(24),
         },
         auditRules: {
-          reviewResult: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
-          reason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
+          reviewResult: [{ required: true, message: '请选择评审结果', trigger: 'change' }],
+          reason: [{ required: true, message: '请输入评审不通过原因', trigger: 'blur' }],
         },
         tableLoading: false,
         tableData: [],
@@ -178,42 +178,7 @@
         })
 
     },
-    onSearch(){
-      this.getApplicationList()
-    },
-    handleDelete(row) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.$store
-            .dispatch("transaction/deleteTestApply", { testApplyId: row.id })
-            .then((res) => {
-              const { data, success, errorMessage } = res
-              if (success) {
-                this.$message({
-                  message: data.msg,
-                  type: "success"
-                })
-                this.handleSearchTestTradeList()
-              } else {
-                this.$message.error(errorMessage)
-              }
-            })
-            .catch(() => {
-            })
-            .finally(() => {
-            })
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          })
-        })
-    },
+
     handleCheck(row) {
       this.dialogVisible_check = true
       this.creditInfo.applicationNum = row.applicationNum
@@ -270,13 +235,6 @@
         path: "/tm/detection/apply/audit/" + data.applicationNum
       })
     },
-    handleAssignCS(data) {
-      console.log('HandleAssignCS')
-      this.$router.push({
-        path: "/tm/detection/as-cs",
-        query: { testTradeId: data.testTradeId }
-      })
-    },
     handleSizeChange(val) {
       this.pagination.pageSize = val
       this.handleSearchTestTradeList()
@@ -284,7 +242,10 @@
     handleCurrentChange(val) {
       this.pagination.currPage = val
       this.handleSearchTestTradeList()
-    }
+    },
+    onSearch(){
+      this.getApplicationList()
+    },
   }
 }
 </script>

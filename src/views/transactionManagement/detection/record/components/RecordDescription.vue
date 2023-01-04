@@ -2,10 +2,10 @@
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
 
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
-    <el-divider content-position="left">工作单信息</el-divider>
+    <el-divider content-position="left">原始记录单信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
-        <template slot="label">客户</template>
+        <template slot="label">测试项目</template>
         {{ postForm.customer }}
       </el-descriptions-item>
       <el-descriptions-item>
@@ -14,88 +14,75 @@
       </el-descriptions-item>
       <br>
       <el-descriptions-item>
-        <template slot="label">开单人</template>
+        <template slot="label">测试人员</template>
         {{ postForm.employee }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">开单时间</template>
-        {{ postForm.gmtCreate | timeFormatFilter }}
+        <template slot="label">检测设备</template>
+        {{ postForm.gmtCreate}}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">加急情况</template>
+        <template slot="label">检测设备号</template>
         {{ postForm.busyStatus }}
       </el-descriptions-item>
+      <br>
       <el-descriptions-item>
-        <template slot="label">出单时间</template>
-        {{ postForm.gmtOutput | timeFormatFilter }}
+        <template slot="label">测试方法</template>
+        {{ postForm.gmtOutput }}
       </el-descriptions-item>
       <el-descriptions-item>
-        <template slot="label">是否退样</template>
+        <template slot="label">测试条件</template>
+        {{ postForm.withdraw }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">备注</template>
+        {{ postForm.withdraw }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">收样日期</template>
+        {{ postForm.withdraw }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">要求完成日期</template>
         {{ postForm.withdraw }}
       </el-descriptions-item>
     </el-descriptions>
-    <el-divider content-position="left">样品单明细</el-divider>
-
-    <div v-for="(item, index) in postForm" :key="index">
-      <el-descriptions
-        class="margin-top"
-        title=""
-        :column="3"
-        :content-style="{ 'width': '200px' }"
-        :style="{ 'margin-top': '20px' }"
-      >
-        <el-descriptions-item>
-          <template slot="label">样品部位名称</template>
-          {{ item.customer }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">样品型号</template>
-          {{ item.issuer }}
-        </el-descriptions-item>
-        <br>
-        <el-descriptions-item>
-          <template slot="label">材质</template>
-          {{ item.employee }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">取样部位描述</template>
-          {{ item.gmtCreate | timeFormatFilter }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">测试项目</template>
-          {{ item.busyStatus }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">测试方法</template>
-          {{ item.gmtOutput }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">测试条件</template>
-          {{ postForm.withdraw }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">备注</template>
-          {{ postForm.withdraw }}
-        </el-descriptions-item>
-      </el-descriptions>
-
-    </div>
-
-    <div class="mt36">样品照片</div>
-    <div class="flex-direction">
-
-      <div v-for="fit in fits" :key="fit" class="block">
-        <el-image class="img" :src="url" />
-      </div>
-    </div>
-
+    <el-divider content-position="left">测试结果</el-divider>
+    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
+      <el-descriptions-item>
+        <template slot="label">测试结果</template>
+        {{ postForm.withdraw }}
+      </el-descriptions-item>
+      <br>
+      <el-table :data="tableData" stripe border style="width: 100%" class="mt8">
+        <el-table-column type="seq" label="序号" width="60"/>
+        <el-table-column prop="testItem" label="测试子项目" min-width="120"/>
+        <el-table-column prop="unitPrice" label="CAS号" min-width="120"/>
+        <el-table-column prop="applicationDate" label="平均值" min-width="120"/>
+        <el-table-column prop="quantity" label="限值" min-width="120"/>
+        <el-table-column prop="sampleStatus" label="测试结果" min-width="120"/>
+      </el-table>
+      <br>
+      <el-descriptions-item>
+        <template slot="label">报告人</template>
+        {{ postForm.withdraw }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">报告日期</template>
+        {{ postForm.withdraw }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">纸质原始记录表</template>
+        {{ postForm.withdraw }}
+      </el-descriptions-item>
+    </el-descriptions>
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
   </div>
 </template>
 
 <script>
-import { queryTestTradeDetail } from "@/api/transaction"
+import { getoriDetail } from "@/api/worksheet"
 import { getToken } from "@/utils/auth"
 import config from "@/utils/config"
 import { getUserById } from "@/api/user"
@@ -180,59 +167,15 @@ export default {
     },
 
     fetchData: function(id) {
-      queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
+      getoriDetail(Object.assign({}, { id: id })).then(response => {
         console.log(response.data)
-        this.postForm = response.data.testWorkOrder
-        const uid1 = this.postForm.editorId
-        const uid2 = this.postForm.reviewerId
-        const uid3 = this.postForm.approverId
-        const postForm = this.tmpForm
-        getUserById({ id: uid1 })
-          .then(res => {
-            const { data } = res
-            console.log(data)
-            postForm.editor = data.nickname
-          })
-          .catch(reason => {
-            console.log(reason)
-          })
-        getUserById({ id: uid2 })
-          .then(res => {
-            const { data } = res
-            console.log(data)
-            postForm.reviewer = data.nickname
-          })
-          .catch(reason => {
-            console.log(reason)
-          })
-        getUserById({ id: uid3 })
-          .then(res => {
-            const { data } = res
-            console.log(data)
-            postForm.approver = data.nickname
-          })
-          .catch(reason => {
-            console.log(reason)
-          })
-
+        this.postForm = response.data
         // set tagsview title
-        this.setTagsViewTitle()
-
-        // set page title
-        this.setPageTitle()
       }).catch(err => {
         console.log(err)
       })
     },
-    setTagsViewTitle() {
-      const title = '查看工作单'
-      const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.tempRoute.params.id}` })
-      this.$store.dispatch('tagsView/updateVisitedView', route)
-    },
-    setPageTitle() {
-      const title = '查看工作单'
-      document.title = `${title} - ${this.tempRoute.params.id}`
-    },
+
     goBack() {
       this.$router.push({
         path: "/tm/detection/worksheet/list"

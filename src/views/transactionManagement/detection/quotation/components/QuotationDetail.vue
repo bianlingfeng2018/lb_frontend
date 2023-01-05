@@ -159,7 +159,7 @@
           <span class="text-danger">{{ postForm.reportFee | changePrice2money }}</span>
         </el-form-item>
         <el-form-item label="快递费：">
-          <el-input v-model="postForm.postage" placeholder="请输入快递费" clearable style="width: 200px" @change="postageChange" />
+          <el-input v-model="postageShow" placeholder="请输入快递费" clearable style="width: 200px" @change="postageChange" />
         </el-form-item>
         <br>
         <el-form-item :label="'总计（含税）：'">
@@ -511,7 +511,8 @@ export default {
         { key: 3, value: "英文电子档", price: 0 },
         { key: 4, value: "英文纸质档", price: 10000 }
       ],
-      feeRate: 0
+      feeRate: 0,
+      postageShow: ''
     }
   },
   created() {
@@ -555,6 +556,7 @@ export default {
       getQuotationDetail(Object.assign({}, { quotationNum: id })).then(response => {
         console.log(response.data, "fetchData===========")
         this.postForm = response.data
+        this.postageShow = this.postForm.postage / 100
         this.postForm.reportTypes = {}
         this.postForm.goods.forEach((good, id) => {
           this.checkedGoodsReportTypes[id] = good.reportTypes
@@ -800,6 +802,9 @@ export default {
           if (form.payType != 0 && form.payType != 100) {
             form.payType = this.payType
           }
+          if (form.postage) {
+            form.postage = this.postageShow * 100
+          }
           let request = getQuotationCreate
           if (this.isEdit) {
             request = editQuotationDetail
@@ -910,8 +915,8 @@ export default {
             this.postForm.reportFee += good.reportFee
       })
       this.postForm.totalCost = total
-      if (this.postForm.postage) {
-        this.postForm.totalCost += (this.postForm.postage * 100)
+      if (this.postageShow) {
+        this.postForm.totalCost += (this.postageShow * 100)
       }
 
       // this.postForm.totalCost = ((Number(this.tmpTotalTestCost) + Number(this.postForm.reportFee) + Number(this.postForm.courierFee)) *

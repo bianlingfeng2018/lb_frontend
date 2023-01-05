@@ -1,112 +1,114 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
-    <el-divider content-position="left">工作单信息</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
-      <el-descriptions-item>
-        <template slot="label">客户</template>
-        {{ postForm.clientName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">检测公司名称</template>
-        {{ postForm.comName }}
-      </el-descriptions-item>
-      <br>
-      <el-descriptions-item>
-        <template slot="label">开单人</template>
-        {{ postForm.createName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">开单时间</template>
-        {{ postForm.orderDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">加急情况</template>
-        {{ postForm.service }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">出单时间</template>
-        {{ postForm.outputDate | timeFormatFilter }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">是否退样</template>
-        {{ postForm.sampleStatus }}
-      </el-descriptions-item>
-    </el-descriptions>
-    <el-divider content-position="left">样品单明细</el-divider>
-
-    <div v-for="(item, index) in postForm.itemList" :key="index">
-
-      <el-descriptions
-        class="margin-top"
-        title=""
-        :column="3"
-        :content-style="{ 'width': '200px' }"
-        :style="{ 'margin-top': '20px' }">
+    <div id="pdfCentent">
+      <el-divider content-position="left">工作单信息</el-divider>
+      <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
         <el-descriptions-item>
-          <template slot="label">样品部位名称</template>
-          {{ item.sampleLocation }}
+          <template slot="label">客户</template>
+          {{ postForm.clientName }}
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label">样品型号</template>
-          {{ item.sampleModel }}
+          <template slot="label">检测公司名称</template>
+          {{ postForm.comName }}
         </el-descriptions-item>
         <br>
         <el-descriptions-item>
-          <template slot="label">材质</template>
-          {{ item.sampleMaterial }}
+          <template slot="label">开单人</template>
+          {{ postForm.createName }}
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label">取样部位描述</template>
-          {{ item.sampleDesc }}
+          <template slot="label">开单时间</template>
+          {{ postForm.orderDate | timeFormatFilter }}
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label">测试项目</template>
-          {{ item.testItem }}
+          <template slot="label">加急情况</template>
+          {{ postForm.service }}
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label">测试方法</template>
-          {{ item.testItemMethod }}
+          <template slot="label">出单时间</template>
+          {{ postForm.outputDate | timeFormatFilter }}
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label">测试条件</template>
-          {{ postForm.testItemCase }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">备注</template>
-          {{ postForm.remark }}
+          <template slot="label">是否退样</template>
+          {{ postForm.sampleStatus }}
         </el-descriptions-item>
       </el-descriptions>
+      <el-divider content-position="left">样品单明细</el-divider>
 
-    </div>
+      <div v-for="(item, index) in postForm.itemList" :key="index">
 
-    <div class="mt36">样品照片</div>
-    <div class="flex-direction">
+        <el-descriptions
+          class="margin-top"
+          title=""
+          :column="3"
+          :content-style="{ 'width': '200px' }"
+          :style="{ 'margin-top': '20px' }"
+        >
+          <el-descriptions-item>
+            <template slot="label">样品部位名称</template>
+            {{ item.sampleLocation }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">样品型号</template>
+            {{ item.sampleModel }}
+          </el-descriptions-item>
+          <br>
+          <el-descriptions-item>
+            <template slot="label">材质</template>
+            {{ item.sampleMaterial }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">取样部位描述</template>
+            {{ item.sampleDesc }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">测试项目</template>
+            {{ item.testItem }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">测试方法</template>
+            {{ item.testItemMethod }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">测试条件</template>
+            {{ postForm.testItemCase }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">备注</template>
+            {{ postForm.remark }}
+          </el-descriptions-item>
+        </el-descriptions>
 
-      <div v-for="item in postForm.fileNameList" :key="item" class="block">
-        <el-image class="img" :src='item'/>
+      </div>
+
+      <div class="mt36">样品照片</div>
+      <div class="flex-direction">
+
+        <div v-for="item in postForm.fileNameList" :key="item" class="block">
+          <el-image class="img" :src="item" />
+        </div>
       </div>
     </div>
-
-    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
-    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
+    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,Date.now())">下载</el-button>
+    <!--    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>-->
   </div>
 </template>
 
 <script>
-  import { getworkDetail } from "@/api/worksheet"
-  import { getToken } from "@/utils/auth"
-  import config from "@/utils/config"
-  import { getUserById } from "@/api/user"
-  import { timeFormatFilter } from "@/utils/simple-util"
-  import MyFlexTable from "@/views/components/MyFlexTable"
+import { getworkDetail } from "@/api/worksheet"
+import { getToken } from "@/utils/auth"
+import config from "@/utils/config"
+import { getUserById } from "@/api/user"
+import { timeFormatFilter } from "@/utils/simple-util"
+import MyFlexTable from "@/views/components/MyFlexTable"
 
-  const { prefix } = config[process.env.NODE_ENV]
+const { prefix } = config[process.env.NODE_ENV]
 
-  export default {
-    components: {
-      MyFlexTable
-    },
+export default {
+  components: {
+    MyFlexTable
+  },
   filters: {
     timeFormatFilter
   },
@@ -118,8 +120,9 @@
       downloadParam: {
         testTradeId: -1
       },
+      htmlTitle: 0,
       postForm: {
-      },
+      }
     }
   },
   created() {
@@ -127,6 +130,7 @@
     const id = this.$route.params && this.$route.params.id
     this.fetchData(id)
     this.downloadParam.testTradeId = this.tempRoute.params.id
+    this.htmlTitle = `工作单-${id}-`
   },
   methods: {
     handlePreview() {
@@ -174,8 +178,8 @@
     fetchData: function(id) {
       getworkDetail(Object.assign({}, { id: id })).then(response => {
         this.postForm = response.data
-        if(this.postForm.fileNameList.length>0){
-          let newList = [];
+        if (this.postForm.fileNameList.length > 0) {
+          const newList = []
           this.postForm.fileNameList.forEach(item => {
             item = prefix.lb + '/workOrder/download?' + item
             newList.push(item)
@@ -199,7 +203,7 @@
     setPageTitle() {
       const title = '查看工作单'
       document.title = `${title} - ${this.tempRoute.params.id}`
-    },
+    }
   }
 }
 </script>

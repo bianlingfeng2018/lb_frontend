@@ -76,80 +76,80 @@
                   <el-table-column prop="sampleQty" label="样品数量" min-width="120" />
                 </el-table>
 
-              <el-form-item label="测试周期">{{ goodsItem.testPeriod }}个工作日</el-form-item>
-              <el-form-item label="总样品量">{{ goodsItem.sampleNum }}个</el-form-item>
-              <el-form-item label="服务类型">
-                <span v-if="goodsItem.service==0">标准</span>
-                <span v-else-if="goodsItem.service==1">加急</span>
-                <span v-else-if="goodsItem.service==2">特急</span>
-              </el-form-item>
-              <br>
-              <el-form-item label="报告类型">{{getReports(goodsItem.reportTypes)}}</el-form-item>
-              <el-form-item label="报告费">{{ goodsItem.reportAmt | changePrice2money }}</el-form-item>
-              <el-form-item label="检测价格（不含税）">{{ goodsItem.amount | changePrice2money }}</el-form-item>
-              <br>
-              <!--加测项-->
-              <div v-for="(alistItem,index) in goodsItem.alist" v-if="goodsItem.alist" :key="index" :model="alistItem">
-                <el-divider content-position="left">加测项 报价单编号：<el-button type="text" @click="handleTo(alistItem.quotationNum)">{{ alistItem.quotationNum }}</el-button></el-divider>
-                <el-table :data="alistItem.items" stripe border style="width: 100%" class="mt8">
-                  <el-table-column prop="itemId" label="序号" width="60" />
-                  <el-table-column prop="testItem" label="测试项目" min-width="120" />
-                  <el-table-column prop="unitPrice" label="单价" min-width="120">
-                    <template slot-scope="scope">
-                      <span>{{ scope.row.unitPrice | changePrice2money }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="quantity" label="测试点数" min-width="120" />
-                  <el-table-column prop="amountRmb" label="测试金额" min-width="120">
-                    <template slot-scope="scope">
-                      <span>{{ scope.row.amountRmb | changePrice2money }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="sampleQty" label="样品数量" min-width="120" />
-                </el-table>
-                <el-form-item label="测试周期">{{ alistItem.testPeriod }}个工作日</el-form-item>
-                <el-form-item label="总样品量">{{ alistItem.sampleNum }}个</el-form-item>
-                <el-form-item label="价格">{{ alistItem.totalCost | changePrice2money }}</el-form-item>
+                <el-form-item label="测试周期">{{ goodsItem.testPeriod }}个工作日</el-form-item>
+                <el-form-item label="总样品量">{{ goodsItem.sampleNum }}个</el-form-item>
+                <el-form-item label="服务类型">
+                  <span v-if="goodsItem.service==0">标准</span>
+                  <span v-else-if="goodsItem.service==1">加急</span>
+                  <span v-else-if="goodsItem.service==2">特急</span>
+                </el-form-item>
                 <br>
-              </div>
+                <el-form-item label="报告类型">{{ getReports(goodsItem.reportTypes) }}</el-form-item>
+                <el-form-item label="报告费">{{ goodsItem.reportAmt | changePrice2money }}</el-form-item>
+                <el-form-item label="检测价格（不含税）">{{ goodsItem.amount | changePrice2money }}</el-form-item>
+                <br>
+                <!--加测项-->
+                <div v-for="(alistItem,index) in goodsItem.alist" v-if="goodsItem.alist" :key="index" :model="alistItem">
+                  <el-divider content-position="left">加测项 报价单编号：<el-button type="text" @click="handleTo(alistItem.quotationNum)">{{ alistItem.quotationNum }}</el-button></el-divider>
+                  <el-table :data="alistItem.items" stripe border style="width: 100%" class="mt8">
+                    <el-table-column prop="itemId" label="序号" width="60" />
+                    <el-table-column prop="testItem" label="测试项目" min-width="120" />
+                    <el-table-column prop="unitPrice" label="单价" min-width="120">
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.unitPrice | changePrice2money }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="quantity" label="测试点数" min-width="120" />
+                    <el-table-column prop="amountRmb" label="测试金额" min-width="120">
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.amountRmb | changePrice2money }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="sampleQty" label="样品数量" min-width="120" />
+                  </el-table>
+                  <el-form-item label="测试周期">{{ alistItem.testPeriod }}个工作日</el-form-item>
+                  <el-form-item label="总样品量">{{ alistItem.sampleNum }}个</el-form-item>
+                  <el-form-item label="价格">{{ alistItem.totalCost | changePrice2money }}</el-form-item>
+                  <br>
+                </div>
 
-              <!--复测项-->
-              <div v-for="(rlistItem,index) in goodsItem.rlist" v-if="goodsItem.rlist" :key="index" :model="rlistItem">
-                <el-divider content-position="left">复测项 报价单编号：<el-button type="text" @click="handleTo(rlistItem.quotationNum)">{{ rlistItem.quotationNum }}</el-button></el-divider>
-                <el-table :data="rlistItem.items" stripe border style="width: 100%" class="mt8">
-                  <el-table-column prop="itemId" label="序号" width="60" />
-                  <el-table-column prop="testItem" label="测试项目" min-width="120" />
-                  <el-table-column prop="unitPrice" label="单价" min-width="120">
-                    <template slot-scope="scope">
-                      <span>{{ scope.row.unitPrice | changePrice2money }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="quantity" label="测试点数" min-width="120" />
-                  <el-table-column prop="amountRmb" label="测试金额" min-width="120">
-                    <template slot-scope="scope">
-                      <span>{{ scope.row.amountRmb | changePrice2money }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="sampleQty" label="样品数量" min-width="120" />
-                </el-table>
-                <el-form-item label="测试周期">{{ rlistItem.testPeriod }}个工作日</el-form-item>
-                <el-form-item label="总样品量">{{ rlistItem.sampleNum }}个</el-form-item>
-                <el-form-item label="价格">{{ rlistItem.totalCost | changePrice2money }}</el-form-item>
+                <!--复测项-->
+                <div v-for="(rlistItem,index) in goodsItem.rlist" v-if="goodsItem.rlist" :key="index" :model="rlistItem">
+                  <el-divider content-position="left">复测项 报价单编号：<el-button type="text" @click="handleTo(rlistItem.quotationNum)">{{ rlistItem.quotationNum }}</el-button></el-divider>
+                  <el-table :data="rlistItem.items" stripe border style="width: 100%" class="mt8">
+                    <el-table-column prop="itemId" label="序号" width="60" />
+                    <el-table-column prop="testItem" label="测试项目" min-width="120" />
+                    <el-table-column prop="unitPrice" label="单价" min-width="120">
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.unitPrice | changePrice2money }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="quantity" label="测试点数" min-width="120" />
+                    <el-table-column prop="amountRmb" label="测试金额" min-width="120">
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.amountRmb | changePrice2money }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="sampleQty" label="样品数量" min-width="120" />
+                  </el-table>
+                  <el-form-item label="测试周期">{{ rlistItem.testPeriod }}个工作日</el-form-item>
+                  <el-form-item label="总样品量">{{ rlistItem.sampleNum }}个</el-form-item>
+                  <el-form-item label="价格">{{ rlistItem.totalCost | changePrice2money }}</el-form-item>
+                  <br>
+                </div>
+                <el-form-item :label="'检测费(含税)：'">
+                  <span class="text-danger">{{ total | changePrice2money }}</span>
+                </el-form-item>
+                <el-form-item :label="'报告费：'">
+                  <span class="text-danger">{{ postForm.reportFee | changePrice2money }}</span>
+                </el-form-item>
+                <el-form-item label="快递费：">
+                  <span class="text-danger">{{ postForm.postage | changePrice2money }}</span>
+                </el-form-item>
                 <br>
-              </div>
-              <el-form-item :label="'检测费(含税)：'">
-                <span class="text-danger">{{ total | changePrice2money }}</span>
-              </el-form-item>
-              <el-form-item :label="'报告费：'">
-                <span class="text-danger">{{ postForm.reportFee | changePrice2money }}</span>
-              </el-form-item>
-              <el-form-item label="快递费：">
-                <span class="text-danger">{{ postForm.postage | changePrice2money }}</span>
-              </el-form-item>
-              <br>
-              <el-form-item :label="'总计（含税）：'">
-                <span class="text-danger">{{ postForm.totalCost | changePrice2money }}</span>
-              </el-form-item>
+                <el-form-item :label="'总计（含税）：'">
+                  <span class="text-danger">{{ postForm.totalCost | changePrice2money }}</span>
+                </el-form-item>
 
               </el-form>
               <div class="right">
@@ -272,7 +272,7 @@
       </el-tabs>
     </div>
     <br>
-    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,nowTime)">下载</el-button>
+    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,Date.now())">下载</el-button>
     <!--    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>-->
 
     <!--弹窗  加测、复测-->
@@ -294,7 +294,8 @@
             width="50%"
             title="选择测试项目"
             :visible.sync="innerDialogVisible"
-            append-to-body >
+            append-to-body
+          >
             <el-checkbox-group v-model="checkList">
               <el-checkbox v-for="date in productItemlist" :key="date.id" :label="date">{{ date.name }} {{ date.price |
                 changePrice2money }}
@@ -315,7 +316,8 @@
             :export-config="{}"
             :data="gooditem.items"
             :edit-config="{ trigger: 'click', mode: 'row' }"
-            @edit-closed="editClose" >
+            @edit-closed="editClose"
+          >
             <vxe-column field="id" width="60" :title="'序号'" align="right" />
             <vxe-column field="name" :title="'测试项目'" />
             <vxe-column field="price" :title="'单价'">
@@ -464,7 +466,8 @@ export default {
         { key: 4, value: "英文纸质档", price: 10000 }
       ],
       feeRate: 0,
-      total: 0
+      total: 0,
+      htmlTitle: 0
     }
   },
   created() {
@@ -474,6 +477,7 @@ export default {
     this.fetchData(id)
     this.getTableData(id)
     this.orgQuotationNum = id
+    this.htmlTitle = `报价单-${id}-`
     this.downloadParam.testTradeId = this.tempRoute.params.id
   },
   methods: {
@@ -504,17 +508,17 @@ export default {
       console.log(rateResp, "getRate")
       this.feeRate = 10 / 100
     },
-    getReports(arr){
-      let testStr = "";
-      arr.forEach(arritem =>{
+    getReports(arr) {
+      let testStr = ""
+      arr.forEach(arritem => {
         this.customerOptions.map(item => {
-          if(item.key == arritem){
-            testStr += item.value + '+';
+          if (item.key == arritem) {
+            testStr += item.value + '+'
           }
         })
-        }
+      }
       )
-      return testStr.substring(0,testStr.length-1);
+      return testStr.substring(0, testStr.length - 1)
     },
     fetchData: function(id) {
       const queryParam = {

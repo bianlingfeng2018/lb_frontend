@@ -3,85 +3,87 @@
 
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
     <div v-if="postForm.status == 3" class="mt20" style="background-color: #F56C6C;padding:10px">
-      <span class="mt20 mb20 ml16 ">原始记录单被{{postForm.reviewName}}评审不通过，不通过原因：{{postForm.reviewReason}}(评审人：{{postForm.reviewName
-        }} 评审时间：{{postForm.reviewTime}})</span>
+      <span class="mt20 mb20 ml16 ">原始记录单被{{ postForm.reviewName }}评审不通过，不通过原因：{{ postForm.reviewReason }}(评审人：{{ postForm.reviewName
+      }} 评审时间：{{ postForm.reviewTime }})</span>
     </div>
-    <el-divider content-position="left">原始记录单信息</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
-      <el-descriptions-item>
-        <template slot="label">测试项目</template>
-        {{ postForm.testItem }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">检测公司名称</template>
-        {{ postForm.testom }}
-      </el-descriptions-item>
-      <br>
-      <el-descriptions-item>
-        <template slot="label">测试人员</template>
-        {{ postForm.testPerson }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">检测设备</template>
-        {{ postForm.testDeviceName}}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">检测设备号</template>
-        {{ postForm.testDeviceNo }}
-      </el-descriptions-item>
-      <br>
-      <el-descriptions-item>
-        <template slot="label">测试方法</template>
-        {{ postForm.testMethod }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">测试条件</template>
-        {{ postForm.testCase }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">备注</template>
-        {{ postForm.remark }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">收样日期</template>
-        {{ postForm.sampleDate }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">要求完成日期</template>
-        {{ postForm.planDate }}
-      </el-descriptions-item>
-    </el-descriptions>
-    <el-divider content-position="left">测试结果</el-divider>
-    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
-      <el-descriptions-item>
-        <template slot="label">测试结果</template>
-        {{ postForm.testResult }}
-      </el-descriptions-item>
-      <br>
-      <el-table :data="postForm.subList" stripe border style="width: 100%" class="mt8">
-        <el-table-column type="seq" label="序号" width="60"/>
-        <el-table-column prop="subTestItem" label="测试子项目" min-width="120"/>
-        <el-table-column prop="cas" label="CAS号" min-width="120"/>
-        <el-table-column prop="avgValue" label="平均值" min-width="120"/>
-        <el-table-column prop="limitValue" label="限值" min-width="120"/>
-        <el-table-column prop="testResult" label="测试结果" min-width="120"/>
-      </el-table>
-      <br>
-      <el-descriptions-item>
-        <template slot="label">报告人</template>
-        {{ postForm.reportPerson }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">报告日期</template>
-        {{ postForm.reportDate }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">纸质原始记录表</template>
-        {{ postForm.withdraw }}
-      </el-descriptions-item>
-    </el-descriptions>
-    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
-    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
+    <div id="pdfCentent">
+      <el-divider content-position="left">原始记录单信息</el-divider>
+      <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
+        <el-descriptions-item>
+          <template slot="label">测试项目</template>
+          {{ postForm.testItem }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">检测公司名称</template>
+          {{ postForm.testom }}
+        </el-descriptions-item>
+        <br>
+        <el-descriptions-item>
+          <template slot="label">测试人员</template>
+          {{ postForm.testPerson }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">检测设备</template>
+          {{ postForm.testDeviceName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">检测设备号</template>
+          {{ postForm.testDeviceNo }}
+        </el-descriptions-item>
+        <br>
+        <el-descriptions-item>
+          <template slot="label">测试方法</template>
+          {{ postForm.testMethod }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">测试条件</template>
+          {{ postForm.testCase }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">备注</template>
+          {{ postForm.remark }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">收样日期</template>
+          {{ postForm.sampleDate }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">要求完成日期</template>
+          {{ postForm.planDate }}
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-divider content-position="left">测试结果</el-divider>
+      <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
+        <el-descriptions-item>
+          <template slot="label">测试结果</template>
+          {{ postForm.testResult }}
+        </el-descriptions-item>
+        <br>
+        <el-table :data="postForm.subList" stripe border style="width: 100%" class="mt8">
+          <el-table-column type="seq" label="序号" width="60" />
+          <el-table-column prop="subTestItem" label="测试子项目" min-width="120" />
+          <el-table-column prop="cas" label="CAS号" min-width="120" />
+          <el-table-column prop="avgValue" label="平均值" min-width="120" />
+          <el-table-column prop="limitValue" label="限值" min-width="120" />
+          <el-table-column prop="testResult" label="测试结果" min-width="120" />
+        </el-table>
+        <br>
+        <el-descriptions-item>
+          <template slot="label">报告人</template>
+          {{ postForm.reportPerson }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">报告日期</template>
+          {{ postForm.reportDate }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">纸质原始记录表</template>
+          {{ postForm.withdraw }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </div>
+    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,Date.now())">下载</el-button>
+    <!--    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>-->
   </div>
 </template>
 
@@ -117,6 +119,7 @@ export default {
         reviewer: '',
         approver: ''
       },
+      htmlTitle: 0,
       mergeFooterItems: [{ row: 0, col: 0, rowspan: 0, colspan: 8 }]
     }
   },
@@ -125,6 +128,7 @@ export default {
     const id = this.$route.params && this.$route.params.id
     this.fetchData(id)
     this.downloadParam.testTradeId = this.tempRoute.params.id
+    this.htmlTitle = `原始记录单-${id}-`
   },
   methods: {
     handlePreview() {

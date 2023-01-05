@@ -560,7 +560,7 @@ export default {
           this.checkedGoodsReportTypes[id] = good.reportTypes
           this.payType = good.payType
           good.items.forEach((item, idx) => {
-            item.id = item.itemId;
+            item.id = item.itemId
             item.name = item.testItem
             item.price = item.unitPrice
             item.price2 = item.amountRmb
@@ -807,7 +807,6 @@ export default {
           request(form).then(res => {
             const { data, status } = res
             if (status == 200) {
-              this.resetForm(formName)
               this.$store.dispatch('tagsView/delView', this.$route)
               this.$router.go(-1)
             } else {

@@ -31,6 +31,14 @@ export function updateOrg(data) {
     data
   })
 }
+
+export function allCompany(data) {
+  return requestsh({
+    url: '/org/allCompany',
+    method: 'post',
+    data
+  })
+}
 // 获取报价单列表
 export function getQuotationList(data) {
   return requestsh({

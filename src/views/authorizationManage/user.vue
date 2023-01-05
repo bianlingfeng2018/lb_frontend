@@ -118,6 +118,7 @@ import config from "@/utils/config"
 import { deepClone } from "@/utils"
 import { addUser, deleteUser, getEmployeeByPage, updateUser } from "@/api/user"
 import { getRoles } from "@/api/role"
+import { allCompany } from "@/api/organizations"
 import methods from "@/views/transactionManagement/detection/pub_methods/validate"
 
 const { prefix } = config[process.env.NODE_ENV]
@@ -161,7 +162,7 @@ export default {
       },
       userList: [],
       rolesList: [],
-      comList: ["立标广州", "立标宁波", "立标上海"],
+      comList: [],
       pagination: {
         currPage: 1,
         pageSize: 10,
@@ -172,6 +173,16 @@ export default {
   created() {
     this.getUsers()
     this.getRoles()
+    allCompany({}).then(res => {
+      console.log(res)
+      const { data, status } = res
+      if (status == 200) {
+        this.comList = []
+        data.forEach(item => {
+          this.comList.push(item.comName)
+        })
+      }
+    })
   },
   methods: {
     handleSizeChange(val) {

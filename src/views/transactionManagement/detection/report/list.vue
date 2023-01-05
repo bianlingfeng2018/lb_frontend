@@ -102,8 +102,7 @@
   import { deepClone } from "../../../../utils"
   import {
     getReportList,
-    getServiceList,
-  } from "@/api/organizations"
+  } from "@/api/worksheet"
 
   export default {
 
@@ -150,6 +149,7 @@
         getReportList(Object.assign({}, queryParam, colParam))
           .then((res) => {
             console.log(res)
+            this.tableLoading = false
             const { data, status } = res
             if (status == 200) {
               this.tableData = data.dataList
@@ -164,10 +164,15 @@
             this.tableLoading = false
           })
       },
+      handleClick(tab) {
+        this.columnParam.reportStatus = tab.name
+        this.pagination.currPage = 1
+        this.handleSearchTestTradeList()
+      },
       // 查看详情
       handleShow(data) {
         this.$router.push({
-          path: "/tm/detection/report/show/" + data.testTradeId
+          path: "/tm/detection/report/show/" + data.id
         })
       },
       // 审核

@@ -273,7 +273,8 @@ const transactionRouter = {
             },
             {
               path: 'show/:id',
-              component: () => import('@/views/transactionManagement/detection/report/show.vue'),
+              // component: () => import('@/views/transactionManagement/detection/report/show.vue'),
+              redirect: '/tm/detection-report-show/:id',
               name: 'Show',
               meta: { title: '查看报告单', noCache: true, role: ['/tm/detection/report/show/:id'] },
               hidden: true
@@ -421,7 +422,14 @@ const transactionRouter = {
       path: 'detection-report-edit/:id',
       component: () => import('@/views/transactionManagement/detection/report/edit.vue'),
       name: 'ReportEdit',
-      meta: { title: '编辑报告单', noCache: false, role: ['/tm/detection-report-edit/:id'] },
+      meta: { title: '编辑检测报告单', noCache: false, role: ['/tm/detection-report-edit/:id'] },
+      hidden: true
+    },
+    {
+      path: 'detection-report-show/:id',
+      component: () => import('@/views/transactionManagement/detection/report/show.vue'),
+      name: 'ReportShow',
+      meta: { title: '查看检测报告单', noCache: false, role: ['/tm/detection-report-edit/:id'] },
       hidden: true
     }
     // ************* 映射到二级菜单结束 *************

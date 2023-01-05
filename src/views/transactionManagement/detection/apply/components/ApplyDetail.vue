@@ -168,14 +168,24 @@
       </el-form-item>
       <br>
       <el-form-item :label="'测试项目及要求'" prop="applicantSigCop">
-        <el-table :data="applyForm.goods" stripe border class="mt8">
-          <el-table-column align="center" label="序号" width="100" type="index" />
-          <el-table-column prop="client" label="测试项目" min-width="120" />
-          <el-table-column prop="reportType" label="单价" min-width="120" />
-          <el-table-column prop="reportFee" label="测试点数" min-width="100" />
-          <el-table-column prop="reportFee" label="测试金额" min-width="100" />
-          <el-table-column prop="reportFee" label="样品数量" min-width="100" />
-        </el-table>
+        <div  v-for="goodsItem in applyForm.goods">
+          <el-table :data="goodsItem.items" stripe border class="mt8">
+            <el-table-column prop="itemId" label="序号" width="100" type="index"/>
+            <el-table-column prop="testItem" label="测试项目" min-width="120"/>
+            <el-table-column prop="unitPrice" label="单价" min-width="120">
+              <template slot-scope="scope">
+                <span>{{ scope.row.unitPrice | changePrice2money }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="quantity" label="测试点数" min-width="100"/>
+            <el-table-column prop="amountRmb" label="测试金额" min-width="100">
+              <template slot-scope="scope">
+                <span>{{ scope.row.amountRmb | changePrice2money }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="sampleQty" label="样品数量" min-width="100"/>
+          </el-table>
+        </div>
       </el-form-item>
 
       <el-divider content-position="left">多种材料清单样品信息</el-divider>

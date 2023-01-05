@@ -845,7 +845,6 @@ export default {
       // }
     },
     resetForm(formName) {
-      this.postForm.testQuotationItemList = []
       this.$refs[formName].resetFields()
     },
     goBack() {

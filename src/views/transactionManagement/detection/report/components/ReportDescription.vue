@@ -53,7 +53,7 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">商标</template>
-        {{ postForm.testRemark.test }}
+        {{ postForm.testRemark }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">批次</template>
@@ -73,7 +73,7 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">订单号</template>
-        {{ postForm.testRemark.test }}
+        {{ postForm.testRemark }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">生产商</template>
@@ -81,7 +81,7 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">出口地</template>
-        {{ postForm.testRemark.test }}
+        {{ postForm.testRemark }}
       </el-descriptions-item>
     </el-descriptions>
     <p class="remark-content">
@@ -113,9 +113,6 @@
       </el-table-column>
       <el-table-column prop="testItem" label="测试人员" min-width="120"/>
       <el-table-column prop="testItem" label="报告时间" min-width="120"/>
-
-      <el-table-column prop="applicationDate" label="取样部位描述" min-width="120"/>
-      <el-table-column prop="quantity" label="取样部位（位置）" min-width="120"/>
     </el-table>
 
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
@@ -124,13 +121,11 @@
 </template>
 
 <script>
+  import { changePrice2money } from "@/utils/simple-util"
 import { getTestReportImages, queryTestTradeDetail } from "@/api/transaction"
-import MyFlexTable from "@/views/components/MyFlexTable"
 
 export default {
-  components: {
-    MyFlexTable
-  },
+
   filters: {
     changePrice2money
   },
@@ -141,129 +136,8 @@ export default {
         testTradeId: -1
       },
       postForm: {
-        reportNum: "XJ1234",
-        client: "新疆乐远儿童玩具",
-        sampleName: "儿童玩具",
-        address: "新疆乌鲁木齐人民路298号",
-        sampleModel: "3-5岁",
-        brand: "乐远",
-        supplier: "新疆欢乐世界儿童玩具制造有限公司",
-        orderNum: "123",
-        buyer: "新疆乐远",
-        producers: "新疆欢乐世界",
-        exportPlace: "美国",
-        producingCountry: "中国",
-        testTradeId: "5",
-        receivingDate: "2022-01-01 12:00:00",
-        testStartDate: "2022-03-01 12:00:00",
-        testEndDate: "2022-04-01 12:00:00",
-        testPeriod: "",
-        sampleDesc: [
-          {
-            sampleNum: "01",
-            sampleDes: "样品描述xxx",
-            sampleLocation: "恐龙玩具"
-          }
-        ],
-        testExperiment: [
-          {
-            title: "1.邻苯二甲酸盐",
-            method: "EN 14372: 2004",
-            result: [
-              {
-                resultDetail:
-                  "以下3种邻苯二甲酸盐（或酯）针对所有产品材料包括可放入口中的儿童玩具或儿童护理产品（豁免产品材料除外）",
-                attrs: [
-                  { name: "testItem", "desc": "检测项目\nReport No" },
-                  { name: "CAS_num", "desc": "CAS编号\nProduct Description" },
-                  { name: "unit", "desc": "单位\nStyle/Item No" },
-                  { name: "threshold", "desc": "方法检出限\nMaterial/Color" },
-                  { name: "limit", "desc": "限值\nMaterial/Color" },
-                  { name: "result", "desc": "01\nMaterial/Color" }
-                ],
-                testItems: [
-                  {
-                    testItem: "邻苯二甲酸二异丁酯(DIBP)",
-                    // eslint-disable-next-line camelcase
-                    CAS_num: "84-69-5",
-                    unit: "mg/kg",
-                    threshold: "30",
-                    limit: "1000",
-                    result: "未检出"
-                  },
-                  {
-                    testItem: "邻苯二甲酸二丁酯(DBP)",
-                    // eslint-disable-next-line camelcase
-                    CAS_num: "84-74-2",
-                    unit: "mg/kg",
-                    threshold: "30",
-                    limit: "1000",
-                    result: "未检出"
-                  },
-                  {
-                    testItem: "邻苯二甲酸丁基苄基酯(BBP)",
-                    // eslint-disable-next-line camelcase
-                    CAS_num: "85-68-7",
-                    unit: "mg/kg",
-                    threshold: "30",
-                    limit: "1000",
-                    result: "未检出"
-                  }
-                ],
-                conclusion: "合格"
-              },
-              {
-                resultDetail:
-                  "以下2种邻苯二甲酸盐适用于可放入口中的儿童玩具和儿童护理产品。",
-                attrs: [
-                  { name: "testItem", "desc": "检测项目\nReport No" },
-                  { name: "CAS_num", "desc": "CAS编号\nProduct Description" },
-                  { name: "unit", "desc": "单位\nStyle/Item No" },
-                  { name: "threshold", "desc": "方法检出限\nMaterial/Color" },
-                  { name: "limit", "desc": "限值\nMaterial/Color" },
-                  { name: "result", "desc": "01\nMaterial/Color" }
-                ],
-                testItems: [
-                  {
-                    testItem: "邻苯二甲酸二正辛酯(DNOP)",
-                    // eslint-disable-next-line camelcase
-                    CAS_num: "117-84-0",
-                    unit: "mg/kg",
-                    threshold: "30",
-                    limit: "-",
-                    result: "未检出"
-                  },
-                  {
-                    testItem: "",
-                    // eslint-disable-next-line camelcase
-                    CAS_num: "28553-12-0",
-                    unit: "mg/kg",
-                    threshold: "30",
-                    limit: "-",
-                    result: "未检出"
-                  }
-                ],
-                conclusion: "合格"
-              }
-            ]
-          }
-        ],
-        testRemark: {
-          test: "1.0.1% =1000mg/kg；未检出指结果小于方法检出限"
-        },
-        flexObj: [],
-        remark: "本报告仅对收到的样品负责。\n" +
-          "\n" +
-          "本报告所包含的测试结果仅供客户参考。（盖章删）\n" +
-          "\n" +
-          "本报告无检测报告专用章、审核人、批准人签名无效。\n" +
-          "\n" +
-          "本报告不得作为商业广告使用。\n" +
-          "\n" +
-          "未经本公司书面统一，不得部分复制报告（全部复制除外）。任何未经授权的修改、伪造本文件的内容或外观都是非法的，违法者将被依法诉讼"
       },
       imgList: [],
-      mergeFooterItems: [{ row: 0, col: 0, rowspan: 0, colspan: 8 }]
     }
   },
   created() {
@@ -353,24 +227,11 @@ export default {
         console.log(response.data)
         this.postForm = response.data.testReport
 
-        // set tagsview title
-        this.setTagsViewTitle()
-
-        // set page title
-        this.setPageTitle()
       }).catch(err => {
         console.log(err)
       })
     },
-    setTagsViewTitle() {
-      const title = '查看检测报告单'
-      const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.tempRoute.params.id}` })
-      this.$store.dispatch('tagsView/updateVisitedView', route)
-    },
-    setPageTitle() {
-      const title = '查看检测报告单'
-      document.title = `${title} - ${this.tempRoute.params.id}`
-    },
+
     goBack() {
       this.$router.push({
         path: "/tm/detection/report/list"

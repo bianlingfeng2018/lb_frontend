@@ -1,8 +1,9 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
-    <div class="mt20" style="background-color: #F56C6C;padding:10px">
-      <span class="mt20 mb20 ml16 ">申请单单被XX评审不通过，评审不通过原因：XXXXXXXXXXXXXXXXXXXXXXXXX(评审人：XXX 评审时间：2022-12-2 14:51)</span>
+    <div v-if="postForm.status == 3" class="mt20" style="background-color: #F56C6C;padding:10px">
+      <span class="mt20 mb20 ml16 ">申请单被{{postForm.reviewName}}评审不通过，不通过原因：{{postForm.reviewReason}}(评审人：{{postForm.reviewName
+        }} 评审时间：{{postForm.reviewTime}})</span>
     </div>
     <el-divider content-position="left">申请信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">

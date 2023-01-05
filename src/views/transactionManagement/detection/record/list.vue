@@ -20,8 +20,8 @@
           <el-tab-pane label="审核通过" name="2" />
           <el-tab-pane label="审核不通过" name="3" />
         </el-tabs>
-<!--        <el-button type="primary" plain size="small" style="position: absolute;right:10px;top:5px;" @click="handleUpload">分配-->
-<!--        </el-button>-->
+        <el-button type="primary" plain size="small" style="position: absolute;right:10px;top:5px;" @click="handleUpload">分配
+        </el-button>
       </div>
 
       <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">

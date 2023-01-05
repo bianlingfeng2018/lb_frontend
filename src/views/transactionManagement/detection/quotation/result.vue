@@ -78,7 +78,7 @@
           <span v-else-if="goodsItem.service==2">特急</span>
         </el-form-item>
         <br>
-        <el-form-item label="报告类型">{{ goodsItem.reportTypes }}</el-form-item>
+        <el-form-item label="报告类型">{{getReports(goodsItem.reportTypes)}}</el-form-item>
         <el-form-item label="报告费">{{ goodsItem.reportAmt | changePrice2money }}</el-form-item>
         <el-form-item label="检测价格（不含税）">{{ goodsItem.amount | changePrice2money }}</el-form-item>
         <br>
@@ -136,7 +136,19 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-    }
+    },
+    getReports(arr){
+      let testStr = "";
+      arr.forEach(arritem =>{
+          this.customerOptions.map(item => {
+            if(item.key == arritem){
+              testStr += item.value + '+';
+            }
+          })
+        }
+      )
+      return testStr.substring(0,testStr.length-1);
+    },
   }
 
 }

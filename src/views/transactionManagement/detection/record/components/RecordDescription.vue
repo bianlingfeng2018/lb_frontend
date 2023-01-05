@@ -2,74 +2,78 @@
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
 
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
+    <div v-if="postForm.status == 3" class="mt20" style="background-color: #F56C6C;padding:10px">
+      <span class="mt20 mb20 ml16 ">原始记录单被{{postForm.reviewName}}评审不通过，不通过原因：{{postForm.reviewReason}}(评审人：{{postForm.reviewName
+        }} 评审时间：{{postForm.reviewTime}})</span>
+    </div>
     <el-divider content-position="left">原始记录单信息</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
         <template slot="label">测试项目</template>
-        {{ postForm.customer }}
+        {{ postForm.testItem }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">检测公司名称</template>
-        {{ postForm.issuer }}
+        {{ postForm.testom }}
       </el-descriptions-item>
       <br>
       <el-descriptions-item>
         <template slot="label">测试人员</template>
-        {{ postForm.employee }}
+        {{ postForm.testPerson }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">检测设备</template>
-        {{ postForm.gmtCreate}}
+        {{ postForm.testDeviceName}}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">检测设备号</template>
-        {{ postForm.busyStatus }}
+        {{ postForm.testDeviceNo }}
       </el-descriptions-item>
       <br>
       <el-descriptions-item>
         <template slot="label">测试方法</template>
-        {{ postForm.gmtOutput }}
+        {{ postForm.testMethod }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">测试条件</template>
-        {{ postForm.withdraw }}
+        {{ postForm.testCase }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">备注</template>
-        {{ postForm.withdraw }}
+        {{ postForm.remark }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">收样日期</template>
-        {{ postForm.withdraw }}
+        {{ postForm.sampleDate }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">要求完成日期</template>
-        {{ postForm.withdraw }}
+        {{ postForm.planDate }}
       </el-descriptions-item>
     </el-descriptions>
     <el-divider content-position="left">测试结果</el-divider>
     <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
       <el-descriptions-item>
         <template slot="label">测试结果</template>
-        {{ postForm.withdraw }}
+        {{ postForm.testResult }}
       </el-descriptions-item>
       <br>
-      <el-table :data="tableData" stripe border style="width: 100%" class="mt8">
+      <el-table :data="postForm.subList" stripe border style="width: 100%" class="mt8">
         <el-table-column type="seq" label="序号" width="60"/>
-        <el-table-column prop="testItem" label="测试子项目" min-width="120"/>
-        <el-table-column prop="unitPrice" label="CAS号" min-width="120"/>
-        <el-table-column prop="applicationDate" label="平均值" min-width="120"/>
-        <el-table-column prop="quantity" label="限值" min-width="120"/>
-        <el-table-column prop="sampleStatus" label="测试结果" min-width="120"/>
+        <el-table-column prop="subTestItem" label="测试子项目" min-width="120"/>
+        <el-table-column prop="cas" label="CAS号" min-width="120"/>
+        <el-table-column prop="avgValue" label="平均值" min-width="120"/>
+        <el-table-column prop="limitValue" label="限值" min-width="120"/>
+        <el-table-column prop="testResult" label="测试结果" min-width="120"/>
       </el-table>
       <br>
       <el-descriptions-item>
         <template slot="label">报告人</template>
-        {{ postForm.withdraw }}
+        {{ postForm.reportPerson }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">报告日期</template>
-        {{ postForm.withdraw }}
+        {{ postForm.reportDate }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">纸质原始记录表</template>

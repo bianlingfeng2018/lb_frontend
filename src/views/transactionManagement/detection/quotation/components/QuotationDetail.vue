@@ -560,8 +560,7 @@ export default {
           this.checkedGoodsReportTypes[id] = good.reportTypes
           this.payType = good.payType
           good.items.forEach((item, idx) => {
-            item.itemId = idx+1;
-            item.id = idx+1;
+            item.id = item.itemId;
             item.name = item.testItem
             item.price = item.unitPrice
             item.price2 = item.amountRmb

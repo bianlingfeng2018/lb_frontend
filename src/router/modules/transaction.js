@@ -113,9 +113,10 @@ const transactionRouter = {
             },
             {
               path: 'result',
-              component: () => import('@/views/transactionManagement/detection/quotation/result'),
+              // component: () => import('@/views/transactionManagement/detection/quotation/result'),
+              redirect: '/tm/detection-quotation-result',
               name: 'Result',
-              meta: { title: '审核报价单', noCache: true },
+              meta: { title: '报价单详情', noCache: true },
               hidden: true
             }
           ]
@@ -351,6 +352,13 @@ const transactionRouter = {
       component: () => import('@/views/transactionManagement/detection/quotation/show.vue'),
       name: 'QuotationShow',
       meta: { title: '查看报价单', noCache: false, role: ['/tm/detection-quotation-edit/:id'] },
+      hidden: true
+    },
+    {
+      path: 'detection-quotation-result',
+      component: () => import('@/views/transactionManagement/detection/quotation/result.vue'),
+      name: 'QuotationResult',
+      meta: { title: '报价单详情', noCache: false, role: ['/tm/detection-quotation-edit/:id'] },
       hidden: true
     },
     {

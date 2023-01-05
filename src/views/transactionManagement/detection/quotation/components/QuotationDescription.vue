@@ -18,7 +18,9 @@
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">{{ "支付方式" }}</template>
-        {{ postForm.payType }}
+        <span v-if="postForm.payType==0">挂账</span>
+        <span v-else-if="postForm.payType==100">先付后检</span>
+        <span v-else>先付{{postForm.payType}}%后检</span>
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">{{ "客户公司" }}</template>
@@ -57,61 +59,111 @@
               <el-form-item label="出口国：" prop="telClient">{{ goodsItem.exportCountry}}</el-form-item>
               <el-form-item label="检测标准：" prop="telClient">{{ goodsItem.standard}}</el-form-item>
 
-              <el-table :data="goodsItem.goods" stripe border style="width: 100%" class="mt8">
-                <el-table-column type="seq" label="序号" width="60"/>
+              <el-table :data="goodsItem.items" stripe border style="width: 100%" class="mt8">
+                <el-table-column prop="itemId" label="序号" width="60"/>
                 <el-table-column prop="testItem" label="测试项目" min-width="120"/>
                 <el-table-column prop="unitPrice" label="单价" min-width="120">
                   <template slot-scope="scope">
                     <span>{{scope.row.unitPrice | changePrice2money}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="applicationDate" label="测试点数" min-width="120"/>
-                <el-table-column prop="quantity" label="测试金额" min-width="120">
+                <el-table-column prop="quantity" label="测试点数" min-width="120"/>
+                <el-table-column prop="amountRmb" label="测试金额" min-width="120">
                   <template slot-scope="scope">
-                    <span>{{scope.row.unitPrice | changePrice2money}}</span>
+                    <span>{{scope.row.amountRmb | changePrice2money}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="sampleStatus" label="样品数量" min-width="120"/>
+                <el-table-column prop="sampleQty" label="样品数量" min-width="120"/>
               </el-table>
 
-              <el-form-item label="测试周期">{{postForm.testPeriod}}</el-form-item>
-              <el-form-item label="总样品量">{{postForm.sampleNum}}</el-form-item>
-              <el-form-item label="服务类型">{{postForm.service}}</el-form-item>
+              <el-form-item label="测试周期">{{goodsItem.testPeriod}}个工作日</el-form-item>
+              <el-form-item label="总样品量">{{goodsItem.sampleNum}}个</el-form-item>
+              <el-form-item label="服务类型">
+                <span v-if="goodsItem.service==0">标准</span>
+                <span v-else-if="goodsItem.service==1">加急</span>
+                <span v-else-if="goodsItem.service==2">特急</span>
+              </el-form-item>
               <br>
-              <el-form-item label="报告类型">{{postForm.reportTypes}}</el-form-item>
-              <el-form-item label="报告费">{{postForm.reportAmt}}</el-form-item>
-              <el-form-item label="检测价格（不含税）">{{postForm.amount}}</el-form-item>
+              <el-form-item label="报告类型">{{goodsItem.reportTypes}}
+<!--                <span>{{// customerOptions[goodsItem.reportTypes]}}</span>-->
+              </el-form-item>
+              <el-form-item label="报告费">{{goodsItem.reportAmt | changePrice2money}}</el-form-item>
+              <el-form-item label="检测价格（不含税）">{{goodsItem.amount | changePrice2money}}</el-form-item>
               <br>
               <!--加测项-->
-              <!--            v-if="postForm.alist"-->
-              <el-divider content-position="left">加测项 报价单编号：</el-divider>
-              <el-table :data="tableData" stripe border style="width: 100%" class="mt8">
-                <el-table-column type="seq" label="序号" width="60"/>
-                <el-table-column prop="testItem" label="测试项目" min-width="120"/>
-                <el-table-column prop="unitPrice" label="单价" min-width="120">
-                  <template slot-scope="scope">
-                    <span>{{scope.row.unitPrice | changePrice2money}}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="applicationDate" label="测试点数" min-width="120"/>
-                <el-table-column prop="quantity" label="测试金额" min-width="120">
-                  <template slot-scope="scope">
-                    <span>{{scope.row.unitPrice | changePrice2money}}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="sampleStatus" label="样品数量" min-width="120"/>
-              </el-table>
-              <el-form-item label="测试周期">{{postForm.alist.goods.testPeriod}}</el-form-item>
-              <el-form-item label="总样品量">{{postForm.alist.goods.sampleNum}}</el-form-item>
-              <el-form-item label="服务类型">{{postForm.alist.goods.service}}</el-form-item>
+              <div v-if="goodsItem.alist" v-for="(alistItem,index) in goodsItem.alist" :key="index" :model="alistItem">
+                <el-divider content-position="left">加测项 报价单编号：<el-button type="text" @click="handleTo(alistItem.quotationNum)">{{alistItem.quotationNum}}</el-button></el-divider>
+                <el-table :data="alistItem.items" stripe border style="width: 100%" class="mt8">
+                  <el-table-column type="seq" label="序号" width="60"/>
+                  <el-table-column prop="testItem" label="测试项目" min-width="120"/>
+                  <el-table-column prop="unitPrice" label="单价" min-width="120">
+                    <template slot-scope="scope">
+                      <span>{{scope.row.unitPrice | changePrice2money}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="quantity" label="测试点数" min-width="120"/>
+                  <el-table-column prop="amountRmb" label="测试金额" min-width="120">
+                    <template slot-scope="scope">
+                      <span>{{scope.row.amountRmb | changePrice2money}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="sampleQty" label="样品数量" min-width="120"/>
+                </el-table>
+                <el-form-item label="测试周期">{{alistItem.testPeriod}}个工作日</el-form-item>
+                <el-form-item label="总样品量">{{alistItem.sampleNum}}个</el-form-item>
+                <el-form-item label="价格">{{alistItem.totalCost | changePrice2money}}</el-form-item>
+                <br>
+              </div>
+
+              <!--复测项-->
+              <div v-if="goodsItem.rlist" v-for="(rlistItem,index) in goodsItem.rlist" :key="index" :model="rlistItem">
+                <el-divider content-position="left">复测项 报价单编号：<el-button type="text" @click="handleTo(rlistItem.quotationNum)">{{rlistItem.quotationNum}}</el-button></el-divider>
+                <el-table :data="rlistItem.items" stripe border style="width: 100%" class="mt8">
+                  <el-table-column type="seq" label="序号" width="60"/>
+                  <el-table-column prop="testItem" label="测试项目" min-width="120"/>
+                  <el-table-column prop="unitPrice" label="单价" min-width="120">
+                    <template slot-scope="scope">
+                      <span>{{scope.row.unitPrice | changePrice2money}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="quantity" label="测试点数" min-width="120"/>
+                  <el-table-column prop="amountRmb" label="测试金额" min-width="120">
+                    <template slot-scope="scope">
+                      <span>{{scope.row.amountRmb | changePrice2money}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="sampleQty" label="样品数量" min-width="120"/>
+                </el-table>
+                <el-form-item label="测试周期">{{rlistItem.testPeriod}}个工作日</el-form-item>
+                <el-form-item label="总样品量">{{rlistItem.sampleNum}}个</el-form-item>
+                <el-form-item label="价格">{{rlistItem.totalCost | changePrice2money}}</el-form-item>
+                <br>
+              </div>
+              <el-form-item :label="'检测费(含税)：'">
+                <span class="text-danger">{{ total | changePrice2money }}</span>
+              </el-form-item>
+              <el-form-item :label="'报告费：'">
+                <span class="text-danger">{{ postForm.reportFee | changePrice2money }}</span>
+              </el-form-item>
+              <el-form-item label="快递费：">
+                <span class="text-danger">{{ postForm.postage | changePrice2money }}</span>
+              </el-form-item>
               <br>
+              <el-form-item :label="'总计（含税）：'">
+                <span class="text-danger">{{ postForm.totalCost | changePrice2money }}</span>
+              </el-form-item>
+
             </el-form>
             <div class="right">
-              <el-button type="primary" size="small" plain @click="insertEvent">加测
+              <el-button type="primary" size="small" plain @click="insertEvent(2,goodsItem)">加测
               </el-button>
-              <el-button type="primary" size="small" plain @click="insertEvent">复测
+              <br>
+              <el-button v-if="goodsItem.applied " type="primary" class="mt8" size="small" plain
+                         @click="insertEvent(3,goodsItem)">复测
               </el-button>
-              <el-button type="primary" size="small" plain @click="handleCreate">创建申请单
+              <br>
+              <el-button v-if="goodsItem.applied == false" type="primary" class="mt8" size="small" plain
+                         @click="handleCreate(goodsItem.goodsId)">创建申请单
               </el-button>
             </div>
           </div>
@@ -209,103 +261,113 @@
       </el-tab-pane>
     </el-tabs>
 
+    <br>
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
     <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
-    <el-button type="primary" size="small" plain @click="handleCreate()">创建申请单</el-button>
-    <el-button type="primary" size="small" plain @click="insertEvent()">加测</el-button>
+
     <!--弹窗  加测、复测-->
     <el-dialog :visible.sync="dialogVisible" title="加/复测">
       <el-form ref="creditInfo" :model="creditInfo" :rules="auditRules" label-width="110px"
                label-position="left" inline
                class="mt8">
-        <el-form-item label="测试项目：" prop="telClient">
-          <el-button type="text" @click="showDialog">选择测试项目</el-button>
-        </el-form-item>
-        <el-dialog
-          width="50%"
-          title="选择测试项目"
-          :visible.sync="innerDialogVisible"
-          append-to-body>
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox v-for="date in productItemlist" :label="date" :key="date.id">{{date.name}} {{date.price |
-              changePrice2money}}
-            </el-checkbox>
-          </el-checkbox-group>
-          <div style="text-align:center;" class="mt20">
-            <el-button size="small" plain @click="innerDialogVisible = false">取消</el-button>
-            <el-button type="primary" size="small" plain @click="checkedConfirm()">确认</el-button>
-          </div>
-        </el-dialog>
-        <vxe-table
-          ref="xTable"
-          border
-          show-footer
-          show-overflow
-          class="editable-footer mb20"
-          :row-config="{ isHover: true }"
-          :export-config="{}"
-          :data="creditInfo.items"
-          :edit-config="{ trigger: 'click', mode: 'row' }"
-          @edit-closed="editClose">
-          <vxe-column field="id" width="60" :title="'序号'" align="right"/>
-          <vxe-column field="name" :title="'测试项目'"/>
-          <vxe-column field="price" :title="'单价'"/>
-          <vxe-column field="quantity" title="测试点数" :edit-render="{ autofocus: '.vxe-input--inner' }">
-            <template #edit="{ row }">
-              <vxe-input v-model="row.quantity" type="number"></vxe-input>
-            </template>
-          </vxe-column>
-          <vxe-column field="price2" :title="'测试金额'">
-            <template #default="{ row }">
-              <span>{{ row.price*row.quantity }} 元</span>
-            </template>
-          </vxe-column>
-          <vxe-column :title="'样品量'">1</vxe-column>
-          <vxe-column title="操作" width="80">
-            <template #default="{ row }">
-              <el-button type="text" status="primary" @click="deleteEvent(row)">删除
-              </el-button>
-            </template>
-          </vxe-column>
-        </vxe-table>
-        <el-form-item label="测试周期" prop="testPeriod">
-          <el-input v-model="creditInfo.testPeriod" placeholder="请输入测试周期" clearable style="width: 240px"/>
-        </el-form-item>
-        <el-form-item label="总样品量" prop="sampleNum">
-          <el-input v-model="creditInfo.sampleNum" placeholder="请输入总样品量" clearable style="width: 240px"/>
-        </el-form-item>
-        <br>
-        <el-form-item label="是否单独出报告" prop="singleReport">
-          <el-radio-group v-model="creditInfo.singleReport" style="width: 200px">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="报告类型" prop="reportTypes">
-          <el-checkbox-group v-model="creditInfo.reportTypes">
-            <el-checkbox :label="item.key" v-for="item of customerOptions" :key="item.key">{{ item.value }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="支付方式" prop="payType">
-          <el-radio-group v-model="creditInfo.payType" style="width: 540px">
-            <el-radio :label="1">挂账</el-radio>
-            <el-radio :label="2">先付后检</el-radio>
-            <el-radio :label="3">先付</el-radio>
-            <el-input
-              class="short"
-              style="width: 100px"/>
-            <el-button type="text" style="color:black">%后检</el-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="检测价格（不含税）" prop="testPrice">
-          <el-input v-model="creditInfo.testPrice" placeholder="请输入检测价格" clearable style="width: 240px"/>
-        </el-form-item>
-        <el-form-item :label="'报告费'" style="color:red">100.00</el-form-item>
-        <br>
-        <el-form-item :label="'总计（含税）：'">
-          <span class="text-danger" style="color:red">{{creditInfo.totalCost | changePrice2money}}</span>
-        </el-form-item>
+        <div v-for="(gooditem,index) in creditInfo.goods" :key="index" :model="gooditem">
+          <el-form-item label="测试项目：" prop="telClient">
+            <el-button type="text" @click="showDialog">选择测试项目</el-button>
+          </el-form-item>
+          <el-dialog
+            width="50%"
+            title="选择测试项目"
+            :visible.sync="innerDialogVisible"
+            append-to-body>
+            <el-checkbox-group v-model="checkList">
+              <el-checkbox v-for="date in productItemlist" :label="date" :key="date.id">{{date.name}} {{date.price |
+                changePrice2money}}
+              </el-checkbox>
+            </el-checkbox-group>
+            <div style="text-align:center;" class="mt20">
+              <el-button size="small" plain @click="innerDialogVisible = false">取消</el-button>
+              <el-button type="primary" size="small" plain @click="checkedConfirm(gooditem)">确认</el-button>
+            </div>
+          </el-dialog>
+          <vxe-table
+            ref="xTable"
+            border
+            show-footer
+            show-overflow
+            class="editable-footer mb20"
+            :row-config="{ isHover: true }"
+            :export-config="{}"
+            :data="gooditem.items"
+            :edit-config="{ trigger: 'click', mode: 'row' }"
+            @edit-closed="editClose">
+            <vxe-column field="id" width="60" :title="'序号'" align="right"/>
+            <vxe-column field="name" :title="'测试项目'"/>
+            <vxe-column field="price" :title="'单价'">
+              <template #default="{ row }">
+                <span>{{ row.price | changePrice2money }} 元</span>
+              </template>
+            </vxe-column>
+            <vxe-column field="quantity" title="测试点数" :edit-render="{ autofocus: '.vxe-input--inner' }">
+              <template #edit="{ row }">
+                <vxe-input v-model="row.quantity" type="number" @change="testInputChange(gooditem)"></vxe-input>
+              </template>
+            </vxe-column>
+            <vxe-column field="price2" :title="'测试金额'">
+              <template #default="{ row }">
+                <span>{{ row.price*row.quantity | changePrice2money }} 元</span>
+              </template>
+            </vxe-column>
+            <vxe-column :title="'样品量'">1</vxe-column>
+            <vxe-column title="操作" width="80">
+              <template #default="{ row }">
+                <el-button type="text" status="primary" @click="deleteEvent(row)">删除
+                </el-button>
+              </template>
+            </vxe-column>
+          </vxe-table>
+          <el-form-item label="测试周期" prop="testPeriod">
+            <el-input v-model="gooditem.testPeriod" placeholder="请输入测试周期" clearable style="width: 240px"/>
+          </el-form-item>
+          <el-form-item label="总样品量" prop="sampleNum">
+            <el-input v-model="gooditem.sampleNum" placeholder="请输入总样品量" clearable style="width: 240px"/>
+          </el-form-item>
+          <br>
+          <el-form-item label="是否单独出报告" prop="singleReport">
+            <el-radio-group v-model="gooditem.singleReport" style="width: 200px">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="报告类型" prop="reportTypes">
+            <el-checkbox-group v-model="checkedGoodsReportTypes" @change="testInputChange(gooditem)">
+              <el-checkbox v-for="item of customerOptions" :key="item.key" :label="item.key">{{ item.value }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="支付方式" prop="payType">
+            <el-radio-group v-model="gooditem.payType" style="width: 540px">
+              <el-radio :label="0">挂账</el-radio>
+              <el-radio :label="100">先付后检</el-radio>
+              <el-radio :label="50">先付</el-radio>
+              <el-input
+                v-model="payType"
+                class="short"
+                style="width: 100px"
+              />
+              <el-button type="text" style="color:black">%后检</el-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="检测价格（不含税）" prop="testPrice">
+            <el-input v-model="gooditem.testPriceShow" :placeholder="gooditem.testPrice /100" clearable
+                      style="width: 240px" @change="testInputChange(gooditem)"/>
+            <span v-if="gooditem.testPriceShow && ((gooditem.testPriceShow *100)<gooditem.testPrice)" class="lb-error">{{ (((gooditem.testPriceShow *100)/gooditem.testPrice) *10).toFixed(2) }} 折</span>
+          </el-form-item>
+          <el-form-item :label="'报告费'" style="color:red">{{ gooditem.reportFee | changePrice2money }}</el-form-item>
+          <br>
+          <el-form-item :label="'总计（含税）：'">
+            <span class="text-danger" style="color:red">{{ creditInfo.totalCost | changePrice2money }}</span>
+          </el-form-item>
+        </div>
         <div style="text-align:center;" class="mt20">
           <el-button size="small" plain @click="dialogVisible = false">取消</el-button>
           <el-button type="primary" size="small" plain @click="handleCheckConfirm2('creditInfo')">确认</el-button>
@@ -316,14 +378,21 @@
 </template>
 
 <script>
-  import { getQuotationDetail, getApplicationList, getItemList } from "@/api/organizations"
-  import { getworkOrderList, getoriList,getReportList } from "@/api/worksheet"
+  import {
+    getQuotationDetail,
+    getApplicationList,
+    getItemList,
+    getRate,
+    getQuotationAdditional
+  } from "@/api/organizations"
+  import { getworkOrderList, getoriList, getReportList } from "@/api/worksheet"
   import { getToken } from "@/utils/auth"
   import config from "@/utils/config"
   import methods from "../../pub_methods/validate"
   import { changePrice2money } from "@/utils/simple-util"
 
   const { prefix } = config[process.env.NODE_ENV]
+  import { deepClone } from "../../../../../utils"
 
   export default {
     filters: {
@@ -337,30 +406,44 @@
         downloadParam: {
           testTradeId: -1
         },
-        postForm: {
-          reportTypes: [],//选择的报告类型
-        },
+        postForm: {},
         tableData1: [],
         tableData2: [],
         tableData3: [],
         tableData4: [],
-
+        payType: 50,
         checkList: [],//报告类型
         productItemlist: [],//测试项目列表
+        checkedGoodsReportTypes: [], // 选中的商品报告
         creditInfo: {
-          orgQuotationNum:'',//原始报价单号
-          reportTypes: [],//选择的报告类型
-          items: [],
+          reportTypes: {}, // 选择的报告类型
+          goods: [
+            {
+              goodsId: 0,
+              items: [],
+              reportTypes: "",
+              sampleNum: "",
+              service: 0,
+              testPeriod: "",
+              testPrice: 0
+            }
+          ],
+          orgQuotationNum: 0,
+          payType: 1,
+          type: 0,
         },
-        auditRules:methods.quotationCreateValidate,
+        orgQuotationNum: '',
+        auditRules: methods.quotationCreateValidate,
         dialogVisible: false,
         innerDialogVisible: false,
         customerOptions: [
-          { key: 1, value: "中文纸质档" },
-          { key: 2, value: "中文电子档" },
-          { key: 3, value: "英文电子档" },
-          { key: 4, value: "英文纸质档" }
-        ]
+          { key: 1, value: "中文纸质档", price: 10000 },
+          { key: 2, value: "中文电子档", price: 0 },
+          { key: 3, value: "英文电子档", price: 0 },
+          { key: 4, value: "英文纸质档", price: 10000 }
+        ],
+        feeRate: 0,
+        total: 0
       }
     },
     created() {
@@ -369,6 +452,7 @@
       console.log(id)
       this.fetchData(id)
       this.getTableData(id)
+      this.orgQuotationNum = id
       this.downloadParam.testTradeId = this.tempRoute.params.id
     },
     methods: {
@@ -394,6 +478,44 @@
           requestId: Math.random().toString(24)
         })
         this.productItemlist = res.data.dataList
+
+        const rateResp = await getRate()
+        console.log(rateResp, "getRate")
+        this.feeRate = 10 / 100
+      },
+      fetchData: function(id) {
+        const queryParam = {
+          requestId: Math.random().toString(24),
+          quotationNum: id
+        }
+        getQuotationDetail(Object.assign({}, queryParam)).then(response => {
+          console.log(response.data)
+          this.postForm = response.data
+          this.postForm.goods.forEach(good => {
+            let aPrice = 0
+            good.alist?.forEach(item => {
+              console.log(item)
+              const price = Number(item.totalCost)
+              aPrice += (isNaN(price) ? 0 : price)
+            })
+
+            let rPrice = 0
+            good.rlist?.forEach(item => {
+              console.log(item)
+              const price = Number(item.totalCost)
+              rPrice += (isNaN(price) ? 0 : price)
+            })
+            this.total += good.amount
+            this.total +=  aPrice+rPrice
+          })
+          // set tagsview title
+          this.setTagsViewTitle()
+
+          // set page title
+          this.setPageTitle()
+        }).catch(err => {
+          console.log(err)
+        })
       },
       //选择测试项目弹框
       showDialog() {
@@ -401,43 +523,88 @@
         this.checkList = []
       },
       //选择测试项目
-      checkedConfirm() {
+      checkedConfirm(data) {
         this.innerDialogVisible = false
         if (this.checkList) {
           this.checkList.forEach((item) => {
-            this.creditInfo.items.push(item)
+            data.items.push(item)
           })
         }
         console.log(this.creditInfo.items)
       },
+      //进入加测详情页
+      handleTo(quotationNum){
+        console.log(quotationNum)
+        this.$router.push({ path: '/tm/detection/quotation/result', query: {id: quotationNum } })
+      },
       //加测/复测
-      insertEvent() {
+      insertEvent(type, data) {
         this.dialogVisible = true
+        this.creditInfo.type = type
+        this.creditInfo.orgQuotationNum = this.orgQuotationNum
+        this.creditInfo.goods[0].goodsId = data.goodsId
       },
       //加测，复测接口
       handleCheckConfirm2(formName) {
-        if (this.creditInfo.goodsName == "") {
-          this.$message.error('请输入产品名称')
-          return
-        }
-        if (this.creditInfo.export == "") {
-          this.$message.error('请选择出口国')
-          return
-        }
-        getProductCreate(this.creditInfo)
-          .then((res) => {
-            const { data, status } = res
-            if (status == 200) {
-              this.dialogVisible = false
-
-            } else {
-              this.$message.error(res.errMsg)
+        console.log(this.creditInfo)
+        this.$refs[formName].validate(async(valid) => {
+          if (valid) {
+            let isPass = true
+            let massage = ""
+            const form = deepClone(this.creditInfo)
+            form.testPrice = form.testPriceShow
+            form.goods.forEach(goodsItem => {
+              if (!goodsItem.testPeriod) {
+                isPass = false
+                massage = "请输入商品检测周期"
+              } else if (!goodsItem.testPrice) {
+                isPass = false
+                massage = "请输入商品检测费用"
+              } else if (!goodsItem.sampleNum) {
+                isPass = false
+                massage = "请输入检测样品数量"
+              } else if (!goodsItem.reportTypes || !goodsItem.reportTypes.length) {
+                isPass = false
+                massage = "请勾选报告类型"
+              } else if (!goodsItem.singleReport) {
+                isPass = false
+                massage = "请选择是否单独出报告"
+              }
+            })
+            if (!isPass) {
+              this.$message.error(massage)
+              return false
             }
-          })
+            if (form.payType != 0 && form.payType != 100) {
+              form.payType = this.payType
+            }
+            let that = this
+            getQuotationAdditional(form).then(res => {
+              const { data, status } = res
+              if (status == 200) {
+                that.dialogVisible = false
+                this.$notify({
+                  title: '成功',
+                  dangerouslyUseHTMLString: true,
+                  message: `操作成功`,
+                  type: 'success'
+                })
+                that.fetchData(that.orgQuotationNum)
+              } else {
+                this.$message.error(res.errMsg)
+              }
+            }).catch(err => {
+              this.$message.error(err)
+            })
+          } else {
+            console.log("error submit!!")
+            return false
+          }
+        })
       },
       //创建申请单
-      handleCreate() {
-        this.$router.push({ path: '/tm/detection/apply/create', query: { applyForm: this.postForm } })
+      handleCreate(goodsId) {
+        this.$router.push({ path: '/tm/detection/apply/create', query: { applyForm: this.postForm, goodsId: goodsId } })
       },
 
       handlePreview() {
@@ -494,24 +661,7 @@
         })
         .finally(() => { })
     },
-    fetchData: function(id) {
-      const queryParam = {
-        requestId: Math.random().toString(24),
-        quotationNum: id
-      }
-      getQuotationDetail(Object.assign({}, queryParam)).then(response => {
-        console.log(response.data)
-        this.postForm = response.data
 
-        // set tagsview title
-        this.setTagsViewTitle()
-
-        // set page title
-        this.setPageTitle()
-      }).catch(err => {
-        console.log(err)
-      })
-    },
     setTagsViewTitle() {
       const title = '查看报价单'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.tempRoute.params.id}` })
@@ -555,8 +705,53 @@
             })
           })
       },
+      testInputChange(e) {
+        e.reportTypes = this.checkedGoodsReportTypes
+        this.calTotalCost()
+      },
+      calTotalCost() {
+        let total = 0
+        this.creditInfo.reportFee = 0
+        this.creditInfo.totalCost = 0
+        this.creditInfo.testFee = 0
+        this.creditInfo.goods.forEach(good => {
+          let testFee = 0
+          good.items?.forEach(item => {
+            item.itemId = item.id
+            console.log(item)
+            const price = Number(item.price)
+            console.log((isNaN(price) ? 0 : price))
+            const quantity = Number(item.quantity)
+            testFee += (isNaN(price) ? 0 : price) * (isNaN(quantity) ? 0 : quantity)
+          })
+          good.testPrice = testFee
+          if (good.testPriceShow) {
+            testFee = good.testPriceShow * 100
+          }
+          this.creditInfo.testFee += testFee
+          total += testFee
+          if (this.feeRate) {
+            total = total * (1 + this.feeRate)
+          }
+          let postage = 0
+          if (good.reportTypes?.length >= 2) {
+            postage = 10000
+            good.reportTypes.forEach(type => {
+              postage += this.customerOptions[type - 1].price
+            })
+          }
+          good.reportFee = postage
+
+          total += postage
+          this.creditInfo.reportFee += good.reportFee
+        })
+        this.creditInfo.totalCost = total
+        if (this.creditInfo.postage) {
+          this.creditInfo.totalCost += (this.creditInfo.postage * 100)
+        }
+      }
     }
-}
+  }
 </script>
 <style lang="scss" scoped>
 .quotation-box {
@@ -577,11 +772,22 @@
 }
 
 .left {
-  width: 28%;
+  width: 100%;
   padding: 15px;
 }
 
 .right {
-  width: 100%; /*右侧初始化宽度*/
+  width: 20%; /*右侧初始化宽度*/
+  text-align: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+.text-danger {
+  color: #a90c0a;
+  font-weight: bold;
+  font-size: large;
 }
 </style>

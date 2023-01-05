@@ -289,6 +289,7 @@
         this.postForm.applicationName = this.applyForm.clientName
         this.postForm.quotationNum = this.applyForm.quotationNum
         this.postForm.comAddrCn = this.applyForm.deliveryAddress
+        this.postForm.goodsId = this.$route.query.goodsId
         console.log(this.applyForm)
         this.setTagsViewTitle()
         this.setPageTitle()

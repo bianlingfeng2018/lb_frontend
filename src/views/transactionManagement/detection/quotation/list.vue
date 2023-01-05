@@ -1,23 +1,29 @@
 <template>
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
-      <el-form-item label="报价单编号" >
+      <el-form-item label="报价单编号">
         <el-input
           v-model="columnParam.quotationNum"
-          placeholder="请输入报价单编号" clearable
-          style="width: 240px" />
+          placeholder="请输入报价单编号"
+          clearable
+          style="width: 240px"
+        />
       </el-form-item>
       <el-form-item label="客户中文名称">
         <el-input
           v-model="columnParam.clientName"
-          placeholder="请输入客户中文名称" clearable
-          style="width: 240px" />
+          placeholder="请输入客户中文名称"
+          clearable
+          style="width: 240px"
+        />
       </el-form-item>
       <el-form-item label="检测交易名称">
         <el-input
           v-model="columnParam.tradeName"
-          placeholder="请输入检测交易名称" clearable
-          style="width: 240px" />
+          placeholder="请输入检测交易名称"
+          clearable
+          style="width: 240px"
+        />
       </el-form-item>
       <el-form-item label="跟进人">
         <el-select v-model="columnParam.serviceId" placeholder="请选择" style="display: block; width: 140px">
@@ -64,21 +70,22 @@
         plain
         size="small"
         style="position: absolute;right:10px;top:5px;"
-        @click="handleCreate" >新增报价 </el-button>
+        @click="handleCreate"
+      >新增报价 </el-button>
     </div>
 
     <el-table :v-loading="tableLoading" :data="tableData" stripe border class="mt8">
       <el-table-column prop="quotationNum" label="报价单编号" min-width="120" />
       <el-table-column prop="clientName" label="客户中文名称" min-width="120" />
       <el-table-column prop="tradeName" label="检测交易名称" min-width="120" />
-      <el-table-column prop="totalCost" label="总金额" min-width="100" >
+      <el-table-column prop="totalCost" label="总金额" min-width="100">
         <template slot-scope="scope">
-        <span >{{scope.row.totalCost | changePrice2money}}</span>
+          <span>{{ scope.row.totalCost | changePrice2money }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="paidAmt" label="已付金额" min-width="100" >
+      <el-table-column prop="paidAmt" label="已付金额" min-width="100">
         <template slot-scope="scope">
-        <span >{{scope.row.paidAmt | changePrice2money}}</span>
+          <span>{{ scope.row.paidAmt | changePrice2money }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="state" label="状态" min-width="90">
@@ -108,7 +115,7 @@
         <template slot-scope="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
           </el-button>
-          <el-button type="primary" plain size="small" @click="handleEdit(scope.row)">编辑
+          <el-button v-if="scope.row.state ==1" type="primary" plain size="small" @click="handleEdit(scope.row)">编辑
           </el-button>
           <el-button v-if="scope.row.state == 1" type="primary" plain size="small" @click="handleCheck(scope.row)">审核
           </el-button>
@@ -126,18 +133,19 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.pageTotal"
       @size-change="handleSizeChange"
-      @current-change="handleCurrentChange" />
+      @current-change="handleCurrentChange"
+    />
 
     <!--弹窗  审核 -->
     <el-dialog :visible.sync="dialogVisible_check" title="审核">
-      <el-form ref="creditInfo" :model="creditInfo"  status-icon :rules="auditRules" label-width="100px" label-position="left">
+      <el-form ref="creditInfo" :model="creditInfo" status-icon :rules="auditRules" label-width="100px" label-position="left">
         <el-form-item label="审核结果：" prop="checkResult">
-        <el-select v-model="creditInfo.checkResult" placeholder="请选择" style="display: block; width: 200px">
-          <el-option key="0" label="审核通过" value="1" />
-          <el-option key="1" label="审核不通过" value="0" />
-        </el-select>
-      </el-form-item>
-        <el-form-item label="原因：" prop="reason" :rules="creditInfo.checkResult == '0'?auditRules.reason:[{required:false}]" >
+          <el-select v-model="creditInfo.checkResult" placeholder="请选择" style="display: block; width: 200px">
+            <el-option key="0" label="审核通过" value="1" />
+            <el-option key="1" label="审核不通过" value="0" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因：" prop="reason" :rules="creditInfo.checkResult == '0'?auditRules.reason:[{required:false}]">
           <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
@@ -151,21 +159,22 @@
     <el-dialog :visible.sync="dialogVisible_settlement" title="上传水单">
       <el-form :model="uploadInfo" label-width="120px" status-icon label-position="left" class="mt8">
         <el-form-item label="支付金额" prop="incomeAmt">
-          <el-input v-model="uploadInfo.incomeAmt" width="120"/>
+          <el-input v-model="uploadInfo.incomeAmt" width="120" />
         </el-form-item>
         <el-form-item label="支付凭证：" prop="username">
           <el-upload
-                  ref="upload1"
-                  accept=".jpg,.jpeg,.png,.JPG,.JPEG,.gif,.pdf"
-                  action=""
-                  :on-change="uploadChange"
-                  :on-success="onSuccess"
-                  :on-error="onError"
-                  :limit="1"
-                  :http-request="submitFile"
-                  :on-exceed="exceed"
-                  :file-list="multpartfile"
-                  :auto-upload="false">
+            ref="upload1"
+            accept=".jpg,.jpeg,.png,.JPG,.JPEG,.gif,.pdf"
+            action=""
+            :on-change="uploadChange"
+            :on-success="onSuccess"
+            :on-error="onError"
+            :limit="1"
+            :http-request="submitFile"
+            :on-exceed="exceed"
+            :file-list="multpartfile"
+            :auto-upload="false"
+          >
             <el-button slot="trigger" size="small">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">
               支持jpg、jpeg、gif、png、pdf
@@ -182,198 +191,197 @@
 </template>
 
 <script>
-  import { changePrice2money } from "@/utils/simple-util"
-  import config from "@/utils/config"
+import { changePrice2money } from "@/utils/simple-util"
+import config from "@/utils/config"
 
-  const { prefix } = config[process.env.NODE_ENV]
-  import { deepClone } from "../../../../utils"
-  import {
-    getQuotationList,
-    getServiceList,
-    getQuotationExamine,
-    getQuotationUpload,
-    getQuotationConfirm
-  } from "@/api/organizations"
+const { prefix } = config[process.env.NODE_ENV]
+import { deepClone } from "../../../../utils"
+import {
+  getQuotationList,
+  getServiceList,
+  getQuotationExamine,
+  getQuotationUpload,
+  getQuotationConfirm
+} from "@/api/organizations"
 
-  export default {
-    filters: {
-      changePrice2money
+export default {
+  filters: {
+    changePrice2money
+  },
+  data() {
+    return {
+      prefix: prefix,
+      dialogVisible_check: false,
+      dialogVisible_settlement: false,
+      tableLoading: false,
+      tableData: [],
+      comList: [],
+      // 搜索条件
+      columnParam: {},
+      uploadInfo: {
+        incomeAmt: '',
+        quotationNum: '',
+        requestId: Math.random().toString(24)
+      },
+      creditInfo: {
+        checkResult: '',
+        quotationNum: '',
+        reason: '',
+        requestId: Math.random().toString(24)
+      },
+      auditRules: {
+        checkResult: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
+        reason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }]
+      },
+      activeIndex: '',
+      imageUrl: '',
+      uploadForm: new FormData(),
+      multpartfile: [],
+      pagination: {
+        currPage: 1,
+        pageSize: 10,
+        pageTotal: 0
+      }
+    }
+  },
+  created() {
+    this.getListDate()
+    this.getComListDate()
+  },
+  methods: {
+    getListDate() {
+      this.tableLoading = true
+      const queryParam = {
+        requestId: Math.random().toString(24),
+        page: this.pagination.currPage,
+        pageSize: this.pagination.pageSize
+      }
+      const colParam = deepClone(this.columnParam)
+      getQuotationList(Object.assign({}, queryParam, colParam))
+        .then((res) => {
+          console.log(res)
+          const { data, status } = res
+          if (status == 200) {
+            this.tableData = data.dataList
+            this.pagination.pageTotal = data.total
+          } else {
+            this.$message.error(data.errMsg)
+          }
+        })
+        .catch(() => {
+        })
+        .finally(() => {
+          this.tableLoading = false
+        })
     },
-    data() {
-      return {
-        prefix: prefix,
-        dialogVisible_check: false,
-        dialogVisible_settlement: false,
-        tableLoading: false,
-        tableData: [],
-        comList: [],
-        // 搜索条件
-        columnParam: {},
-        uploadInfo: {
-          incomeAmt: '',
-          quotationNum: '',
-          requestId: Math.random().toString(24),
-        },
-        creditInfo: {
-          checkResult: '',
-          quotationNum: '',
-          reason: '',
-          requestId: Math.random().toString(24),
-        },
-        auditRules: {
-          checkResult: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
-          reason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
-        },
-        activeIndex: '',
-        imageUrl: '',
-        uploadForm: new FormData(),
-        multpartfile: [],
-        pagination: {
-          currPage: 1,
-          pageSize: 10,
-          pageTotal: 0
-        }
+    // 获取跟进人列表
+    async getComListDate() {
+      const res = await getServiceList({})
+      console.log(res)
+      this.comList = res.data.dataList
+      console.log(this.comList)
+    },
+    // 点击切换type
+    handleClick(tab, event) {
+      console.log(tab, event)
+    },
+    // 上传水单
+    handleDelete(data) {
+      this.dialogVisible_settlement = true
+      this.uploadInfo.quotationNum = data.quotationNum
+    },
+    setCreditInfo() {
+      console.log(this.uploadInfo.incomeAmt)
+      if (this.uploadInfo.incomeAmt == "") {
+        this.$message.error('请输入支付金额')
+        return
+      }
+      if (this.multpartfile.length !== 0) {
+        // 文件
+        this.$refs.upload1.submit()
+        getQuotationUpload(this.uploadForm).then((res) => {
+          const { data, status } = res
+          if (status == 200) {
+            console.log("上传成功")
+            this.uploadInfo.billPath = res.data
+            const colParam = deepClone(this.uploadInfo)
+            getQuotationConfirm(Object.assign({}, colParam)).then((res) => {
+              const { data, status } = res
+              if (status == 200) {
+                this.dialogVisible_settlement = false
+                this.$notify({
+                  title: '成功',
+                  dangerouslyUseHTMLString: true,
+                  message: `操作成功`,
+                  type: 'success'
+                })
+                this.getListDate()
+              } else {
+                this.$message.error(res.errMsg)
+              }
+            })
+              .catch((e) => {
+                this.$message.error(e)
+              })
+              .finally(() => {
+                this.dialogVisible_settlement = false
+              })
+          } else {
+            this.$message.error(res.errMsg)
+          }
+        })
+      } else {
+        this.$message.error('请上传支付凭证')
       }
     },
-    created() {
-      this.getListDate()
-      this.getComListDate()
+
+    uploadChange(file, fileList) {
+      this.multpartfile = fileList
     },
-    methods: {
-      getListDate() {
-        this.tableLoading = true
-        const queryParam = {
-          requestId: Math.random().toString(24),
-          page: this.pagination.currPage,
-          pageSize: this.pagination.pageSize
-        }
-        const colParam = deepClone(this.columnParam)
-        getQuotationList(Object.assign({}, queryParam, colParam))
-                .then((res) => {
-                  console.log(res)
-                  const { data, status } = res
-                  if (status == 200) {
-                    this.tableData = data.dataList
-                    this.pagination.pageTotal = data.total
-                  } else {
-                    this.$message.error(data.errMsg)
-                  }
-                })
-                .catch(() => {
-                })
-                .finally(() => {
-                  this.tableLoading = false
-                })
-      },
-      //获取跟进人列表
-      async getComListDate() {
-        const res = await getServiceList({})
-        console.log(res)
-        this.comList = res.data.dataList
-        console.log(this.comList)
-      },
-      //点击切换type
-      handleClick(tab, event) {
-        console.log(tab, event);
-      },
-      // 上传水单
-      handleDelete(data) {
-        this.dialogVisible_settlement = true
-        this.uploadInfo.quotationNum = data.quotationNum
-      },
-      setCreditInfo() {
-        console.log(this.uploadInfo.incomeAmt)
-        if (this.uploadInfo.incomeAmt == "") {
-          this.$message.error('请输入支付金额');
-          return
-        }
-        if (this.multpartfile.length !== 0) {
-          //文件
-          this.$refs.upload1.submit();
-          getQuotationUpload(this.uploadForm).then((res) => {
-            const { data, status } = res
-            if (status == 200) {
-              console.log("上传成功")
-              this.uploadInfo.billPath = res.data
-              const colParam = deepClone(this.uploadInfo)
-              getQuotationConfirm(Object.assign({}, colParam)).then((res) => {
-                const { data, status } = res
-                if (status == 200) {
-                  this.dialogVisible_settlement = false
-                  this.$notify({
-                    title: '成功',
-                    dangerouslyUseHTMLString: true,
-                    message: `操作成功`,
-                    type: 'success'
-                  })
-                  this.getListDate();
-                } else {
-                  this.$message.error(res.errMsg)
-                }
-              })
-                      .catch((e) => {
-                        this.$message.error(e)
-                      })
-                      .finally(() => {
-                        this.dialogVisible_settlement = false
-                      })
+    onSuccess(response, file) {
+      this.$message({
+        showClose: true,
+        message: '提交成功',
+        type: 'success'
+      })
+      this.multpartfile = []
+    },
+    onError(err, file, multpartfile) {
+      this.$message({ showClose: true, message: err, type: 'error' })
+    },
+    exceed() {
+      this.$message({ showClose: true, message: '请先删除已选中文件', type: 'error' })
+    },
+    submitFile(file) {
+      this.uploadForm.append("file", file.file)
+    },
+    handleCreate() {
+      this.$router.push({
+        path: "/tm/detection/quotation/create"
+      })
+    },
+    // 查看
+    handleShow(data) {
+      this.$router.push({
+        path: "/tm/detection/quotation/show/" + data.quotationNum
+      })
+    },
+    // 编辑
+    handleEdit(data) {
+      this.$router.push({
+        path: "/tm/detection/quotation/edit/" + data.quotationNum
+      })
+    },
 
-            } else {
-              this.$message.error(res.errMsg)
-            }
-          })
-        } else {
-          this.$message.error('请上传支付凭证');
-        }
-      },
-
-      uploadChange(file, fileList) {
-        this.multpartfile = fileList;
-      },
-      onSuccess(response, file) {
-        this.$message({
-          showClose: true,
-          message: '提交成功',
-          type: 'success'
-        });
-        this.multpartfile = [];
-      },
-      onError(err, file, multpartfile) {
-        this.$message({ showClose: true, message: err, type: 'error' });
-      },
-      exceed() {
-        this.$message({ showClose: true, message: '请先删除已选中文件', type: 'error' });
-      },
-      submitFile(file) {
-        this.uploadForm.append("file", file.file);
-      },
-      handleCreate() {
-        this.$router.push({
-          path: "/tm/detection/quotation/create"
-        })
-      },
-      // 查看
-      handleShow(data) {
-        this.$router.push({
-          path: "/tm/detection/quotation/show/" + data.quotationNum
-        })
-      },
-      // 编辑
-      handleEdit(data) {
-        this.$router.push({
-          path: "/tm/detection/quotation/edit/" + data.quotationNum
-        })
-      },
-
-      // 审核
-      async handleCheckConfirm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            getQuotationExamine(this.creditInfo)
-                    .then((res) => {
-                      const { data, status } = res
-                      if (status == 200) {
-                        this.dialogVisible_check = false
+    // 审核
+    async handleCheckConfirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          getQuotationExamine(this.creditInfo)
+            .then((res) => {
+              const { data, status } = res
+              if (status == 200) {
+                this.dialogVisible_check = false
                 this.$notify({
                   title: '成功',
                   dangerouslyUseHTMLString: true,
@@ -391,10 +399,9 @@
               this.dialogVisible_check = false
             })
         } else {
-          return false;
+          return false
         }
-      });
-
+      })
     },
     handleCheck(row) {
       this.dialogVisible_check = true

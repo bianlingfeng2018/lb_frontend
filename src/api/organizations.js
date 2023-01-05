@@ -1,6 +1,6 @@
 import requestsh from '@/utils/request-sh'
 
-//获取组织机构树
+// 获取组织机构树
 export function getTreesPage(data) {
   return requestsh({
     url: '/org/tree',
@@ -8,7 +8,7 @@ export function getTreesPage(data) {
     data
   })
 }
-//下属组织列表
+// 下属组织列表
 export function getTreeList(data) {
   return requestsh({
     url: '/org/list',
@@ -31,7 +31,7 @@ export function updateOrg(data) {
     data
   })
 }
-//获取报价单列表
+// 获取报价单列表
 export function getQuotationList(data) {
   return requestsh({
     url: '/quotation/list',
@@ -39,7 +39,7 @@ export function getQuotationList(data) {
     data
   })
 }
-//审核报价单
+// 审核报价单
 export function getQuotationExamine(data) {
   return requestsh({
     url: '/quotation/examine',
@@ -47,7 +47,7 @@ export function getQuotationExamine(data) {
     data
   })
 }
-//获取报价单详情
+// 获取报价单详情
 export function getQuotationDetail(data) {
   return requestsh({
     url: '/quotation/detail',
@@ -55,7 +55,15 @@ export function getQuotationDetail(data) {
     data
   })
 }
-//根据客户姓名获取列表
+// 修改报价单
+export function editQuotationDetail(data) {
+  return requestsh({
+    url: '/quotation/modify',
+    method: 'post',
+    data
+  })
+}
+// 根据客户姓名获取列表
 export function getSearchName(data) {
   return requestsh({
     url: '/customer/search/name',
@@ -63,7 +71,7 @@ export function getSearchName(data) {
     data
   })
 }
-//上传水单文件
+// 上传水单文件
 export function getQuotationUpload(data) {
   return requestsh({
     url: '/quotation/upload',
@@ -71,7 +79,7 @@ export function getQuotationUpload(data) {
     data
   })
 }
-//上传水单
+// 上传水单
 export function getQuotationConfirm(data) {
   return requestsh({
     url: '/quotation/confirm',
@@ -79,7 +87,7 @@ export function getQuotationConfirm(data) {
     data
   })
 }
-//新增报价单
+// 新增报价单
 export function getQuotationCreate(data) {
   return requestsh({
     url: '/quotation/create',
@@ -87,7 +95,7 @@ export function getQuotationCreate(data) {
     data
   })
 }
-//获取商品列表
+// 获取商品列表
 export function getProductList(data) {
   return requestsh({
     url: '/product/list',
@@ -95,7 +103,7 @@ export function getProductList(data) {
     data
   })
 }
-//获取出口国
+// 获取出口国
 export function getCountryList(data) {
   return requestsh({
     url: '/product/country/list',
@@ -103,7 +111,7 @@ export function getCountryList(data) {
     data
   })
 }
-//获取基本检测项列表
+// 获取基本检测项列表
 export function getItemList(data) {
   return requestsh({
     url: '/product/item/list',
@@ -111,7 +119,7 @@ export function getItemList(data) {
     data
   })
 }
-//获取标准列表
+// 获取标准列表
 export function getStandardList(data) {
   return requestsh({
     url: '/product/standard/list',
@@ -119,7 +127,7 @@ export function getStandardList(data) {
     data
   })
 }
-//获取客服列表
+// 获取客服列表
 export function getServiceList(data) {
   return requestsh({
     url: '/api/user/service/list',
@@ -127,7 +135,7 @@ export function getServiceList(data) {
     data
   })
 }
-//创建商品
+// 创建商品
 export function getProductCreate(data) {
   return requestsh({
     url: '/product/create',
@@ -135,7 +143,7 @@ export function getProductCreate(data) {
     data
   })
 }
-//获取费率
+// 获取费率
 export function getRate(data) {
   return requestsh({
     url: '/quotation/getRate',
@@ -144,7 +152,7 @@ export function getRate(data) {
   })
 }
 
-//获取申请单列表
+// 获取申请单列表
 export function getApplicationList(data) {
   return requestsh({
     url: '/application/list',
@@ -152,7 +160,7 @@ export function getApplicationList(data) {
     data
   })
 }
-//获取申请单详情
+// 获取申请单详情
 export function getApplicationDetail(data) {
   return requestsh({
     url: '/application/detail',
@@ -160,7 +168,7 @@ export function getApplicationDetail(data) {
     data
   })
 }
-//新增申请单
+// 新增申请单
 export function getApplicationCreate(data) {
   return requestsh({
     url: '/application/create',
@@ -168,7 +176,7 @@ export function getApplicationCreate(data) {
     data
   })
 }
-//修改申请单
+// 修改申请单
 export function getApplicationModify(data) {
   return requestsh({
     url: '/application/modify',
@@ -176,7 +184,7 @@ export function getApplicationModify(data) {
     data
   })
 }
-//审核申请单
+// 审核申请单
 export function getApplicationReview(data) {
   return requestsh({
     url: '/application/review',
@@ -185,7 +193,7 @@ export function getApplicationReview(data) {
   })
 }
 
-//获取检测方法和检测条件
+// 获取检测方法和检测条件
 export function getItemById(data) {
   return requestsh({
     url: '/test/getItemById',
@@ -193,5 +201,4 @@ export function getItemById(data) {
     data
   })
 }
-
 

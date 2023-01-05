@@ -401,6 +401,7 @@ import { queryTestTradeDetail } from "@/api/transaction"
 import {
   getQuotationDetail,
   getQuotationCreate,
+  editQuotationDetail,
   getCountryList,
   getItemList,
   getStandardList,
@@ -522,6 +523,8 @@ export default {
       const id = this.$route.params && this.$route.params.id
       this.tmpTestTradeId = id
       this.fetchData(id)
+      this.setTagsViewTitle()
+      this.setPageTitle()
     } else {
       // create
       this.tmpTestTradeId = this.$route.query.id
@@ -550,9 +553,21 @@ export default {
     },
     fetchData: function(id) {
       getQuotationDetail(Object.assign({}, { quotationNum: id })).then(response => {
-        console.log(response.data)
-        this.postForm = response.data.testQuotation
-
+        console.log(response.data, "fetchData===========")
+        this.postForm = response.data
+        this.postForm.reportTypes = {}
+        this.postForm.goods.forEach((good, id) => {
+          this.checkedGoodsReportTypes[id] = good.reportTypes
+          this.payType = good.payType
+          good.items.forEach((item, idx) => {
+            // item.itemId = idx;
+            // item.id = idx;
+            item.name = item.testItem
+            item.price = item.unitPrice
+            item.price2 = item.amountRmb
+          })
+        })
+        this.calTotalCost()
         // set tagsview title
         this.setTagsViewTitle()
 
@@ -662,6 +677,7 @@ export default {
       console.log(item)
       this.postForm.clientName = item.name
       this.postForm.clientId = item.id
+      this.postForm.clientNum = item.clientNum
       this.postForm.attn = item.contactName
       this.postForm.telClient = item.contactMobile
       this.postForm.email = item.contactEmail
@@ -676,9 +692,10 @@ export default {
     // 确认选择商品
     handleCheckConfirm() {
       console.log(this.productlist)
-      if (this.productlist) {
-        this.postForm.goods.push(this.productlist)
+      if (!this.productlist.goodsId) {
+        return
       }
+      this.postForm.goods.push(this.productlist)
       console.log(this.postForm.goods)
       this.postForm.goods.forEach((good, idx) => {
         this.checkedGoodsReportTypes[idx] = []
@@ -744,12 +761,12 @@ export default {
       })
     },
     setTagsViewTitle() {
-      const title = '新建报价单'
+      const title = this.isEdit ? "编辑报价单" : '新建报价单'
       const route = Object.assign({}, this.tempRoute, { title: `${title}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     setPageTitle() {
-      const title = '新建报价单'
+      const title = this.isEdit ? "编辑报价单" : '新建报价单'
       document.title = `${title} `
     },
     submitForm(formName) {
@@ -760,7 +777,6 @@ export default {
           let massage = ""
           const form = deepClone(this.postForm)
           console.log(form, "deepClone===============")
-          form.testPrice = form.testPriceShow
           form.goods.forEach(goodsItem => {
             if (!goodsItem.testPeriod) {
               isPass = false
@@ -774,6 +790,8 @@ export default {
             } else if (!goodsItem.reportTypes || !goodsItem.reportTypes.length) {
               isPass = false
               massage = "请勾选报告类型"
+            } else {
+              goodsItem.testPrice = Number(goodsItem.testPriceShow) * 100
             }
           })
           if (!isPass) {
@@ -783,9 +801,15 @@ export default {
           if (form.payType != 0 && form.payType != 100) {
             form.payType = this.payType
           }
-          getQuotationCreate(form).then(res => {
+          let request = getQuotationCreate
+          if (this.isEdit) {
+            request = editQuotationDetail
+          }
+          request(form).then(res => {
             const { data, status } = res
             if (status == 200) {
+              this.resetForm(formName)
+              this.$store.dispatch('tagsView/updateVisitedView', this.$route)
               this.$router.go(-1)
             } else {
               this.$message.error(res.errMsg)

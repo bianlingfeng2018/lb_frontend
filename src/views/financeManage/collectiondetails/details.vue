@@ -1,10 +1,10 @@
 <template>
   <div class="app-container ohn">
     <div>
-      <el-radio-group v-model="radio" >
+      <el-radio-group v-model="radio">
 
-        <el-radio-button label="消费账" @click.native = "findPage($event,'消费账')" />
-        <el-radio-button label="收款账" @click.native = "findPage($event,'收款账')"/>
+        <el-radio-button label="消费账" @click.native="findPage($event,'消费账')" />
+        <el-radio-button label="收款账" @click.native="findPage($event,'收款账')" />
       </el-radio-group>
     </div>
     <!--消费账-->
@@ -73,7 +73,7 @@
       </el-form-item>
     </el-form>
 
-    <div class="lb-flex lb-flex-bw"  v-if="radio =='消费账'">
+    <div v-if="radio =='消费账'" class="lb-flex lb-flex-bw">
       <el-button
         type="primary"
         plain
@@ -83,28 +83,34 @@
       </el-button>
     </div>
 
-    <el-table :v-loading="tableLoading" :data="tableData"
-              stripe border style="width: 100%" class="mt8" v-if="radio=='消费账'"
-              key="table1"
-              @selection-change="handleSelectionChange"
+    <el-table
+      v-if="radio=='消费账'"
+      key="table1"
+      :v-loading="tableLoading"
+      :data="tableData"
+      stripe
+      border
+      style="width: 100%"
+      class="mt8"
+      @selection-change="handleSelectionChange"
     >
 
       <el-table-column align="center" type="selection" min-width="80" :selectable="canSelect" />
       <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
       <el-table-column prop="tradeName" label="交易名称" min-width="150" />
-      <el-table-column prop="onaccountAmt" label="挂账金额" min-width="150" >
+      <el-table-column prop="onaccountAmt" label="挂账金额" min-width="150">
         <template v-slot="scope">
-          <span>{{scope.row.onaccountAmt/100}}</span>
+          <span>{{ scope.row.onaccountAmt/100 }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="unAmt" label="未核销金额" min-width="150" >
+      <el-table-column prop="unAmt" label="未核销金额" min-width="150">
         <template v-slot="scope">
-          <span>{{scope.row.unAmt/100}}</span>
+          <span>{{ scope.row.unAmt/100 }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="startTime" label="挂账日期" min-width="150" />
       <el-table-column prop="lastTime" label="最晚收款日期" min-width="150" />
-      <el-table-column prop="status" label="状态" min-width="150" >
+      <el-table-column prop="status" label="状态" min-width="150">
         <template v-slot="scope">
           <span v-if="scope.row.status==0">未核销</span>
           <span v-else-if="scope.row.status==1">已核销</span>
@@ -136,7 +142,7 @@
       label-width="150px"
     >
       <el-form-item label="客户名称">{{ routeData.name }}</el-form-item>
-      <el-form-item label="剩余收款金额">{{routeData.leftIncomeAmt /100}}</el-form-item>
+      <el-form-item label="剩余收款金额">{{ routeData.leftIncomeAmt /100 }}</el-form-item>
       <br>
       <el-form-item :label="'操作日期'">
         <el-date-picker
@@ -166,7 +172,7 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <div class="lb-flex lb-flex-bw"  v-if="radio =='收款账'">
+    <div v-if="radio =='收款账'" class="lb-flex lb-flex-bw">
       <el-button
         type="primary"
         plain
@@ -175,7 +181,7 @@
       >入账
       </el-button>
     </div>
-    <el-table :v-loading="tableLoading2" :data="tableData2" stripe border style="width: 100%" class="mt8"  v-if="radio =='收款账'"  key="table2">
+    <el-table v-if="radio =='收款账'" key="table2" :v-loading="tableLoading2" :data="tableData2" stripe border style="width: 100%" class="mt8">
       <el-table-column prop="oprationType" label="操作类型" min-width="150">
         <template v-slot="scope">
           <span v-if="scope.row.oprationType==0">入账</span>
@@ -183,21 +189,21 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="clientId" label="收款公司" min-width="150" />
-      <el-table-column prop="originAmount" label="期初金额" min-width="150" >
+      <el-table-column prop="incomeComp" label="收款公司" min-width="150" />
+      <el-table-column prop="originAmount" label="期初金额" min-width="150">
         <template v-slot="scope">
-          <span>{{scope.row.originAmount/100}}</span>
+          <span>{{ scope.row.originAmount/100 }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="operationAmount" label="发生额" min-width="150" >
+      <el-table-column prop="operationAmount" label="发生额" min-width="150">
         <template v-slot="scope">
-          <span>{{scope.row.operationAmount/100}}</span>
+          <span>{{ scope.row.operationAmount/100 }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="finalAmount" label="期末余额" min-width="150" >
+      <el-table-column prop="finalAmount" label="期末余额" min-width="150">
         <template v-slot="scope">
-          <span>{{scope.row.finalAmount/100}}</span>
+          <span>{{ scope.row.finalAmount/100 }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="operUser" label="操作人" min-width="150" />
@@ -273,13 +279,14 @@
 </template>
 
 <script>
-import { getAllIncomeBill,getAllOutBill,addOutBillBatch,addOneIncomeBill} from "@/api/bill"
-import {deepClone} from "@/utils";
+import { getAllIncomeBill, getAllOutBill, addOutBillBatch, addOneIncomeBill } from "@/api/bill"
+import { allCompany } from "@/api/organizations"
+import { deepClone } from "@/utils"
 export default {
   name: "Details",
   data() {
     return {
-      visible:1,
+      visible: 1,
       tableLoading: false,
       tableLoading2: false,
       tableData: [],
@@ -289,11 +296,11 @@ export default {
       creditInfo: {},
       // 搜索条件
       columnParam: {
-        tradeId:"",
-        clientId:"",
-        status:"",
-        uploadStartTime:"",
-        uploadEndTime:"",
+        tradeId: "",
+        clientId: "",
+        status: "",
+        uploadStartTime: "",
+        uploadEndTime: "",
         startTime: "",
         endTime: ""
       },
@@ -322,32 +329,42 @@ export default {
         pageSize: 10,
         pageTotal: 0
       },
-      routeData:{},
-      statusList:["宁波公司","上海公司","广州公司"],
-      operTime:[],
-      lastTime:[],
-      selectData:[]
+      routeData: {},
+      statusList: [],
+      operTime: [],
+      lastTime: [],
+      selectData: []
     }
   },
   created() {
-    this.routeData = this.$route.query.data;
+    this.routeData = this.$route.query.data
     this.getDate()
+    allCompany({}).then(res => {
+      console.log(res)
+      const { data, status } = res
+      if (status == 200) {
+        this.statusList = []
+        data.forEach(item => {
+          this.statusList.push(item.comName)
+        })
+      }
+    })
   },
   methods: {
 
     // 切换头部标签==客户佣金设置/查看
-    findPage(event,data) {
-      this.visible = data;
-      this.columnParam = {};
+    findPage(event, data) {
+      this.visible = data
+      this.columnParam = {}
       this.getDate()
     },
     // 获取列表数据
     getDate() {
-      this.columnParam.clientId = this.routeData.clientId;
+      this.columnParam.clientId = this.routeData.clientId
       let columnParam = {}
-      if(this.visible == 1){
+      if (this.visible == 1) {
         this.tableLoading = true
-        this.tableData = [];
+        this.tableData = []
         const queryParam = {
           pageNum: this.pagination.currPage,
           pageSize: this.pagination.pageSize
@@ -357,7 +374,7 @@ export default {
         columnParam.lastEndTime = this.lastTime[1]
         columnParam.startTime = this.operTime[0]
         columnParam.endTime = this.operTime[1]
-        getAllOutBill(Object.assign({}, queryParam, columnParam)).then(res=>{
+        getAllOutBill(Object.assign({}, queryParam, columnParam)).then(res => {
           console.log(res)
           const { data, status } = res
           if (status == 200) {
@@ -373,9 +390,9 @@ export default {
           .finally(() => {
             this.tableLoading = false
           })
-      }else{
-        this.tableLoading2= true
-        this.tableData2 = [];
+      } else {
+        this.tableLoading2 = true
+        this.tableData2 = []
         const queryParam = {
           pageNum: this.pagination2.currPage,
           pageSize: this.pagination2.pageSize
@@ -383,7 +400,7 @@ export default {
         columnParam = deepClone(this.columnParam)
         columnParam.startTime = this.operTime[0]
         columnParam.endTime = this.operTime[1]
-        getAllIncomeBill(Object.assign({}, queryParam, columnParam)).then(res=>{
+        getAllIncomeBill(Object.assign({}, queryParam, columnParam)).then(res => {
           console.log(res)
           const { data, status } = res
           if (status == 200) {
@@ -403,10 +420,10 @@ export default {
     },
     // 核销
     setCreditInfo() {
-      let param = deepClone(this.creditInfo);
-      param.clientId = this.routeData.clientId;
-      param.operType = "0";
-      console.log(param);
+      const param = deepClone(this.creditInfo)
+      param.clientId = this.routeData.clientId
+      param.operType = "0"
+      console.log(param)
       addOneIncomeBill(param).then((res) => {
         const { data, status } = res
         if (status == 200) {
@@ -417,7 +434,7 @@ export default {
             message: `操作成功`,
             type: 'success'
           })
-          this.getDate();
+          this.getDate()
         } else {
           this.$message.error(res.errMsg)
         }
@@ -428,26 +445,25 @@ export default {
         .finally(() => {
           this.dialogVisible_set = false
         })
-
     },
 
-    inputChange(e){
-      console.log(e);
-      this.creditInfo.operAmount = Number(e)*100;
+    inputChange(e) {
+      console.log(e)
+      this.creditInfo.operAmount = Number(e) * 100
     },
 
-    onBatchOut(){
-      if(this.selectData.length ==0){
-        this.$message.error("请选择核销条目");
-        return;
+    onBatchOut() {
+      if (this.selectData.length == 0) {
+        this.$message.error("请选择核销条目")
+        return
       }
-      let ids = [];
-      this.selectData.forEach(item=>{
-        ids.push(item.id);
+      const ids = []
+      this.selectData.forEach(item => {
+        ids.push(item.id)
       })
-      let params = {
-        ids:ids,
-        clientId:this.routeData.clientId
+      const params = {
+        ids: ids,
+        clientId: this.routeData.clientId
       }
       addOutBillBatch(params).then((res) => {
         const { data, status } = res
@@ -459,7 +475,7 @@ export default {
             message: `操作成功`,
             type: 'success'
           })
-          this.getDate();
+          this.getDate()
         } else {
           this.$message.error(res.errMsg)
         }
@@ -471,19 +487,19 @@ export default {
           this.dialogVisible_edit = false
         })
     },
-    handleSelectionChange(data){
-      this.selectData = data;
-      this.creditInfo.amount =0;
-      data?.forEach(item=>{
-        this.creditInfo.amount += Number(item.unAmt);
+    handleSelectionChange(data) {
+      this.selectData = data
+      this.creditInfo.amount = 0
+      data?.forEach(item => {
+        this.creditInfo.amount += Number(item.unAmt)
       })
     },
-    canSelect(row,index){
-      return row.status == 0;
+    canSelect(row, index) {
+      return row.status == 0
     },
-    handleCreate(state){
-      this.dialogVisible_edit = state ==1
-      this.dialogVisible_set = state ==2
+    handleCreate(state) {
+      this.dialogVisible_edit = state == 1
+      this.dialogVisible_set = state == 2
     },
     handleShow(row) {
       this.dialogVisible = true

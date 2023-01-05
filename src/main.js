@@ -19,13 +19,14 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
+import html2Pdf from "@/utils/html2Pdf"
 
 import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 
-
 Vue.use(VXETable)
+Vue.use(html2Pdf)
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size

@@ -1,80 +1,80 @@
 <template>
   <div class="app-container ohn quotation-box">
+    <div id="pdfCentent">
+      <!--    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>-->
+      <!--    <el-divider content-position="left">基本信息</el-divider>-->
+      <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
+        <el-descriptions-item>
+          <template slot="label">{{ "报价编号" }}</template>
+          {{ postForm.quotationNum }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "交易名称" }}</template>
+          {{ postForm.tradeName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "交易描述" }}</template>
+          {{ postForm.tradeDesc }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "支付方式" }}</template>
+          <span v-if="postForm.payType==0">挂账</span>
+          <span v-else-if="postForm.payType==100">先付后检</span>
+          <span v-else>先付{{ postForm.payType }}%后检</span>
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "客户公司" }}</template>
+          {{ postForm.clientName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "联系人" }}</template>
+          {{ postForm.attn }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "联系电话" }}</template>
+          {{ postForm.telClient }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "客户传真" }}</template>
+          {{ postForm.faxClient }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "客户邮箱" }}</template>
+          {{ postForm.email }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">{{ "报告邮寄地址" }}</template>
+          {{ postForm.deliveryAddress }}
+        </el-descriptions-item>
+      </el-descriptions>
 
-    <!--    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>-->
-    <!--    <el-divider content-position="left">基本信息</el-divider>-->
-    <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
-      <el-descriptions-item>
-        <template slot="label">{{ "报价编号" }}</template>
-        {{ postForm.quotationNum }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "交易名称" }}</template>
-        {{ postForm.tradeName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "交易描述" }}</template>
-        {{ postForm.tradeDesc }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "支付方式" }}</template>
-        <span v-if="postForm.payType==0">挂账</span>
-        <span v-else-if="postForm.payType==100">先付后检</span>
-        <span v-else>先付{{ postForm.payType }}%后检</span>
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "客户公司" }}</template>
-        {{ postForm.clientName }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "联系人" }}</template>
-        {{ postForm.attn }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "联系电话" }}</template>
-        {{ postForm.telClient }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "客户传真" }}</template>
-        {{ postForm.faxClient }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "客户邮箱" }}</template>
-        {{ postForm.email }}
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">{{ "报告邮寄地址" }}</template>
-        {{ postForm.deliveryAddress }}
-      </el-descriptions-item>
-    </el-descriptions>
+      <el-tabs style="width: 100%">
+        <el-tab-pane label="报价明细" name="0">
+          <div v-for="goodsItem in postForm.goods">
+            <div class="parent">
+              <el-form ref="postForm" class="left mt20" :inline="true" :model="goodsItem" status-icon label-width="150px">
+                <el-form-item label="产品名：" prop="telClient">{{ goodsItem.goodsName }}</el-form-item>
+                <el-form-item label="HSCode：" prop="telClient">{{ goodsItem.hsCode }}</el-form-item>
+                <el-form-item label="材质：" prop="telClient">{{ goodsItem.material }}</el-form-item>
+                <el-form-item label="出口国：" prop="telClient">{{ goodsItem.exportCountry }}</el-form-item>
+                <el-form-item label="检测标准：" prop="telClient">{{ goodsItem.standard }}</el-form-item>
 
-    <el-tabs style="width: 100%">
-      <el-tab-pane label="报价明细" name="0">
-        <div v-for="goodsItem in postForm.goods">
-          <div class="parent">
-            <el-form ref="postForm" class="left mt20" :inline="true" :model="goodsItem" status-icon label-width="150px">
-              <el-form-item label="产品名：" prop="telClient">{{ goodsItem.goodsName }}</el-form-item>
-              <el-form-item label="HSCode：" prop="telClient">{{ goodsItem.hsCode }}</el-form-item>
-              <el-form-item label="材质：" prop="telClient">{{ goodsItem.material }}</el-form-item>
-              <el-form-item label="出口国：" prop="telClient">{{ goodsItem.exportCountry }}</el-form-item>
-              <el-form-item label="检测标准：" prop="telClient">{{ goodsItem.standard }}</el-form-item>
-
-              <el-table :data="goodsItem.items" stripe border style="width: 100%" class="mt8">
-                <el-table-column prop="itemId" label="序号" width="60" />
-                <el-table-column prop="testItem" label="测试项目" min-width="120" />
-                <el-table-column prop="unitPrice" label="单价" min-width="120">
-                  <template slot-scope="scope">
-                    <span>{{ scope.row.unitPrice | changePrice2money }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="quantity" label="测试点数" min-width="120" />
-                <el-table-column prop="amountRmb" label="测试金额" min-width="120">
-                  <template slot-scope="scope">
-                    <span>{{ scope.row.amountRmb | changePrice2money }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="sampleQty" label="样品数量" min-width="120" />
-              </el-table>
+                <el-table :data="goodsItem.items" stripe border style="width: 100%" class="mt8">
+                  <el-table-column prop="itemId" label="序号" width="60" />
+                  <el-table-column prop="testItem" label="测试项目" min-width="120" />
+                  <el-table-column prop="unitPrice" label="单价" min-width="120">
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.unitPrice | changePrice2money }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="quantity" label="测试点数" min-width="120" />
+                  <el-table-column prop="amountRmb" label="测试金额" min-width="120">
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.amountRmb | changePrice2money }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="sampleQty" label="样品数量" min-width="120" />
+                </el-table>
 
               <el-form-item label="测试周期">{{ goodsItem.testPeriod }}个工作日</el-form-item>
               <el-form-item label="总样品量">{{ goodsItem.sampleNum }}个</el-form-item>
@@ -151,129 +151,129 @@
                 <span class="text-danger">{{ postForm.totalCost | changePrice2money }}</span>
               </el-form-item>
 
-            </el-form>
-            <div class="right">
-              <el-button type="primary" size="small" plain @click="insertEvent(2,goodsItem)">加测
-              </el-button>
-              <br>
-              <el-button
-                v-if="goodsItem.applied "
-                type="primary"
-                class="mt8"
-                size="small"
-                plain
-                @click="insertEvent(3,goodsItem)"
-              >复测
-              </el-button>
-              <br>
-              <el-button
-                v-if="goodsItem.applied == false"
-                type="primary"
-                class="mt8"
-                size="small"
-                plain
-                @click="handleCreate(goodsItem.goodsId)"
-              >创建申请单
-              </el-button>
+              </el-form>
+              <div class="right">
+                <el-button type="primary" size="small" plain @click="insertEvent(2,goodsItem)">加测
+                </el-button>
+                <br>
+                <el-button
+                  v-if="goodsItem.applied "
+                  type="primary"
+                  class="mt8"
+                  size="small"
+                  plain
+                  @click="insertEvent(3,goodsItem)"
+                >复测
+                </el-button>
+                <br>
+                <el-button
+                  v-if="goodsItem.applied == false"
+                  type="primary"
+                  class="mt8"
+                  size="small"
+                  plain
+                  @click="handleCreate(goodsItem.goodsId)"
+                >创建申请单
+                </el-button>
+              </div>
             </div>
           </div>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="申请单" name="1">
-        <el-table :data="tableData1" stripe border style="width: 100%" class="mt8">
-          <el-table-column prop="applicationNum" label="申请单编号" min-width="120" />
-          <el-table-column prop="applicationDate" label="申请日期" min-width="120" />
-          <el-table-column prop="sampleStatus" label="收样状态" min-width="120">
-            <template slot-scope="scope">
-              <span v-if="scope.row.sampleStatus == 1">已收样</span>
-              <span v-else-if="scope.row.sampleStatus == 0">未收样</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="sampleDate" label="样品接收日期" min-width="120" />
-          <el-table-column prop="planDate" label="要求完成日期" min-width="120" />
-          <el-table-column prop="contractStatus" label="合同评审状态" min-width="120">
-            <template slot-scope="scope">
-              <span v-if="scope.row.contractStatus == 0">待评审</span>
-              <span v-else-if="scope.row.contractStatus == 1">评审通过</span>
-              <span v-else-if="scope.row.contractStatus == 2">评审不通过</span>
-              <span v-else-if="scope.row.contractStatus == 3">已下单</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="serviceName" label="跟进人" min-width="120" />
-          <el-table-column prop="reviewName" label="评审人" min-width="120" />
-        </el-table>
-      </el-tab-pane>
+        </el-tab-pane>
+        <el-tab-pane label="申请单" name="1">
+          <el-table :data="tableData1" stripe border style="width: 100%" class="mt8">
+            <el-table-column prop="applicationNum" label="申请单编号" min-width="120" />
+            <el-table-column prop="applicationDate" label="申请日期" min-width="120" />
+            <el-table-column prop="sampleStatus" label="收样状态" min-width="120">
+              <template slot-scope="scope">
+                <span v-if="scope.row.sampleStatus == 1">已收样</span>
+                <span v-else-if="scope.row.sampleStatus == 0">未收样</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="sampleDate" label="样品接收日期" min-width="120" />
+            <el-table-column prop="planDate" label="要求完成日期" min-width="120" />
+            <el-table-column prop="contractStatus" label="合同评审状态" min-width="120">
+              <template slot-scope="scope">
+                <span v-if="scope.row.contractStatus == 0">待评审</span>
+                <span v-else-if="scope.row.contractStatus == 1">评审通过</span>
+                <span v-else-if="scope.row.contractStatus == 2">评审不通过</span>
+                <span v-else-if="scope.row.contractStatus == 3">已下单</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="serviceName" label="跟进人" min-width="120" />
+            <el-table-column prop="reviewName" label="评审人" min-width="120" />
+          </el-table>
+        </el-tab-pane>
 
-      <el-tab-pane label="工作单" name="2">
-        <el-table :data="tableData2" stripe border style="width: 100%" class="mt8">
-          <el-table-column prop="workOrderNum" label="工作单编号" min-width="120" />
-          <el-table-column prop="orderDate" label="开单日期" min-width="120" />
-          <el-table-column prop="service" label="是否加急" min-width="120">
-            <template slot-scope="scope">
-              <span v-if="scope.row.service == 0">不加急</span>
-              <span v-else-if="scope.row.service == 1">加急</span>
-              <span v-else-if="scope.row.service ==2">特急</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="planDate" label="要求完成日期" min-width="120" />
-          <el-table-column prop="outputDate" label="出单日期" min-width="120" />
-          <el-table-column prop="comName" label="检测单位名称" min-width="120" />
-          <el-table-column prop="subContract" label="是否分包商" min-width="120">
-            <template slot-scope="scope">
-              <span v-if="scope.row.subContract == 1">是</span>
-              <span v-else-if="scope.row.subContract == 0">否</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="status" label="状态" min-width="90">
-            <template slot-scope="scope">
-              <span v-if="scope.row.status == 0">待确认</span>
-              <span v-else-if="scope.row.status == 1">已确认</span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
+        <el-tab-pane label="工作单" name="2">
+          <el-table :data="tableData2" stripe border style="width: 100%" class="mt8">
+            <el-table-column prop="workOrderNum" label="工作单编号" min-width="120" />
+            <el-table-column prop="orderDate" label="开单日期" min-width="120" />
+            <el-table-column prop="service" label="是否加急" min-width="120">
+              <template slot-scope="scope">
+                <span v-if="scope.row.service == 0">不加急</span>
+                <span v-else-if="scope.row.service == 1">加急</span>
+                <span v-else-if="scope.row.service ==2">特急</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="planDate" label="要求完成日期" min-width="120" />
+            <el-table-column prop="outputDate" label="出单日期" min-width="120" />
+            <el-table-column prop="comName" label="检测单位名称" min-width="120" />
+            <el-table-column prop="subContract" label="是否分包商" min-width="120">
+              <template slot-scope="scope">
+                <span v-if="scope.row.subContract == 1">是</span>
+                <span v-else-if="scope.row.subContract == 0">否</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" label="状态" min-width="90">
+              <template slot-scope="scope">
+                <span v-if="scope.row.status == 0">待确认</span>
+                <span v-else-if="scope.row.status == 1">已确认</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
 
-      <el-tab-pane label="原始记录单" name="3">
-        <el-table :data="tableData3" stripe border style="width: 100%" class="mt8">
-          <el-table-column prop="recordNum" label="原始记录单编号" min-width="120" />
-          <el-table-column prop="testItem" label="检测项目" min-width="120" />
-          <el-table-column prop="testLab" label="检测实验室" min-width="120" />
-          <el-table-column prop="testDeviceNo" label="检测设备号" min-width="120" />
-          <el-table-column prop="testPerson" label="测试人员" min-width="120" />
-          <el-table-column prop="createTime" label="创建日期" min-width="120" />
-          <el-table-column prop="planDate" label="要求日期" min-width="120" />
-          <el-table-column prop="reportDate" label="报告日期" min-width="120" />
-          <el-table-column prop="status" label="状态" min-width="90">
-            <template slot-scope="scope">
-              <span v-if="scope.row.status == 1">待审核</span>
-              <span v-else-if="scope.row.status == 2">审核通过</span>
-              <span v-else-if="scope.row.status == 3">审核不通过</span>
-              <span v-else-if="scope.row.status == 0">未完成</span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
+        <el-tab-pane label="原始记录单" name="3">
+          <el-table :data="tableData3" stripe border style="width: 100%" class="mt8">
+            <el-table-column prop="recordNum" label="原始记录单编号" min-width="120" />
+            <el-table-column prop="testItem" label="检测项目" min-width="120" />
+            <el-table-column prop="testLab" label="检测实验室" min-width="120" />
+            <el-table-column prop="testDeviceNo" label="检测设备号" min-width="120" />
+            <el-table-column prop="testPerson" label="测试人员" min-width="120" />
+            <el-table-column prop="createTime" label="创建日期" min-width="120" />
+            <el-table-column prop="planDate" label="要求日期" min-width="120" />
+            <el-table-column prop="reportDate" label="报告日期" min-width="120" />
+            <el-table-column prop="status" label="状态" min-width="90">
+              <template slot-scope="scope">
+                <span v-if="scope.row.status == 1">待审核</span>
+                <span v-else-if="scope.row.status == 2">审核通过</span>
+                <span v-else-if="scope.row.status == 3">审核不通过</span>
+                <span v-else-if="scope.row.status == 0">未完成</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
 
-      <el-tab-pane label="检测报告单" name="4">
-        <el-table :data="tableData4" stripe border style="width: 100%" class="mt8">
-          <el-table-column prop="workOrderNum" label="报告编号" min-width="120" />
-          <el-table-column prop="gmtCreate" label="客户名称" min-width="120" />
-          <el-table-column prop="gmtOutput" label="测试人员" min-width="120" />
-          <el-table-column prop="withdraw" label="要求日期" min-width="120" />
-          <el-table-column prop="withdraw" label="报告日期" min-width="120" />
-          <el-table-column fixed="right" label="状态" min-width="90">
-            <template slot-scope="scope">
-              <span v-if="scope.row.confirmed">已确认</span>
-              <span v-else>待确认</span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
-    </el-tabs>
-
+        <el-tab-pane label="检测报告单" name="4">
+          <el-table :data="tableData4" stripe border style="width: 100%" class="mt8">
+            <el-table-column prop="workOrderNum" label="报告编号" min-width="120" />
+            <el-table-column prop="gmtCreate" label="客户名称" min-width="120" />
+            <el-table-column prop="gmtOutput" label="测试人员" min-width="120" />
+            <el-table-column prop="withdraw" label="要求日期" min-width="120" />
+            <el-table-column prop="withdraw" label="报告日期" min-width="120" />
+            <el-table-column fixed="right" label="状态" min-width="90">
+              <template slot-scope="scope">
+                <span v-if="scope.row.confirmed">已确认</span>
+                <span v-else>待确认</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
     <br>
-    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="handleDownLoad()">下载</el-button>
-    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
+    <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,nowTime)">下载</el-button>
+    <!--    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>-->
 
     <!--弹窗  加测、复测-->
     <el-dialog :visible.sync="dialogVisible" title="加/复测">

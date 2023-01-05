@@ -95,6 +95,16 @@ export function getQuotationCreate(data) {
     data
   })
 }
+
+// 加测-复测报价单
+export function getQuotationAdditional(data) {
+  return requestsh({
+    url: '/quotation/additional',
+    method: 'post',
+    data
+  })
+}
+
 // 获取商品列表
 export function getProductList(data) {
   return requestsh({

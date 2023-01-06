@@ -52,7 +52,10 @@ const methods = {
     payType: [
       { required: true, message: '请选择支付方式', trigger: 'change' }
     ],
-
+    email: [
+      { required: false, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
+    ],
     clientName: [
       { required: true, message: '请选择客户公司', trigger: 'change' }
     ],

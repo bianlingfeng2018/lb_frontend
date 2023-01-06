@@ -3,12 +3,14 @@
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="客户中文名称">
-        <el-input
-          v-model="columnParam.clientName "
+        <el-autocomplete
+          v-model="columnParam.clientName"
+          :fetch-suggestions="queryClientCom"
           placeholder="请输入客户中文名称"
-          clearable
           style="width: 240px"
-          @keydown.enter.native="onSearch"/>
+          clearable
+          @select="onSelect"
+        />
       </el-form-item>
       <el-form-item label="合同结束日期">
         <el-date-picker
@@ -122,7 +124,7 @@
 
         </el-form-item>
         <el-form-item label="结算周期(天)：" prop="settlePeriod">
-          <el-input v-model="add_creditInfo.settlePeriod" placeholder="" style="width: 240px"/>
+          <el-input v-model="add_creditInfo.settlePeriod" placeholder="" type="number" style="width: 240px"/>
         </el-form-item>
         <el-form-item label="合同附件：">
           <el-upload
@@ -164,7 +166,9 @@
           </template>
         </el-form-item>
         <el-form-item label="结算周期：">{{creditInfo.settlePeriod }} 天</el-form-item>
-        <el-form-item label="合同附件：">{{creditInfo.contractPath }}</el-form-item>
+        <el-form-item label="合同附件：">
+          <el-button type="text" @click="handleTo(creditInfo.contractPath)">{{ creditInfo.contractPath }}</el-button>
+        </el-form-item>
         <el-form-item v-if="dialogType==='edit'" label="审核结果：" prop="reviewStatus">
           <el-select v-model="creditInfo.reviewStatus" placeholder="请选择" style="display: block; width: 200px">
             <el-option key="0" label="审核通过" value="1"/>
@@ -193,11 +197,13 @@
     getContractModify,
     getContractDetail,
     getContractReview,
-    getContractUpload
+    getContractUpload,
+    getContractDownload
   } from "@/api/contract"
   import {
     getSearchName,
   } from "@/api/organizations"
+  import { getClientByName } from "@/api/clientCompany"
   import { deepClone } from "@/utils";
   import config from "@/utils/config"
 
@@ -301,6 +307,30 @@
             this.tableLoading = false
           })
       },
+      queryClientCom(s, cb) {
+        this.columnParam.client = ''
+        const params = {
+          clientName: s
+        }
+        getClientByName(params).then(res => {
+          if (res.status == 200) {
+            this.restaurants = res.data.dataList
+            const cliets = []
+            this.restaurants.forEach(client => {
+              var mer = {}
+              mer.value = client.name
+              mer.clientId = client.clientNum
+              cliets.push(mer)
+            })
+            cb(cliets)
+          }
+        }).catch(e => {
+          console.log(e)
+        })
+      },
+      onSelect(item) {
+        this.columnParam.client = item.clientId
+      },
       changeTxnBtn() {
         let that = this;
         if (!that.contractTime) {
@@ -325,7 +355,38 @@
         this.add_creditInfo.clientId = item.id
         this.add_creditInfo.clientNum = item.clientNum
       },
-
+      // 查看下载PDF文件
+      handleTo(fileName) {
+        console.log(fileName)
+        fetch(
+          prefix.lb +
+          "/contract/download?fileName=" +fileName,
+          {
+            method: "GET",
+            responseType: "blob",
+          }
+        )
+          .then((res) => res.blob())
+          .then((data) => {
+            const blobUrl = window.URL.createObjectURL(data)
+            const a = document.createElement("a")
+            a.download = fileName
+            a.href = blobUrl
+            a.click()
+            this.$message({
+              type: "success",
+              message: "文件下载成功"
+            })
+          })
+          .catch(() => {
+            this.$message({
+              type: "error",
+              message: "文件下载失败，请稍后再试~"
+            })
+          })
+          .finally(() => {
+          })
+      },
       // 添加合同
       //提交
       onSubmit(formName) {
@@ -462,6 +523,7 @@
       handleCreate() {
         this.add_dialogType = 'new'
         this.add_dialogVisible = true
+        this.add_creditInfo = []
         this.getDataInfoList()
       },
       uploadChange(file, fileList) {
@@ -553,6 +615,7 @@
                       message: `操作成功`,
                       type: 'success'
                     })
+                    this.handleSearchTestTradeList()
                   } else {
                     this.$message.error(res.errMsg)
                   }

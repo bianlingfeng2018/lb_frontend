@@ -47,10 +47,10 @@
         <el-input v-model="postForm.attn" placeholder="请输入客户联系人" clearable style="width: 240px" />
       </el-form-item>
       <el-form-item label="联系电话">
-        <el-input v-model="postForm.telClient" placeholder="请输入联系电话" clearable style="width: 240px" />
+        <el-input v-model="postForm.telClient" type="number" placeholder="请输入联系电话" clearable style="width: 240px" />
       </el-form-item>
       <br>
-      <el-form-item label="邮箱">
+      <el-form-item label="邮箱" prop="email">
         <el-input v-model="postForm.email" placeholder="请输入邮箱" clearable style="width: 240px" />
       </el-form-item>
       <el-form-item label="传真">
@@ -122,11 +122,13 @@
           </vxe-column>
         </vxe-table>
 
-        <el-form-item label="测试周期" prop="testPeriod">
-          <el-input v-model="gooditem.testPeriod" placeholder="请输入测试周期" clearable style="width: 240px" />
+        <el-form-item label="测试周期" >
+          <label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;测试周期：</label>
+          <el-input v-model="gooditem.testPeriod" placeholder="请输入测试周期" type="number" clearable style="width: 240px" />
         </el-form-item>
-        <el-form-item label="总样品量" prop="sampleNum">
-          <el-input v-model="gooditem.sampleNum" placeholder="请输入总样品量" clearable style="width: 240px" />
+        <el-form-item label="总样品量" >
+          <label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;总样品量：</label>
+          <el-input v-model="gooditem.sampleNum" placeholder="请输入总样品量" type="number" clearable style="width: 240px" />
         </el-form-item>
         <br>
         <el-form-item label="服务类型">
@@ -630,10 +632,12 @@ export default {
         }
       } else if (type == 2) {
         if (this.checkList.length != 0) {
+          this.creditInfo.items = []
           this.checkList.forEach((item) => {
             this.creditInfo.items.push(item)
           })
         }
+        console.log( this.creditInfo.items)
       }
     },
     remoteMethod(query) {
@@ -708,11 +712,15 @@ export default {
     handleCheckConfirm2(formName) {
       console.log(this.creditInfo.goodsName)
       console.log(this.creditInfo.export)
-      if (this.creditInfo.goodsName == "") {
+      if (!this.creditInfo.busType) {
+        this.$message.error('请选择类型')
+        return
+      }
+      if (!this.creditInfo.goodsName) {
         this.$message.error('请输入产品名称')
         return
       }
-      if (this.creditInfo.export == "") {
+      if (!this.creditInfo.export) {
         this.$message.error('请选择出口国')
         return
       }
@@ -722,11 +730,23 @@ export default {
       }
 
       console.log(this.creditInfo)
-      getProductCreate(this.creditInfo)
+      const colParam = deepClone(this.creditInfo)
+      getProductCreate(Object.assign({}, colParam))
         .then((res) => {
           const { data, status } = res
           if (status == 200) {
+            console.log(this.creditInfo)
+            this.creditInfo.goodsId = data
+            if (!this.creditInfo.goodsId) {
+              return
+            }
+            this.postForm.goods.push(this.creditInfo)
+            console.log(this.postForm.goods)
+            this.postForm.goods.forEach((good, idx) => {
+              this.checkedGoodsReportTypes[idx] = []
+            })
             this.dialogVisible = false
+            this.calTotalCost()
           } else {
             this.$message.error(res.errMsg)
           }

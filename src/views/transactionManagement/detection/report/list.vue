@@ -10,11 +10,13 @@
           @keydown.enter.native="onSearch"/>
       </el-form-item>
       <el-form-item label="客户中文名称">
-        <el-input
+        <el-autocomplete
           v-model="columnParam.client"
+          :fetch-suggestions="queryClientCom"
           placeholder="请输入客户中文名称"
-          clearable
           style="width: 240px"
+          clearable
+          @select="onSelect"
         />
       </el-form-item>
       <el-form-item>
@@ -103,7 +105,7 @@
   import {
     getReportList,
   } from "@/api/worksheet"
-
+  import { getClientByName } from "@/api/clientCompany"
   export default {
 
     data() {
@@ -163,6 +165,30 @@
           .finally(() => {
             this.tableLoading = false
           })
+      },
+      queryClientCom(s, cb) {
+        this.columnParam.client = ''
+        const params = {
+          clientName: s
+        }
+        getClientByName(params).then(res => {
+          if (res.status == 200) {
+            this.restaurants = res.data.dataList
+            const cliets = []
+            this.restaurants.forEach(client => {
+              var mer = {}
+              mer.value = client.name
+              mer.clientId = client.clientNum
+              cliets.push(mer)
+            })
+            cb(cliets)
+          }
+        }).catch(e => {
+          console.log(e)
+        })
+      },
+      onSelect(item) {
+        this.columnParam.client = item.clientId
       },
       handleClick(tab) {
         this.columnParam.reportStatus = tab.name

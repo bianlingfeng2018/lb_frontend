@@ -7,14 +7,17 @@
           placeholder="请输入报告单编号"
           clearable
           style="width: 240px"
-          @keydown.enter.native="onSearch"/>
+          @keydown.enter.native="onSearch"
+        />
       </el-form-item>
       <el-form-item label="客户中文名称">
-        <el-input
+        <el-autocomplete
           v-model="columnParam.client"
+          :fetch-suggestions="queryClientCom"
           placeholder="请输入客户中文名称"
-          clearable
           style="width: 240px"
+          clearable
+          @select="onSelect"
         />
       </el-form-item>
       <el-form-item>
@@ -73,21 +76,31 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.pageTotal"
       @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"/>
+      @current-change="handleCurrentChange"
+    />
 
     <!--弹窗  审核-->
     <el-dialog :visible.sync="dialogVisible_check" title="审核">
-      <el-form ref="creditInfo" :model="creditInfo" status-icon :rules="auditRules" label-width="100px"
-               label-position="left">
+      <el-form
+        ref="creditInfo"
+        :model="creditInfo"
+        status-icon
+        :rules="auditRules"
+        label-width="100px"
+        label-position="left"
+      >
         <el-form-item label="审核结果：" prop="checkResult">
           <el-select v-model="creditInfo.checkResult" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="0" label="审核通过" value="1"/>
-            <el-option key="1" label="审核不通过" value="0"/>
+            <el-option key="0" label="审核通过" value="1" />
+            <el-option key="1" label="审核不通过" value="0" />
           </el-select>
         </el-form-item>
-        <el-form-item label="原因：" prop="reason"
-                      :rules="creditInfo.checkResult == '0'?auditRules.reason:[{required:false}]">
-          <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容"/>
+        <el-form-item
+          label="原因："
+          prop="reason"
+          :rules="creditInfo.checkResult == '0'?auditRules.reason:[{required:false}]"
+        >
+          <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -99,128 +112,152 @@
 </template>
 
 <script>
-  import { deepClone } from "../../../../utils"
-  import {
-    getReportList,
-  } from "@/api/worksheet"
+import { deepClone } from "../../../../utils"
+import {
+  getReportList
+} from "@/api/worksheet"
+import { getClientByName } from "@/api/clientCompany"
+export default {
 
-  export default {
-
-    data() {
-      return {
-        creditInfo: {
-          checkResult: '',
-          quotationNum: '',
-          reason: '',
-          requestId: Math.random().toString(24),
-        },
-        auditRules: {
-          checkResult: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
-          reason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
-        },
-        columnParam:  {
-          reportStatus: '-1'// 默认全部
-        },
-        tableLoading: false,
-        dialogVisible_check: false,
-        tableData: [],
-        pagination: {
-          currPage: 1,
-          pageSize: 10,
-          pageTotal: 0
-        }
+  data() {
+    return {
+      creditInfo: {
+        checkResult: '',
+        quotationNum: '',
+        reason: '',
+        requestId: Math.random().toString(24)
+      },
+      auditRules: {
+        checkResult: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
+        reason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }]
+      },
+      columnParam: {
+        reportStatus: '-1'// 默认全部
+      },
+      tableLoading: false,
+      dialogVisible_check: false,
+      tableData: [],
+      pagination: {
+        currPage: 1,
+        pageSize: 10,
+        pageTotal: 0
       }
+    }
+  },
+  created() {
+    this.handleSearchTestTradeList()
+  },
+  methods: {
+    handleSearchTestTradeList() {
+      this.tableLoading = true
+      const queryParam = {
+        requestId: Math.random().toString(24),
+        page: this.pagination.currPage,
+        pageSize: this.pagination.pageSize
+      }
+      const colParam = deepClone(this.columnParam)
+      if (this.columnParam.reportStatus == '-1') {
+        colParam.reportStatus = ""
+      }
+      getReportList(Object.assign({}, queryParam, colParam))
+        .then((res) => {
+          console.log(res)
+          this.tableLoading = false
+          const { data, status } = res
+          if (status == 200) {
+            this.tableData = data.dataList
+            this.pagination.pageTotal = data.total
+          } else {
+            this.$message.error(data.errMsg)
+          }
+        })
+        .catch(() => {
+        })
+        .finally(() => {
+          this.tableLoading = false
+        })
     },
-    created() {
+    queryClientCom(s, cb) {
+      this.columnParam.client = ''
+      const params = {
+        clientName: s
+      }
+      getClientByName(params).then(res => {
+        if (res.status == 200) {
+          this.restaurants = res.data.dataList
+          const cliets = []
+          this.restaurants.forEach(client => {
+            var mer = {}
+            mer.value = client.name
+            mer.clientId = client.clientNum
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    onSelect(item) {
+      this.columnParam.client = item.clientId
+    },
+    handleClick(tab) {
+      this.columnParam.reportStatus = tab.name
+      this.pagination.currPage = 1
       this.handleSearchTestTradeList()
     },
-    methods: {
-      handleSearchTestTradeList() {
-        this.tableLoading = true
-        const queryParam = {
-          requestId: Math.random().toString(24),
-          page: this.pagination.currPage,
-          pageSize: this.pagination.pageSize
-        }
-        const colParam = deepClone(this.columnParam)
-        if (this.columnParam.reportStatus == '-1') {
-          colParam.reportStatus = ""
-        }
-        getReportList(Object.assign({}, queryParam, colParam))
-          .then((res) => {
-            console.log(res)
-            this.tableLoading = false
-            const { data, status } = res
-            if (status == 200) {
-              this.tableData = data.dataList
-              this.pagination.pageTotal = data.total
-            } else {
-              this.$message.error(data.errMsg)
-            }
-          })
-          .catch(() => {
-          })
-          .finally(() => {
-            this.tableLoading = false
-          })
-      },
-      handleClick(tab) {
-        this.columnParam.reportStatus = tab.name
-        this.pagination.currPage = 1
-        this.handleSearchTestTradeList()
-      },
-      // 查看详情
-      handleShow(data) {
-        this.$router.push({
-          path: "/tm/detection/report/show/" + data.id
-        })
-      },
-      // 审核
-      handleEdit(data) {
-        this.dialogVisible_check = true
-        this.creditInfo = deepClone(row)
-      },
-      // 审核
-      async handleCheckConfirm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            getQuotationExamine(this.creditInfo)
-              .then((res) => {
-                const { data, status } = res
-                if (status == 200) {
-                  this.dialogVisible_check = false
-                  this.$notify({
-                    title: '成功',
-                    dangerouslyUseHTMLString: true,
-                    message: `操作成功`,
-                    type: 'success'
-                  })
-                } else {
-                  this.$message.error(res.errMsg)
-                }
-              })
-              .catch((e) => {
-                this.$message.error(e)
-              })
-              .finally(() => {
+    // 查看详情
+    handleShow(data) {
+      this.$router.push({
+        path: "/tm/detection/report/show/" + data.id
+      })
+    },
+    // 审核
+    handleEdit(data) {
+      this.dialogVisible_check = true
+      this.creditInfo = deepClone(row)
+    },
+    // 审核
+    async handleCheckConfirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          getQuotationExamine(this.creditInfo)
+            .then((res) => {
+              const { data, status } = res
+              if (status == 200) {
                 this.dialogVisible_check = false
-              })
-          } else {
-            return false;
-          }
-        });
-      },
-      handleSizeChange(val) {
-        this.pagination.pageSize = val
-        this.handleSearchTestTradeList()
-      },
-      handleCurrentChange(val) {
-        this.pagination.currPage = val
-        this.handleSearchTestTradeList()
-      },
-      onSearch() {
-        this.handleSearchTestTradeList()
-      },
+                this.$notify({
+                  title: '成功',
+                  dangerouslyUseHTMLString: true,
+                  message: `操作成功`,
+                  type: 'success'
+                })
+              } else {
+                this.$message.error(res.errMsg)
+              }
+            })
+            .catch((e) => {
+              this.$message.error(e)
+            })
+            .finally(() => {
+              this.dialogVisible_check = false
+            })
+        } else {
+          return false
+        }
+      })
+    },
+    handleSizeChange(val) {
+      this.pagination.pageSize = val
+      this.handleSearchTestTradeList()
+    },
+    handleCurrentChange(val) {
+      this.pagination.currPage = val
+      this.handleSearchTestTradeList()
+    },
+    onSearch() {
+      this.handleSearchTestTradeList()
     }
+  }
 }
 </script>

@@ -10,11 +10,13 @@
         />
       </el-form-item>
       <el-form-item label="客户中文名称">
-        <el-input
+        <el-autocomplete
           v-model="columnParam.clientName"
+          :fetch-suggestions="queryClientCom"
           placeholder="请输入客户中文名称"
-          clearable
           style="width: 240px"
+          clearable
+          @select="onSelect"
         />
       </el-form-item>
       <el-form-item label="检测交易名称">
@@ -193,7 +195,7 @@
 <script>
 import { changePrice2money } from "@/utils/simple-util"
 import config from "@/utils/config"
-
+import { getClientByName } from "@/api/clientCompany"
 const { prefix } = config[process.env.NODE_ENV]
 import { deepClone } from "../../../../utils"
 import {
@@ -388,7 +390,7 @@ export default {
                   message: `操作成功`,
                   type: 'success'
                 })
-                this.getListDate();
+                this.getListDate()
               } else {
                 this.$message.error(res.errMsg)
               }
@@ -403,6 +405,30 @@ export default {
           return false
         }
       })
+    },
+    queryClientCom(s, cb) {
+      this.columnParam.client = ''
+      const params = {
+        clientName: s
+      }
+      getClientByName(params).then(res => {
+        if (res.status == 200) {
+          this.restaurants = res.data.dataList
+          const cliets = []
+          this.restaurants.forEach(client => {
+            var mer = {}
+            mer.value = client.name
+            mer.clientId = client.clientNum
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    onSelect(item) {
+      this.columnParam.client = item.clientId
     },
     handleCheck(row) {
       this.dialogVisible_check = true

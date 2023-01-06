@@ -47,12 +47,15 @@ const methods = {
   },
   quotationCreateValidate: {
     tradeName: [
-      { required: true, message: '请输入交易名称', trigger: 'blur' },
+      { required: true, message: '请输入交易名称', trigger: 'blur' }
     ],
     payType: [
       { required: true, message: '请选择支付方式', trigger: 'change' }
     ],
-
+    email: [
+      { required: false, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
+    ],
     clientName: [
       { required: true, message: '请选择客户公司', trigger: 'change' }
     ],
@@ -73,7 +76,7 @@ const methods = {
     //   { required: true, message: '请输入检测价格', trigger: 'blur' },
     // ],
     reportTypes: [
-      { required: true, message: '请选择报告类型', trigger: 'change' },
+      { required: true, message: '请选择报告类型', trigger: 'change' }
     ],
     clientComSignature: [
       { required: true, message: '请输入公司签名', trigger: 'blur' },
@@ -150,7 +153,7 @@ const methods = {
     ],
     sampleDescription: [
       { required: true, message: '请输入取样部位描述', trigger: 'blur' }
-    ],
+    ]
   },
   worksheetCreateValidate: {
     testId: [

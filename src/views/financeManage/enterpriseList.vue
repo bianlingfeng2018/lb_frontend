@@ -45,7 +45,7 @@
       </el-table-column>
       <el-table-column prop="balanceAmt" label="可用额度" min-width="150">
         <template slot-scope="scope">
-          <span class="rflex">{{ scope.row.balanceAmt | changePrice2money }}</span>
+          <span class="rflex">{{ (scope.row.creditLimit-scope.row.unsettledAmt) | changePrice2money }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="unsettledAmt" label="未核销金额" min-width="150">

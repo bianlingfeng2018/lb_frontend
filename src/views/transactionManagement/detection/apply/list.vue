@@ -66,11 +66,17 @@
         <template slot-scope="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
           </el-button>
-          <el-button v-if="scope.row.contractStatus == 0 || scope.row.contractStatus == 2" type="primary" plain size="small" @click="handleEdit(scope.row)">编辑
+          <el-button v-if="scope.row.contractStatus == 0 || scope.row.contractStatus == 2" type="primary" plain
+                     size="small" @click="handleEdit(scope.row)">编辑
           </el-button>
-          <el-button v-if="scope.row.contractStatus == 0" type="primary" plain size="small" @click="handleCheck(scope.row)">评审
+          <el-button v-if="scope.row.contractStatus == 0" type="primary" plain size="small"
+                     @click="handleCheck(scope.row)">评审
           </el-button>
-          <el-button v-if="scope.row.contractStatus == 1" type="primary" plain size="small" @click="handleEdit(scope.row)">创建工作单
+          <el-button v-if="scope.row.contractStatus == 1" type="primary" plain size="small"
+                     @click="handleEdit(scope.row)">创建工作单
+          </el-button>
+          <el-button v-if="scope.row.contractStatus == 1" type="primary" plain size="small"
+                     @click="handleGet(scope.row)">确认收样
           </el-button>
         </template>
       </el-table-column>
@@ -87,20 +93,87 @@
       @current-change="handleCurrentChange"/>
     <!--弹窗  评审-->
     <el-dialog :visible.sync="dialogVisible_check" title="评审">
-      <el-form ref="creditInfo" :model="creditInfo" status-icon :rules="auditRules" label-width="100px" label-position="left">
+      <el-form ref="creditInfo" :model="creditInfo" status-icon :rules="auditRules" label-width="100px"
+               label-position="left">
         <el-form-item label="评审结果：" prop="reviewResult">
           <el-select v-model="creditInfo.reviewResult" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="1" label="评审通过" value="1" />
-            <el-option key="2" label="评审不通过" value="2" />
+            <el-option key="1" label="评审通过" value="1"/>
+            <el-option key="2" label="评审不通过" value="2"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="原因：" prop="reason" :rules="creditInfo.reviewResult == '2'?auditRules.reason:[{required:false}]" >
-          <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容" />
+        <el-form-item label="原因：" prop="reason"
+                      :rules="creditInfo.reviewResult == '2'?auditRules.reason:[{required:false}]">
+          <el-input v-model="creditInfo.reason" type="textarea" :rows="2" placeholder="请输入内容"/>
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button size="small" plain @click="dialogVisible_check = false">取消</el-button>
         <el-button type="primary" size="small" plain @click="handleCheckConfirm('creditInfo')">确认</el-button>
+      </div>
+    </el-dialog>
+
+    <!--弹窗   创建工作单-->
+    <el-dialog :visible.sync="dialogVisible" title="创建工作单">
+      <el-form ref="confirmInfo" :model="confirmInfo" label-width="100px"
+               label-position="left">
+        <div v-for="(gooditem,index) in confirmInfo.orderList" :key="index" :model="gooditem">
+          <el-form-item label="检测公司：" prop="reason">
+            <el-autocomplete
+              v-model="gooditem.comName"
+              :fetch-suggestions="queryClientCom"
+              placeholder="请输入关键字选择检测公司"
+              style="width: 240px"
+              clearable
+              @select="onSelect"/>
+          </el-form-item>
+          <el-form-item label="测试项目：" prop="telClient">
+            <el-button type="text" @click="showDialog">选择测试项目</el-button>
+          </el-form-item>
+          <el-dialog
+            width="50%"
+            title="选择测试项目"
+            :visible.sync="innerDialogVisible"
+            append-to-body>
+            <el-checkbox-group v-model="checkList">
+              <el-checkbox v-for="date in productItemlist" :key="date.id" :label="date" style="margin: 5px">{{ date.name
+                }} {{ date.price |
+                changePrice2money }}
+              </el-checkbox>
+            </el-checkbox-group>
+            <div style="text-align:center;" class="mt20">
+              <el-button size="small" plain @click="innerDialogVisible = false">取消</el-button>
+              <el-button type="primary" size="small" plain @click="checkedConfirm(1)">确认</el-button>
+            </div>
+          </el-dialog>
+          <el-table :data="productlist.testItemList" stripe border>
+            <el-table-column prop="id" label="序号" width="80" type="index"/>
+            <el-table-column prop="itemName" label="测试项目" min-width="120"/>
+            <el-table-column prop="unitPrice" label="单价" min-width="120">
+              <template slot-scope="scope">
+                <span>{{ scope.row.unitPrice | changePrice2money }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="amountRmb" label="测试金额" min-width="120">
+              <template slot-scope="scope">
+                <span>{{ scope.row.amountRmb | changePrice2money }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="操作" width="150">
+              <template slot-scope="scope">
+                <el-button size="small" plain @click.native.prevent="deleteRow(scope.$index, productlist.testItemList)">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-divider content-position="left"/>
+        </div>
+      </el-form>
+
+      <el-button type="text" @click="insertEvent">再加一个</el-button>
+      <div style="text-align:right;">
+        <el-button size="small" plain @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" size="small" plain @click="handleConfirm('confirmInfo')">确认</el-button>
       </div>
     </el-dialog>
   </div>
@@ -109,7 +182,17 @@
 <script>
   import { changePrice2money } from "@/utils/simple-util"
   import { deepClone } from "../../../../utils"
-  import { getApplicationList, getServiceList, getQuotationExamine,getApplicationReview } from "@/api/organizations"
+  import {
+    getApplicationList,
+    getServiceList,
+    getQuotationExamine,
+    getApplicationReview,
+    getConfirm,
+    getworkOrderComList,
+    getworkOrderItemList,
+    getworkOrderCreate,
+    getItemList
+  } from "@/api/organizations"
 
   export default {
     filters: {
@@ -122,16 +205,36 @@
         },
         dialogVisible_check: false,
         creditInfo: {
-          reviewResult:'',
-          applicationNum:'',
-          reason:'',
+          reviewResult: '',
+          applicationNum: '',
+          reason: '',
           requestId: Math.random().toString(24),
         },
         auditRules: {
           reviewResult: [{ required: true, message: '请选择评审结果', trigger: 'change' }],
           reason: [{ required: true, message: '请输入评审不通过原因', trigger: 'blur' }],
         },
+        confirmInfo: {
+          applicationNum:'',
+          orderList:[],
+          requestId: Math.random().toString(24),
+        },
+        productlist: {
+          testItemList: [
+            {
+              labId: 0,
+              testItemId: 0
+            }
+          ],
+          comName: "",
+          subContract: "",
+          testComId: "",
+        },
         tableLoading: false,
+        dialogVisible: false,
+        innerDialogVisible: false,
+        productItemlist: [], // 测试项目列表
+        checkList: [], // 报告类型
         tableData: [],
         pagination: {
           currPage: 1,
@@ -178,11 +281,113 @@
         })
 
     },
+    // 获取info列表
+    getDataInfoList(id) {
+      // 获取基本检测项列表
+      const res1 = getworkOrderItemList({
+        requestId: Math.random().toString(24),
+        comId: id,
+        applicationNum: this.applicationNum
+      })
+      this.productItemlist = res1.data.dataList
 
+    },
+    queryClientCom(s, cb) {
+      this.productlist.testComId = ''
+      const params = {
+        comName: s
+      }
+      getworkOrderComList(params).then(res => {
+        if (res.status == 200) {
+          this.restaurants = res.data.dataList
+          const cliets = []
+          this.restaurants.forEach(client => {
+            var mer = {}
+            mer.value = client.comName
+            mer.id = client.id
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    onSelect(item) {
+      this.productlist.comName = item.comName
+      this.productlist.subContract = item.subContract
+      this.productlist.testComId = item.id
+      this.getDataInfoList(item.id)
+    },
+    // 新增
+    insertEvent() {
+      const item = {
+        testItemList: [],
+        comName: "",
+        subContract: "",
+        testComId: "",
+      } // 数据
+      if (this.confirmInfo.orderList) {
+        this.confirmInfo.orderList.push(item)
+      } else {
+        this.confirmInfo.orderList= []
+        this.confirmInfo.orderList.push(item)
+      }
+    },
+    // 删除本地测试项目
+    deleteRow(index, rows) {
+      rows.splice(index, 1)
+    },
+    // 选择测试项目弹框
+    showDialog() {
+      this.innerDialogVisible = true
+      this.checkList = []
+    },
+    // 选择测试项目
+    checkedConfirm() {
+      this.innerDialogVisible = false
+      if (this.checkList.length != 0) {
+        this.checkList.forEach((item) => {
+          this.productlist.testItemList.push(item)
+        })
+      }
+      console.log(this.productlist.testItemList)
+    },
     handleCheck(row) {
       this.dialogVisible_check = true
       this.creditInfo.applicationNum = row.applicationNum
       console.log(this.creditInfo)
+    },
+    //创建工作单
+    handleConfirm() {
+      if (this.confirmInfo.orderList.length == 0) {
+        this.$message.error('请选择测试项目')
+        return
+      }
+    console.log(this.confirmInfo)
+      const colParam = deepClone(this.confirmInfo)
+      getworkOrderCreate(Object.assign({}, colParam))
+        .then((res) => {
+          const { data, status } = res
+          if (status == 200) {
+            this.dialogVisible = false
+            this.$notify({
+              title: '成功',
+              dangerouslyUseHTMLString: true,
+              message: `操作成功`,
+              type: 'success'
+            })
+          } else {
+            this.$message.error(res.errMsg)
+          }
+        })
+        .catch((e) => {
+          this.$message.error(e)
+        })
+        .finally(() => {
+          this.dialogVisible = false
+        })
+
     },
     // 审核
     async handleCheckConfirm(formName) {
@@ -215,6 +420,42 @@
       });
 
     },
+    handleGet(data) {
+      this.$confirm("是否确认已收到样品?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          const queryParam = {
+            requestId: Math.random().toString(24),
+            applicationNum: data.applicationNum
+          }
+          getConfirm(Object.assign({}, queryParam))
+            .then((res) => {
+              const { data, success, errorMessage } = res;
+              if (success) {
+                this.$message({
+                  message: "操作成功",
+                  type: "success",
+                });
+                this.getApplicationList();
+              } else {
+                this.$message.error(errorMessage);
+              }
+            })
+            .catch(() => {
+            })
+            .finally(() => {
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
+    },
     handleCreate() {
       this.$router.push({
         path: "/tm/detection/apply/create"
@@ -226,9 +467,8 @@
       })
     },
     handleEdit(data) {
-      this.$router.push({
-        path: "/tm/detection/apply/edit/" + data.applicationNum
-      })
+      this.dialogVisible = true
+      this.applicationNum = data.applicationNum
     },
     handleAudit(data) {
       this.$router.push({
@@ -237,11 +477,11 @@
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val
-      this.handleSearchTestTradeList()
+      this.getApplicationList()
     },
     handleCurrentChange(val) {
       this.pagination.currPage = val
-      this.handleSearchTestTradeList()
+      this.getApplicationList()
     },
     onSearch(){
       this.getApplicationList()

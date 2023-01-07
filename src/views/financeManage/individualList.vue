@@ -3,11 +3,19 @@
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="交易名称">
-        <el-input
-          v-model="columnParam.tradeId"
+<!--        <el-input-->
+<!--          v-model="columnParam.tradeId"-->
+<!--          placeholder="请输入交易名称"-->
+<!--          style="width: 240px"-->
+<!--          @keydown.enter.native="onSearch"-->
+<!--        />-->
+        <el-autocomplete
+          v-model="columnParam.tradeName"
+          :fetch-suggestions="queryClientTrade"
           placeholder="请输入交易名称"
           style="width: 240px"
-          @keydown.enter.native="onSearch"
+          clearable
+          @select="onSelectTrade"
         />
       </el-form-item>
       <el-form-item label="客户中文名称">
@@ -21,12 +29,12 @@
         />
       </el-form-item>
       <el-form-item label="核销状态" prop="email">
-        <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px">
+        <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px" clearable>
           <el-option
             v-for="(item,i) in statusList"
             :key="i"
-            :label="item"
-            :value="item"
+            :label="item.name"
+            :value="item.key"
           />
         </el-select>
       </el-form-item>
@@ -85,7 +93,12 @@
       <el-table-column prop="uploadTime" label="上传水单日期" min-width="150" />
       <el-table-column prop="incomeTime" label="实际收款日期" min-width="150" />
       <el-table-column prop="operTime" label="核销日期" min-width="150" />
-      <el-table-column prop="status" label="状态" min-width="150" />
+      <el-table-column prop="status" label="状态" min-width="150" >
+        <template v-slot="scope">
+        <span v-if="scope.row.status==0" >未核销</span>
+        <span v-if="scope.row.status==1" >已核销</span>
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template v-slot="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row,1)">查看
@@ -172,6 +185,7 @@
 import { getPersonalBillList, updatePersonalBillBatch, updatePersonalBill } from "@/api/bill"
 import { deepClone } from "@/utils"
 import { getClientByName } from "@/api/clientCompany"
+import { getQuotationByName } from "@/api/organizations"
 export default {
   name: "IndividualList",
   data() {
@@ -182,7 +196,7 @@ export default {
       dialogVisible_checkall: false,
       dialogVisible_look: false,
       creditInfo: [],
-      statusList: ["未结算", "未核销", "已核销"],
+      statusList: [ {key:0,name:"未核销"}, {key:1,name:"已核销"}],
       uploadTime: [],
       truelyTime: [],
       selectData: [],
@@ -269,6 +283,32 @@ export default {
     },
     onSelect(item) {
       this.columnParam.clientId = item.clientId
+    },
+
+    queryClientTrade(s, cb) {
+      this.columnParam.tradeId = ''
+      const params = {
+        name: s
+      }
+      getQuotationByName(params).then(res => {
+        if (res.status == 200) {
+          this.restaurantsTrade = res.data
+          const cliets = []
+          this.restaurantsTrade.forEach(trade => {
+            var mer = {}
+            mer.value = trade.tradeName
+            mer.tradeId = trade.tradeId
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    onSelectTrade(item) {
+      this.columnParam.tradeId = item.tradeId
+      this.columnParam.tradeName = item.value
     },
     // 核销
     setCreditInfo() {

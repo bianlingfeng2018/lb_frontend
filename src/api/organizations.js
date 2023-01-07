@@ -103,6 +103,14 @@ export function getQuotationCreate(data) {
     data
   })
 }
+// 根据名称查询交易
+export function getQuotationByName(data) {
+  return requestsh({
+    url: '/quotation/getQuotationByName',
+    method: 'post',
+    data
+  })
+}
 
 // 加测-复测报价单
 export function getQuotationAdditional(data) {

@@ -121,7 +121,7 @@ export default {
       },
       // 搜索条件
       columnParam: {
-        client: "",
+        clientId: "",
         startTime: "",
         endTime: "",
         lastTraceDate: []
@@ -152,7 +152,7 @@ export default {
         colParam.endTime = range[1]
       }
       colParam.lastTraceDate = null
-      getBalanceList(Object.assign({}, queryParam, colParam))
+      getBalanceList(Object.assign({}, colParam, queryParam))
         .then((res) => {
           console.log(res)
           const { data, status } = res

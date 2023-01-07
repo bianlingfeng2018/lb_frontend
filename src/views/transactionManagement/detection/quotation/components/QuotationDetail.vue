@@ -660,6 +660,7 @@ export default {
       this.innerDialogVisible = false
       if (type == 1) {
         if (this.checkList.length != 0) {
+          this.productlist.items = []
           this.checkList.forEach((item) => {
             this.productlist.items.push(item)
           })
@@ -709,7 +710,10 @@ export default {
     // 选中商品
     changeSelect(item) {
       console.log(item)
-      this.productlist = item
+      const checkItem = deepClone(item)
+      this.productItemlist = deepClone(checkItem.items)
+      this.productlist = checkItem
+      this.productlist.items = []
     },
     // 选中客户
     changeSelectName(item) {
@@ -944,11 +948,11 @@ export default {
             if (good.testPriceShow) {
               testFee = good.testPriceShow * 100
             }
+            if (this.feeRate) {
+              testFee = testFee * (1 + this.feeRate)
+            }
             this.postForm.testFee += testFee
             total += testFee
-            if (this.feeRate) {
-              total = total * (1 + this.feeRate)
-            }
             let postage = 0
             if (good.reportTypes?.length >= 2) {
               postage = 10000

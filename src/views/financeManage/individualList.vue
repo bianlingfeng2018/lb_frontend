@@ -3,12 +3,12 @@
   <div class="app-container ohn">
     <el-form ref="searchForm" :inline="true" :model="columnParam" class="demo-form-inline" label-width="150px">
       <el-form-item label="交易名称">
-<!--        <el-input-->
-<!--          v-model="columnParam.tradeId"-->
-<!--          placeholder="请输入交易名称"-->
-<!--          style="width: 240px"-->
-<!--          @keydown.enter.native="onSearch"-->
-<!--        />-->
+        <!--        <el-input-->
+        <!--          v-model="columnParam.tradeId"-->
+        <!--          placeholder="请输入交易名称"-->
+        <!--          style="width: 240px"-->
+        <!--          @keydown.enter.native="onSearch"-->
+        <!--        />-->
         <el-autocomplete
           v-model="columnParam.tradeName"
           :fetch-suggestions="queryClientTrade"
@@ -84,26 +84,34 @@
       </el-button>
     </div>
     <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8" @selection-change="handleSelectionChange">
-      <el-table-column align="center" type="selection" min-width="80" />
+      <el-table-column align="center" type="selection" min-width="80" :selectable="canSelect" />
       <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
       <el-table-column prop="tradeName" label="交易名称" min-width="150" />
       <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
-      <el-table-column prop="orderAmt" label="交易金额" min-width="150" />
-      <el-table-column prop="incomeAmt" label="回款金额" min-width="150" />
+      <el-table-column prop="orderAmt" label="交易金额" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.orderAmt | changePrice2money }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="incomeAmt" label="回款金额" min-width="150">
+        <template v-slot="scope">
+          <span>{{ scope.row.incomeAmt | changePrice2money }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="uploadTime" label="上传水单日期" min-width="150" />
       <el-table-column prop="incomeTime" label="实际收款日期" min-width="150" />
       <el-table-column prop="operTime" label="核销日期" min-width="150" />
-      <el-table-column prop="status" label="状态" min-width="150" >
+      <el-table-column prop="status" label="状态" min-width="150">
         <template v-slot="scope">
-        <span v-if="scope.row.status==0" >未核销</span>
-        <span v-if="scope.row.status==1" >已核销</span>
+          <span v-if="scope.row.status==0">未核销</span>
+          <span v-if="scope.row.status==1">已核销</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template v-slot="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row,1)">查看
           </el-button>
-          <el-button type="primary" plain size="small" @click="handleShow(scope.row,2)">核销
+          <el-button v-if="scope.row.status == 0" type="primary" plain size="small" @click="handleShow(scope.row,2)">核销
           </el-button>
         </template>
       </el-table-column>
@@ -125,7 +133,7 @@
         <el-form-item label="客户名称" label-width="150px">{{ creditInfo.clientName }}</el-form-item>
         <el-form-item label="报价单编号" label-width="150px">{{ creditInfo.tradeId }}</el-form-item>
         <el-form-item label="回款金额" prop="incomeAmt" label-width="150px">
-          <el-input v-model="creditInfo.incomeAmt" placeholder="输入回款金额" width="120" />
+          <el-input v-model="inputIncomeAmt" placeholder="输入回款金额" width="120" />
         </el-form-item>
         <el-form-item label="水单" label-width="150px" prop="username">
           <el-input v-model="creditInfo.billPath" width="120" />
@@ -151,8 +159,10 @@
       <el-form :model="creditInfo" label-width="120px" label-position="left">
         <el-form-item label="客户名称">{{ creditInfo.clientName }}</el-form-item>
         <el-form-item label="报价单编号">{{ creditInfo.tradeId }}</el-form-item>
-        <el-form-item label="回款金额" prop="username">{{ creditInfo.incomeAmt /100 }}</el-form-item>
-        <el-form-item label="水单" prop="username">{{ creditInfo.billPath }}</el-form-item>
+        <el-form-item label="回款金额" prop="username">{{ creditInfo.incomeAmt |changePrice2money }}</el-form-item>
+        <el-form-item label="水单" prop="username">
+          <img :src="creditInfo.billPath">
+        </el-form-item>
       </el-form>
       <div>
         <el-button type="danger" size="small" plain @click="dialogVisible_look = false">关闭</el-button>
@@ -163,13 +173,13 @@
     <el-dialog :visible.sync="dialogVisible_checkall" title="批量核销">
       <span>是否确认所选报价单收款金额无误？</span>
       <el-form label-width="80px" label-position="left">
-        <el-form-item label="实际收款日期" prop="username" label-width="200px">
+        <el-form-item label="实际收款日期" prop="username" label-width="120px">
           <el-date-picker
             v-model="batchTime"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
-            style="width: 120px"
+            style="width: 240px"
           />
         </el-form-item>
       </el-form>
@@ -184,10 +194,14 @@
 <script>
 import { getPersonalBillList, updatePersonalBillBatch, updatePersonalBill } from "@/api/bill"
 import { deepClone } from "@/utils"
+import { changePrice2money } from "@/utils/simple-util"
 import { getClientByName } from "@/api/clientCompany"
 import { getQuotationByName } from "@/api/organizations"
 export default {
   name: "IndividualList",
+  filters: {
+    changePrice2money
+  },
   data() {
     return {
       tableLoading: false,
@@ -196,10 +210,11 @@ export default {
       dialogVisible_checkall: false,
       dialogVisible_look: false,
       creditInfo: [],
-      statusList: [ {key:0,name:"未核销"}, {key:1,name:"已核销"}],
+      statusList: [{ key: 0, name: "未核销" }, { key: 1, name: "已核销" }],
       uploadTime: [],
       truelyTime: [],
       selectData: [],
+      inputIncomeAmt: 0,
       batchTime: '',
       // 搜索条件
       columnParam: {
@@ -284,7 +299,9 @@ export default {
     onSelect(item) {
       this.columnParam.clientId = item.clientId
     },
-
+    canSelect(row, index) {
+      return row.status == 0
+    },
     queryClientTrade(s, cb) {
       this.columnParam.tradeId = ''
       const params = {
@@ -312,7 +329,10 @@ export default {
     },
     // 核销
     setCreditInfo() {
+      console.log(this.creditInfo)
       const param = deepClone(this.creditInfo)
+      param.status = 1
+      param.incomeAmt = this.inputIncomeAmt * 100
       updatePersonalBill(param).then((res) => {
         const { data, status } = res
         if (status == 200) {
@@ -323,6 +343,7 @@ export default {
             message: `操作成功`,
             type: 'success'
           })
+          this.getListDate()
         }
       }).catch((e) => {
         this.$message.error(e)
@@ -339,7 +360,9 @@ export default {
         const sendData = {
           id: data.id,
           clientId: data.clientId,
-          incomeTime: this.batchTime
+          incomeTime: this.batchTime,
+          status: 1,
+          incomeAmt: data.orderAmt - data.incomeAmt
         }
         sendArray.push(sendData)
       })

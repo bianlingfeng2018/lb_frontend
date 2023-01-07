@@ -362,7 +362,7 @@ export default {
           clientId: data.clientId,
           incomeTime: this.batchTime,
           status: 1,
-          incomeAmt: data.orderAmt - data.incomeAmt
+          incomeAmt: data.orderAmt
         }
         sendArray.push(sendData)
       })

@@ -122,11 +122,11 @@
           </vxe-column>
         </vxe-table>
 
-        <el-form-item label="测试周期" >
+        <el-form-item label="测试周期">
           <label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;测试周期：</label>
           <el-input v-model="gooditem.testPeriod" placeholder="请输入测试周期" type="number" clearable style="width: 240px" />
         </el-form-item>
-        <el-form-item label="总样品量" >
+        <el-form-item label="总样品量">
           <label slot="label"><span style="color:red">*</span>&nbsp;&nbsp;总样品量：</label>
           <el-input v-model="gooditem.sampleNum" placeholder="请输入总样品量" type="number" clearable style="width: 240px" />
         </el-form-item>
@@ -312,10 +312,24 @@
           <el-input v-model="creditInfo.goodsName" placeholder="请输入商品名称" style="width: 200px" />
         </el-form-item>
         <el-form-item label="HSCode：">
-          <el-input v-model="creditInfo.hsCode" placeholder="请输入HSCode" style="width: 200px" />
+          <el-select v-model="creditInfo.hsCode" filterable placeholder="请选择" style="display: block; width: 200px">
+            <el-option
+              v-for="item in hsCodes"
+              :key="item.id"
+              :label="item.hscode"
+              :value="item.hscode"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="材质：">
-          <el-input v-model="creditInfo.material" placeholder="请输入材质" style="width: 200px" />
+          <el-select v-model="creditInfo.material" filterable placeholder="请选择" style="display: block; width: 200px">
+            <el-option
+              v-for="item in goodsMaterial"
+              :key="item.id"
+              :label="item.materialName"
+              :value="item.materialName"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="出口国：" prop="export">
           <el-select v-model="creditInfo.export" filterable placeholder="请选择" style="display: block; width: 200px">
@@ -400,6 +414,7 @@
 import { changePrice2money } from "@/utils/simple-util"
 import methods from "../../pub_methods/validate"
 import { queryTestTradeDetail } from "@/api/transaction"
+import { getAllHSCode, getGoodsClass, getGoodsMaterial } from "@/api/basic"
 import {
   getQuotationDetail,
   getQuotationCreate,
@@ -445,7 +460,7 @@ export default {
       tableRules: methods.quotationTableValidate,
       payType: 50,
       checkList: [], // 报告类型
-      radio: "1",
+      radio: 1,
       radioStandard: "1",
       dialogVisible: false,
       innerDialogVisible: false,
@@ -454,7 +469,13 @@ export default {
         items: [],
         export: '',
         goodsName: '',
-        hsCode: ''
+        hsCode: '',
+        sampleNum: "",
+        service: '',
+        testPeriod: '',
+        testPrice: '',
+        totalPrice: 0,
+        reportTypes: [] // 选择的报告类型
       },
       auditRules: {
         export: [{ required: true, message: '请选择国家', trigger: 'change' }],
@@ -475,7 +496,7 @@ export default {
         sampleNum: "",
         service: '',
         testPeriod: '',
-        testPrice: '',
+        testPrice: 0,
         totalPrice: 0
       }, // 商品列表
       productItemlist: [], // 测试项目列表
@@ -514,7 +535,10 @@ export default {
         { key: 4, value: "英文纸质档", price: 10000 }
       ],
       feeRate: 0,
-      postageShow: ''
+      postageShow: '',
+      goodsClass: [],
+      goodsMaterial: [],
+      hsCodes: []
     }
   },
   created() {
@@ -612,6 +636,16 @@ export default {
         pageSize: 100
       })
       this.exportList = res2.data.dataList
+
+      const materials = await getGoodsMaterial({
+        requestId: Math.random().toString(24)
+      })
+      this.goodsMaterial = materials.data
+
+      const codes = await getAllHSCode({
+        requestId: Math.random().toString(24)
+      })
+      this.hsCodes = codes.data
     },
 
     async onGoodSearch() {
@@ -626,6 +660,7 @@ export default {
       this.innerDialogVisible = false
       if (type == 1) {
         if (this.checkList.length != 0) {
+          this.productlist.items = []
           this.checkList.forEach((item) => {
             this.productlist.items.push(item)
           })
@@ -637,7 +672,7 @@ export default {
             this.creditInfo.items.push(item)
           })
         }
-        console.log( this.creditInfo.items)
+        console.log(this.creditInfo.items)
       }
     },
     remoteMethod(query) {
@@ -675,7 +710,10 @@ export default {
     // 选中商品
     changeSelect(item) {
       console.log(item)
-      this.productlist = item
+      const checkItem = deepClone(item)
+      this.productItemlist = deepClone(checkItem.items)
+      this.productlist = checkItem
+      this.productlist.items = []
     },
     // 选中客户
     changeSelectName(item) {
@@ -725,32 +763,26 @@ export default {
         return
       }
 
-      if (this.creditInfo.length !== 0) {
-        this.postForm.goods.push(this.creditInfo)
-      }
-
       console.log(this.creditInfo)
-      const colParam = deepClone(this.creditInfo)
-      getProductCreate(Object.assign({}, colParam))
+      const that = this
+      const goods = deepClone(this.creditInfo)
+      getProductCreate(goods)
         .then((res) => {
           const { data, status } = res
           if (status == 200) {
-            console.log(this.creditInfo)
-            this.creditInfo.goodsId = data
-            if (!this.creditInfo.goodsId) {
-              return
-            }
-            this.postForm.goods.push(this.creditInfo)
-            console.log(this.postForm.goods)
-            this.postForm.goods.forEach((good, idx) => {
-              this.checkedGoodsReportTypes[idx] = []
-            })
-            this.dialogVisible = false
-            this.calTotalCost()
+            that.dialogVisible = false
+            goods.goodsId = data
+            goods.testPrice = 0
           } else {
             this.$message.error(res.errMsg)
           }
+        }).finally(() => {
+          that.postForm.goods.push(goods)
+          that.postForm.goods.forEach((good, idx) => {
+            this.checkedGoodsReportTypes[idx] = []
+          })
         })
+      this.calTotalCost()
     },
 
     fetchDataAndFill: function(id) {
@@ -916,11 +948,11 @@ export default {
             if (good.testPriceShow) {
               testFee = good.testPriceShow * 100
             }
+            if (this.feeRate) {
+              testFee = testFee * (1 + this.feeRate)
+            }
             this.postForm.testFee += testFee
             total += testFee
-            if (this.feeRate) {
-              total = total * (1 + this.feeRate)
-            }
             let postage = 0
             if (good.reportTypes?.length >= 2) {
               postage = 10000
@@ -954,7 +986,7 @@ export default {
       this.dialogVisible = true
       this.productlist = []
       this.goodsInfo = {}
-      this.creditInfo = []
+      this.creditInfo = {}
     },
     // 编辑单元格事件
     async editClose({

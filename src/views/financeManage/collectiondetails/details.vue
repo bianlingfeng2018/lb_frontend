@@ -20,11 +20,13 @@
 
       <br>
       <el-form-item label="交易名称">
-        <el-input
+        <el-autocomplete
           v-model="columnParam.tradeName"
+          :fetch-suggestions="queryClientTrade"
           placeholder="请输入交易名称"
           style="width: 240px"
-          @keydown.enter.native="onSearch"
+          clearable
+          @select="onSelectTrade"
         />
       </el-form-item>
       <el-form-item :label="'发生日期'">
@@ -280,7 +282,7 @@
 
 <script>
 import { getAllIncomeBill, getAllOutBill, addOutBillBatch, addOneIncomeBill } from "@/api/bill"
-import { allCompany } from "@/api/organizations"
+import {allCompany, getQuotationByName} from "@/api/organizations"
 import { deepClone } from "@/utils"
 export default {
   name: "Details",
@@ -446,7 +448,31 @@ export default {
           this.dialogVisible_set = false
         })
     },
-
+    queryClientTrade(s, cb) {
+      this.columnParam.tradeId = ''
+      const params = {
+        name: s
+      }
+      getQuotationByName(params).then(res => {
+        if (res.status == 200) {
+          this.restaurantsTrade = res.data
+          const cliets = []
+          this.restaurantsTrade.forEach(trade => {
+            var mer = {}
+            mer.value = trade.tradeName
+            mer.tradeId = trade.tradeId
+            cliets.push(mer)
+          })
+          cb(cliets)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    onSelectTrade(item) {
+      this.columnParam.tradeId = item.tradeId
+      this.columnParam.tradeName = item.value
+    },
     inputChange(e) {
       console.log(e)
       this.creditInfo.operAmount = Number(e) * 100

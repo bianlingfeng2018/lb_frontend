@@ -235,9 +235,10 @@ const transactionRouter = {
           children: [
             {
               path: 'show/:id',
-              component: () => import('@/views/transactionManagement/detection/record/show.vue'),
+              // component: () => import('@/views/transactionManagement/detection/record/show.vue'),
+              redirect: '/tm/detection-record-show/:id',
               name: 'Show',
-              meta: { title: '查看原始记录单', noCache: true, role: ['/tm/detection/record/show/:id'] },
+              meta: { title: '查看原始记录单', noCache: true, role: ['/tm/detection/worksheet/show/:id'] },
               hidden: true
             }
           ]
@@ -409,6 +410,13 @@ const transactionRouter = {
       component: () => import('@/views/transactionManagement/detection/worksheet/show.vue'),
       name: 'WorksheetShow',
       meta: { title: '查看工作单', noCache: false, role: ['/tm/detection-worksheet-edit/:id'] },
+      hidden: true
+    },
+    {
+      path: 'detection-record-show/:id',
+      component: () => import('@/views/transactionManagement/detection/record/show.vue'),
+      name: 'RecordShow',
+      meta: { title: '查看原始记录单', noCache: false, role: ['/tm/detection-worksheet-edit/:id'] },
       hidden: true
     },
     {

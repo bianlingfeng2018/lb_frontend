@@ -216,9 +216,9 @@ export default {
     },
     // 查看详情
     handleShow(data) {
-      // this.$router.push({
-      //   path: "/tm/detection/report/show/" + data.id
-      // })
+      this.$router.push({
+        path: "/tm/detection/report/show/" + data.id
+      })
     },
     canSelect(row, index) {
       return row.reportStatus == 0

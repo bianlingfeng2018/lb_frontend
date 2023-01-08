@@ -1,6 +1,6 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack">返回上一页</el-button>
     <div id="pdfCentent">
       <el-divider content-position="left">检测报告单</el-divider>
       <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
@@ -14,23 +14,23 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">编制人</template>
-          {{ postForm.client }}
+          {{ postForm.editor }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">报告日期</template>
-          {{ postForm.receivingDate }}
+          {{ postForm.reportDate }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">线路负责人</template>
-          {{ postForm.address }}
+          {{ postForm.charger }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">审核人</template>
-          {{ postForm.sampleName }}
+          {{ postForm.reviewer }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">审批人</template>
-          {{ postForm.sampleModel }}
+          {{ postForm.approver }}
         </el-descriptions-item>
       </el-descriptions>
 
@@ -38,51 +38,51 @@
       <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
         <el-descriptions-item>
           <template slot="label">样品名称</template>
-          {{ postForm.receivingDate }}
+          {{ postForm.sampleNameCn }}({{postForm.sampleNameEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品数量</template>
-          {{ postForm.testStartDate }}
+          {{ postForm.sampleQuantity }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品型号</template>
-          {{ postForm.testEndDate }}
+          {{ postForm.sampleModelCn }}({{postForm.sampleModelEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品状态</template>
-          {{ postForm.testPeriod }}
+          {{ postForm.sampleStatusCn }}({{postForm.sampleStatusEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">商标</template>
-          {{ postForm.testRemark }}
+          {{ postForm.brandCn }}({{postForm.brandEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">批次</template>
-          {{ postForm.receivingDate }}
+          {{ postForm.lotNoCn }}({{postForm.lotNoEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">规格</template>
-          {{ postForm.testStartDate }}
+          {{ postForm.specificationCn }}({{postForm.specificationEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">供应商</template>
-          {{ postForm.testEndDate }}
+          {{ postForm.supplierCn }}({{postForm.supplierEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">购买商</template>
-          {{ postForm.testPeriod }}
+          {{ postForm.buyerCn }}({{postForm.buyerEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">订单号</template>
-          {{ postForm.testRemark }}
+          {{ postForm.orderNo }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">生产商</template>
-          {{ postForm.testPeriod }}
+          {{ postForm.manufacturerCn }}({{postForm.manufacturerEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">出口地</template>
-          {{ postForm.testRemark }}
+          {{ postForm.exportedTo }}
         </el-descriptions-item>
       </el-descriptions>
       <p class="remark-content">
@@ -90,18 +90,17 @@
       </p>
       <el-divider content-position="left">样品描述</el-divider>
 
-      <el-table :data="tableData" stripe border style="width: 100%" class="mt8">
-        <el-table-column type="seq" label="序号" width="60" />
-        <el-table-column prop="testItem" label="样品编号" min-width="120" />
-
-        <el-table-column prop="applicationDate" label="取样部位描述" min-width="120" />
-        <el-table-column prop="quantity" label="取样部位（位置）" min-width="120" />
+      <el-table :data="postForm.descList" stripe border style="width: 100%" class="mt8">
+        <el-table-column type="seq" label="序号" width="60"/>
+        <el-table-column prop="id" label="样品编号" min-width="120"/>
+        <el-table-column prop="sampleDescription" label="取样部位描述" min-width="120"/>
+        <el-table-column prop="sampleName" label="取样部位（位置）" min-width="120"/>
       </el-table>
 
       <el-divider content-position="left">测试结果</el-divider>
 
       <el-table
-        :data="tableData"
+        :data="postForm.testResult"
         stripe
         border
         style="width: 100%"
@@ -109,18 +108,18 @@
         default-expand-all
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
-        <el-table-column type="seq" label="序号" width="60" />
-        <el-table-column prop="testItem" label="测试项目" min-width="120" />
-        <el-table-column prop="testItem" label="测试数值" min-width="120" />
-        <el-table-column prop="testItem" label="限值" min-width="120" />
-        <el-table-column prop="testItem" label="测试结果" min-width="120">
-          <template slot-scope="scope">
-            <span v-if="scope.row.state == 1">合格</span>
-            <span v-else-if="scope.row.state == 2" style="color:red">不合格</span>
-          </template>
+        <el-table-column type="seq" label="序号" width="60"/>
+        <el-table-column prop="testItem" label="测试项目" min-width="120"/>
+        <el-table-column prop="testValue" label="测试数值" min-width="120"/>
+        <el-table-column prop="limitValue" label="限值" min-width="120"/>
+        <el-table-column prop="testResult" label="测试结果" min-width="120">
+          <!--          <template slot-scope="scope">-->
+          <!--            <span v-if="scope.row.state == 1">合格</span>-->
+          <!--            <span v-else-if="scope.row.state == 2" style="color:red">不合格</span>-->
+          <!--          </template>-->
         </el-table-column>
-        <el-table-column prop="testItem" label="测试人员" min-width="120" />
-        <el-table-column prop="testItem" label="报告时间" min-width="120" />
+        <el-table-column prop="testPerson" label="测试人员" min-width="120"/>
+        <el-table-column prop="reportDate" label="报告时间" min-width="120"/>
       </el-table>
     </div>
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,Date.now())">下载</el-button>
@@ -129,8 +128,8 @@
 </template>
 
 <script>
-import { changePrice2money } from "@/utils/simple-util"
-import { getTestReportImages, queryTestTradeDetail } from "@/api/transaction"
+  import { changePrice2money } from "@/utils/simple-util"
+  import { getTestReportImages, approveReportDetail } from "@/api/worksheet"
 
 export default {
 
@@ -154,98 +153,32 @@ export default {
     const id = this.$route.params && this.$route.params.id
     this.fetchData(id)
     this.downloadParam.testTradeId = this.tempRoute.params.id
-    this.htmlTitle = `测试报告单-${id}-`
-    this.fetchAttachments(id)
+    // this.htmlTitle = `测试报告单-${id}-`
+    //this.fetchAttachments(id)
   },
   methods: {
-    fetchAttachments(tradeId) {
-      getTestReportImages({ testTradeId: tradeId })
-        .then(res => {
-          console.log(res)
-          this.imgList = res.data.data
-          for (const img of this.imgList) {
-            img.url = this.getFileBlobUrl(img)
-          }
-        })
-        .catch(() => { })
-        .finally(() => { })
-    },
-    getFileBlobUrl(file) {
-      console.log(file)
-      const _url = prefix.lb + "/api/file?path=" + file.path + "&name=" + file.name
-      return _url.replaceAll('\\', '%2F')
-    },
-    getRef(i, j) {
-      return 'xTable' + i + j
-    },
-    handlePreview() {
-      fetch(prefix.lb +
-        "/api/test/previewTestReport?testTradeId=" +
-        this.downloadParam.testTradeId,
-      {
-        method: "GET",
-        responseType: "application/pdf",
-        headers: new Headers({
-          "token": getToken().toString()
-        })
-      }) // FETCH BLOB FROM IT
-        .then((response) => response.blob())
-        .then((blob) => { // RETRIEVE THE BLOB AND CREATE LOCAL URL
-          var _url = window.URL.createObjectURL(blob)
-          window.open(_url, "_blank").focus() // window.open + focus
-        }).catch((err) => {
-          console.log(err)
-        })
-    },
-    handleDownLoad() {
-      console.log('handleDownLoad')
-      const fileName = '报告单-' + this.downloadParam.testTradeId
-      fetch(
-        prefix.lb +
-        "/api/test/downloadTestReport?testTradeId=" +
-        this.downloadParam.testTradeId,
-        {
-          method: "GET",
-          responseType: "blob",
-          headers: new Headers({
-            "token": getToken().toString()
-          })
-        }
-      )
-        .then((res) => res.blob())
-        .then((data) => {
-          const blobUrl = window.URL.createObjectURL(data)
-          const a = document.createElement("a")
-          a.download = fileName + ".pdf"
-          a.href = blobUrl
-          a.click()
-          this.$message({
-            type: "success",
-            message: "文件下载成功"
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: "error",
-            message: "文件下载失败，请稍后再试~"
-          })
-        })
-        .finally(() => { })
-    },
     fetchData: function(id) {
-      queryTestTradeDetail(Object.assign({}, { testTradeId: id })).then(response => {
+      approveReportDetail(Object.assign({}, {
+        testReportId: id,
+        requestId: Math.random().toString(24),
+      })).then(response => {
         console.log(response.data)
-        this.postForm = response.data.testReport
+        this.postForm = response.data
+        this.postForm.testResult.forEach(good => {
+          good.children = good.subList
+        })
+
+
       }).catch(err => {
         console.log(err)
       })
     },
 
-    goBack() {
-      this.$router.push({
-        path: "/tm/detection/report/list"
-      })
-    }
+    goBack()
+  {
+    this.$store.dispatch('tagsView/delView', this.$route)
+    this.$router.go(-1)
+  }
   }
 }
 </script>

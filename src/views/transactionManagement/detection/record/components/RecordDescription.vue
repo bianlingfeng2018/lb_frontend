@@ -178,7 +178,6 @@ export default {
       getoriDetail(Object.assign({}, { id: id })).then(response => {
         console.log(response.data)
         this.postForm = response.data
-        // set tagsview title
       }).catch(err => {
         console.log(err)
       })

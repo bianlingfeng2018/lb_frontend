@@ -6,7 +6,7 @@
 import RecordDescription from './components/RecordDescription'
 
 export default {
-  name: 'Record',
+  name: 'RecordShow',
   components: { RecordDescription }
 }
 </script>

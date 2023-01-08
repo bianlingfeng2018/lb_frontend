@@ -71,11 +71,34 @@ export function getoriReview(data) {
     data
   })
 }
-
+// 获取测试信息
+export function getoriTestInfo(data) {
+  return requestsh({
+    url: '/ori/test/info',
+    method: 'post',
+    data
+  })
+}
+// 分配
+export function getoriAssignment(data) {
+  return requestsh({
+    url: '/ori/assignment',
+    method: 'post',
+    data
+  })
+}
 // 上传文件
 export function getoriUpload(data) {
   return requestsh({
     url: '/ori/upload',
+    method: 'post',
+    data
+  })
+}
+// 上传结果
+export function getoriUploadResult(data) {
+  return requestsh({
+    url: '/ori/uploadResult',
     method: 'post',
     data
   })
@@ -103,6 +126,15 @@ export function approveReport(data) {
 export function approveReportBatch(data) {
   return requestsh({
     url: '/report/approveBatch',
+    method: 'post',
+    data
+  })
+}
+
+//检测报告单详情
+export function approveReportDetail(data) {
+  return requestsh({
+    url: '/report/detail',
     method: 'post',
     data
   })

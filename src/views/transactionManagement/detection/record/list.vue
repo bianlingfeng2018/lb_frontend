@@ -20,22 +20,22 @@
           <el-tab-pane label="审核通过" name="2" />
           <el-tab-pane label="审核不通过" name="3" />
         </el-tabs>
-        <el-button type="primary" plain size="small" style="position: absolute;right:10px;top:5px;" @click="handleUpload">分配
-        </el-button>
+        <!--        <el-button type="primary" plain size="small" style="position: absolute;right:10px;top:5px;" @click="handleFenpei(null,true)">分配-->
+        <!--        </el-button>-->
       </div>
 
       <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-        <el-table-column align="center" type="selection" min-width="80" />
-        <el-table-column prop="recordNum" label="原始记录单编号" min-width="120" />
-        <el-table-column prop="workOrderNum" label="工作单编号" min-width="120" />
-        <el-table-column prop="reportNum" label="报告单编号" min-width="120" />
-        <el-table-column prop="testItem" label="检测项目" min-width="120" />
-        <el-table-column prop="testLab" label="检测实验室" min-width="120" />
-        <el-table-column prop="testDeviceNo" label="检测设备号" min-width="120" />
-        <el-table-column prop="testPerson" label="测试人员" min-width="120" />
-        <el-table-column prop="createTime" label="创建日期" min-width="120" />
-        <el-table-column prop="planDate" label="要求日期" min-width="120" />
-        <el-table-column prop="reportDate" label="报告日期" min-width="120" />
+        <el-table-column align="center" type="selection" min-width="80"/>
+        <el-table-column prop="recordNum" label="原始记录单编号" min-width="120"/>
+        <el-table-column prop="workOrderNum" label="工作单编号" min-width="120"/>
+        <el-table-column prop="reportNum" label="报告单编号" min-width="120"/>
+        <el-table-column prop="testItem" label="检测项目" min-width="120"/>
+        <el-table-column prop="testLab" label="检测实验室" min-width="120"/>
+        <el-table-column prop="testDeviceNo" label="检测设备号" min-width="120"/>
+        <el-table-column prop="testPerson" label="测试人员" min-width="120"/>
+        <el-table-column prop="createTime" label="创建日期" min-width="120"/>
+        <el-table-column prop="planDate" label="要求日期" min-width="120"/>
+        <el-table-column prop="reportDate" label="报告日期" min-width="120"/>
         <el-table-column prop="status" label="状态" min-width="90">
           <template slot-scope="scope">
             <span v-if="scope.row.status == 1">待审核</span>
@@ -52,38 +52,39 @@
             </el-button>
             <el-button v-if="scope.row.status == 1" type="primary" plain size="small" @click="handleEdit(scope.row)">审核
             </el-button>
-            <el-button type="primary" size="small" plain @click="handleDelete(scope.row)">上传结果
+            <el-button type="primary" size="small" plain @click="handleUpload(scope.row)">上传结果
+            </el-button>
+            <el-button type="primary" size="small" plain @click="handleFenpei(scope.row)">分配
             </el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination class="fr mt20" :current-page="pagination.currPage" :page-sizes="[10, 20, 30, 50]"
-                     :page-size="pagination.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pagination.pageTotal"
-                     @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+                     :page-size="pagination.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                     :total="pagination.pageTotal"
+                     @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
 
-    <!--弹窗  分配-->
-    <el-dialog :visible.sync="dialogVisible_check" title="分配">
-      <el-form ref="auditRulesForm" :model="creditInfo" :rules="auditRules" label-width="100px" label-position="left">
-        <el-form-item label="测试人员" prop="email">
-          <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 200px">
-            <el-option
-              v-for="item in rolesList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
+      <!--弹窗  分配-->
+      <el-dialog :visible.sync="dialogVisible" title="分配">
+        <el-form :model="testInfo" label-width="100px" label-position="left">
+          <el-form-item label="测试人员">
+            <el-select v-model="testInfo.userList"   value-key="id"  multiple placeholder="请选择" style="display: block">
+              <el-option v-for="(item,i) in comList"
+                         :key="item.id"
+                         :label="item.nickname"
+                         :value="item"/>
+            </el-select>
+          </el-form-item>
 
-      </el-form>
-      <div style="text-align:right;">
-        <el-button size="small" plain @click="dialogVisible_check = false">取消</el-button>
-        <el-button type="primary" size="small" plain @click="setCreditInfo">确认</el-button>
-      </div>
-    </el-dialog>
+        </el-form>
+        <div style="text-align:right;">
+          <el-button size="small" plain @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" size="small" plain @click="setTestInfo()">确认</el-button>
+        </div>
+      </el-dialog>
 
-    <!--弹窗  审核-->
-    <el-dialog :visible.sync="dialogVisible_check" title="审核">
+      <!--弹窗  审核-->
+      <el-dialog :visible.sync="dialogVisible_check" title="审核">
       <el-form ref="creditInfo" :model="creditInfo"  status-icon :rules="auditRules" label-width="100px" label-position="left">
         <el-form-item label="审核结果：" prop="status">
           <el-select v-model="creditInfo.status" placeholder="请选择" style="display: block; width: 200px">
@@ -103,20 +104,19 @@
 
     <!--弹窗  上传结果1和2-->
     <el-dialog :visible.sync="dialogVisible_result" title="上传结果">
-      <el-form ref="auditRulesForm" :model="creditInfo" :rules="auditRules" label-width="150px" label-position="left">
+      <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="left">
         <el-form-item label="测试数值" prop="username">
-          <el-input v-model="creditInfo.username" placeholder="请输入内容" />
+          <el-input v-model="resultInfo.username" placeholder="请输入内容"/>
         </el-form-item>
-        <el-form-item label="选择分类" prop="email">
-          <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 200px">
-            <el-option key="0" label="A类" value="0" />
-            <el-option key="1" label="B类" value="1" />
-            <el-option key="2" label="C类" value="2" />
+        <el-form-item v-if="resultInfo.type == 2" label="选择分类" prop="email">
+          <el-select v-model="resultInfo.levelList" placeholder="请选择" style="display: block; width: 200px">
+            <el-option v-for="item in resultInfo.levelList" :key="item.levelName" :label="item.levelName"
+                       :value="item.levelName"/>
           </el-select>
         </el-form-item>
         <el-form-item label="测试结果" prop="username">
           <span style="color: #67C23A">符合标准</span>
-          <span> （限值≤20mg/kg）</span>
+          <span> （{{resultInfo.value}}）</span>
         </el-form-item>
         <el-form-item label="上传纸质原始记录表" prop="username">
           <el-upload
@@ -149,15 +149,15 @@
       <div>该测试项目系统无法自动得出结果。限值：</div>
       <div class="mt8" style="fontSize:16px; font-weight: bold;"> 不应出现滑脱、断裂和变形</div>
       <div class="mt20 mb10">请手动输入测试结果：</div>
-      <el-form ref="auditRulesForm" :model="creditInfo" :rules="auditRules" label-width="150px" label-position="right">
+      <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="right">
         <el-form-item label="测试结果" prop="email">
-          <el-radio-group v-model="creditInfo.mainContact" style="width: 240px">
-            <el-radio label="通过" />
-            <el-radio label="不通过" />
+          <el-radio-group v-model="resultInfo.mainContact" style="width: 240px">
+            <el-radio label="通过"/>
+            <el-radio label="不通过"/>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="username">
-          <el-input v-model="creditInfo.username" placeholder="请输入备注" />
+          <el-input v-model="resultInfo.username" placeholder="请输入备注"/>
         </el-form-item>
         <el-form-item label="上传纸质原始记录表" prop="username">
           <el-upload
@@ -187,19 +187,28 @@
 
     <!--弹窗  上传结果4-->
     <el-dialog :visible.sync="dialogVisible_result4" title="上传结果">
-      <el-form ref="auditRulesForm" :model="creditInfo" :rules="auditRules" label-width="150px" label-position="right">
+      <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="right">
         <el-form-item label="总数值" prop="username">
-          <el-input v-model="creditInfo.username" placeholder="请输入测试总数值" style="width: 300px">
+          <el-input v-model="resultInfo.username" placeholder="请输入测试总数值" style="width: 300px">
             <template slot="append">mg/kg</template>
           </el-input>
         </el-form-item>
-        <el-table v-loading="tableLoading" :data="routes" stripe border style="width: 100%" class="mt8 mb10">
-          <el-table-column align="center" label="序号" width="80" type="index" />
-          <el-table-column align="center" prop="name" label="测试子项目" width="150" />
-          <el-table-column align="center" prop="path" label="CAS号" />
-          <el-table-column align="center" prop="path" label="限值" />
-          <el-table-column align="center" prop="path" label="平均值" />
-          <el-table-column align="center" prop="path" label="测试结果" />
+        <el-table v-loading="tableLoading" :data="resultInfo.subList" stripe border style="width: 100%"
+                  class="mt8 mb10">
+          <el-table-column align="center" label="序号" width="80" type="index"/>
+          <el-table-column align="center" prop="subTestItem" label="测试子项目" width="150"/>
+          <el-table-column align="center" prop="cas" label="CAS号"/>
+          <el-table-column align="center" prop="limitValue" label="限值"/>
+          <el-table-column align="center" prop="avgValue" label="平均值">
+            <template slot-scope="row">
+              <el-input v-model="row.avgValue" type="number" @change="testInputChange(row)"/>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="testResult" label="测试结果">
+            <template slot-scope="row">
+              <el-input v-model="row.testResult" type="number" @change="testInputChange(row)"/>
+            </template>
+          </el-table-column>
         </el-table>
         <el-form-item label="测试结果" prop="username">
           <span style="color: #67C23A">符合标准</span>
@@ -234,47 +243,66 @@
 </template>
 
 <script>
-import config from "@/utils/config"
-const { prefix } = config[process.env.NODE_ENV]
-import { deepClone } from "../../../../utils"
-import { getoriList, getoriDetail, getoriReview, getoriUpload } from "@/api/worksheet"
-export default {
-  data() {
-    return {
-      prefix: prefix,
-      tableLoading: false,
-      dialogVisible_check: false,
-      dialogVisible_result: false,
-      dialogVisible_result3: false,
-      dialogVisible_result4: false,
-      uploadForm: new FormData(),
-      multpartfile: [],
-      tableData: [],
-      // 搜索条件
-      columnParam: {
-        status: '-1'// 默认全部
-      },
-      dialogVisible_settlement: false,
-      imageUrl: '',
-      creditInfo: {
-        status: '',
-        id: '',
-        reviewReason: '',
-        requestId: Math.random().toString(24),
-      },
-      auditRules: {
-        status: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
-        reviewReason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
-      },
-      pagination: {
-        currPage: 1,
-        pageSize: 10,
-        pageTotal: 0
+  import config from "@/utils/config"
+
+  const { prefix } = config[process.env.NODE_ENV]
+  import { deepClone } from "../../../../utils"
+  import {
+    getoriList,
+    getoriDetail,
+    getoriReview,
+    getoriUpload,
+    getoriUploadResult,
+    getoriTestInfo,
+    getoriAssignment
+  } from "@/api/worksheet"
+  import {
+    getCustomerListWithPages
+  } from '@/api/cert'
+
+  export default {
+    data() {
+      return {
+        prefix: prefix,
+        tableLoading: false,
+        dialogVisible: false,
+        testInfo: [],
+        comList: [],
+        dialogVisible_check: false,
+        dialogVisible_result: false,
+        dialogVisible_result3: false,
+        dialogVisible_result4: false,
+        uploadForm: new FormData(),
+        multpartfile: [],
+        tableData: [],
+        // 搜索条件
+        columnParam: {
+          status: '-1'// 默认全部
+        },
+        dialogVisible_settlement: false,
+        imageUrl: '',
+        creditInfo: {
+          status: '',
+          id: '',
+          reviewReason: '',
+          requestId: Math.random().toString(24),
+        },
+        auditRules: {
+          status: [{ required: true, message: '请选择审核结果', trigger: 'change' }],
+          reviewReason: [{ required: true, message: '请输入审核不通过原因', trigger: 'blur' }],
+        },
+        resultInfo: {},
+        pagination: {
+          currPage: 1,
+          pageSize: 10,
+          pageTotal: 0
+        },
+
       }
-    }
   },
   created() {
     this.handleSearchTestTradeList()
+    this.getComListDate()
   },
   methods: {
     handleSearchTestTradeList() {
@@ -305,11 +333,81 @@ export default {
           this.tableLoading = false
         })
     },
+    //获取测试人列表
+    async getComListDate() {
+      const res = await getCustomerListWithPages({
+        page: '1',
+        pageSize: "100"
+      })
+      console.log(res)
+      this.comList = res.data.list
+      console.log(this.comList)
+    },
+
+    //分配
+    handleFenpei(data) {
+      this.dialogVisible = true
+      this.testInfo = deepClone(data);
+      this.testInfo.oriRecordId = data.id;
+    },
+    setTestInfo() {
+      if (this.testInfo.userList.length == 0) {
+        this.$message.error('请选择测试人员');
+        return
+      }
+      getoriAssignment(this.testInfo)
+        .then((res) => {
+          const { data, status } = res
+          if (status == 200) {
+            this.dialogVisible = false
+            this.$notify({
+              title: '成功',
+              dangerouslyUseHTMLString: true,
+              message: `操作成功`,
+              type: 'success'
+            })
+            this.handleSearchTestTradeList();
+          } else {
+            this.$message.error(res.errMsg)
+          }
+        })
+        .catch((e) => {
+          this.$message.error(e)
+        })
+        .finally(() => {
+          this.dialogVisible = false
+        })
+
+    },
     // 上传结果
     handleUpload(row) {
-      // this.dialogVisible_result = true
-      // this.dialogVisible_result3 = true
-      this.dialogVisible_result4 = true
+      getoriTestInfo({
+        requestId: Math.random().toString(24),
+        oriRecordId: row.id,
+        testItemId: row.testItemId,
+      })
+        .then((res) => {
+          const { data, status } = res
+          if (status == 200) {
+            this.resultInfo = data
+            let type = data.type//1:单个限值 2:多级别限值 3:纯文本判断 4:包含测试子项目
+            if (type == 1 || type == 2) {
+              this.dialogVisible_result = true
+            } else if (type == 3) {
+              this.dialogVisible_result3 = true
+            } else if (type == 4) {
+              this.dialogVisible_result4 = true
+            }
+          } else {
+            this.$message.error(res.errMsg)
+          }
+        })
+        .catch((e) => {
+          this.$message.error(e)
+        })
+        .finally(() => {
+          this.dialogVisible = false
+        })
     },
     setCreditInfo() {
       console.log(this.uploadInfo.incomeAmt)
@@ -326,7 +424,8 @@ export default {
             console.log("上传成功")
             this.uploadInfo.billPath = res.data
             const colParam = deepClone(this.uploadInfo)
-            getQuotationConfirm(Object.assign({}, colParam)).then((res) => {
+            //上传结果
+            getoriUploadResult(Object.assign({}, colParam)).then((res) => {
               const { data, status } = res
               if (status == 200) {
                 this.dialogVisible_settlement = false

@@ -48,7 +48,7 @@
       <el-table-column align="center" type="selection" min-width="80" />
       <el-table-column prop="reportNum" label="报告单编号" min-width="120" />
       <el-table-column prop="client" label="客户名称" min-width="120" />
-      <el-table-column prop="address" label="测试人员" min-width="120" />
+      <el-table-column prop="tester" label="测试人员" min-width="120" />
       <el-table-column prop="planDate" label="要求日期" min-width="120" />
       <el-table-column prop="reportDate" label="报告日期" min-width="120" />
       <el-table-column prop="reportStatus" label="状态" width="90">

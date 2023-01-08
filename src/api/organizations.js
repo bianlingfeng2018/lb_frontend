@@ -177,7 +177,14 @@ export function getRate(data) {
     data
   })
 }
-
+// 确认收样
+export function getConfirm(data) {
+  return requestsh({
+    url: '/application/confirm',
+    method: 'post',
+    data
+  })
+}
 // 获取申请单列表
 export function getApplicationList(data) {
   return requestsh({
@@ -190,6 +197,30 @@ export function getApplicationList(data) {
 export function getApplicationDetail(data) {
   return requestsh({
     url: '/application/detail',
+    method: 'post',
+    data
+  })
+}
+// 检测公司列表
+export function getworkOrderComList(data) {
+  return requestsh({
+    url: '/workOrder/comList',
+    method: 'post',
+    data
+  })
+}
+// 该公司下检测项目列表
+export function getworkOrderItemList(data) {
+  return requestsh({
+    url: '/workOrder/itemList',
+    method: 'post',
+    data
+  })
+}
+//新增工作单
+export function getworkOrderCreate(data) {
+  return requestsh({
+    url: '/workOrder/create',
     method: 'post',
     data
   })

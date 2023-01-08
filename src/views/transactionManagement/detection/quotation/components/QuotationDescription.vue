@@ -256,15 +256,16 @@
 
         <el-tab-pane label="检测报告单" name="4">
           <el-table :data="tableData4" stripe border style="width: 100%" class="mt8">
-            <el-table-column prop="workOrderNum" label="报告编号" min-width="120" />
-            <el-table-column prop="gmtCreate" label="客户名称" min-width="120" />
-            <el-table-column prop="gmtOutput" label="测试人员" min-width="120" />
-            <el-table-column prop="withdraw" label="要求日期" min-width="120" />
-            <el-table-column prop="withdraw" label="报告日期" min-width="120" />
-            <el-table-column fixed="right" label="状态" min-width="90">
+            <el-table-column prop="reportNum" label="报告编号" min-width="120" />
+            <el-table-column prop="client" label="客户名称" min-width="120" />
+            <el-table-column prop="tester" label="测试人员" min-width="120" />
+            <el-table-column prop="planDate" label="要求日期" min-width="120" />
+            <el-table-column prop="reportDate" label="报告日期" min-width="120" />
+            <el-table-column prop="reportStatus" label="状态" min-width="90">
               <template slot-scope="scope">
-                <span v-if="scope.row.confirmed">已确认</span>
-                <span v-else>待确认</span>
+                <span v-if="scope.row.reportStatus == 0">待审核</span>
+                <span v-else-if="scope.row.reportStatus == 1">审核通过</span>
+                <span v-else-if="scope.row.reportStatus == 2">审核不通过</span>
               </template>
             </el-table-column>
           </el-table>

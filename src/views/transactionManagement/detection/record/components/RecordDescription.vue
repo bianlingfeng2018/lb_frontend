@@ -78,7 +78,7 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">纸质原始记录表</template>
-          {{ postForm.oriReportFile }}
+          <el-button v-if="postForm.type ==1 " type="text" @click="handleDownLoad(postForm.oriReportFile)">{{postForm.oriReportFile}}</el-button>
           <el-image v-if="postForm.type ==2 " class="img" :src="postForm.oriReportFile" />
         </el-descriptions-item>
       </el-descriptions>
@@ -139,26 +139,20 @@ export default {
         "_blank"
       )
     },
-    handleDownLoad() {
-      console.log('handleDownLoad')
-      const fileName = '工作单-' + this.downloadParam.testTradeId
+    handleDownLoad(fileName) {
       fetch(
         prefix.lb +
-        "/api/test/downloadTestWorkOrder?testTradeId=" +
-        this.downloadParam.testTradeId,
+        "/ori/download?fileName=" + fileName,
         {
           method: "GET",
-          responseType: "blob",
-          headers: new Headers({
-            "token": getToken().toString()
-          })
+          responseType: "blob"
         }
       )
         .then((res) => res.blob())
         .then((data) => {
           const blobUrl = window.URL.createObjectURL(data)
           const a = document.createElement("a")
-          a.download = fileName + ".pdf"
+          a.download = fileName
           a.href = blobUrl
           a.click()
           this.$message({

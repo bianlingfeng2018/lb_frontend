@@ -123,7 +123,7 @@
       </el-table>
     </div>
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,Date.now())">下载</el-button>
-    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
+<!--    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>-->
   </div>
 </template>
 

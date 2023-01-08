@@ -1,6 +1,6 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack">返回上一页</el-button>
     <div v-if="postForm.status == 3" class="mt20" style="background-color: #F56C6C;padding:10px">
       <span class="mt20 mb20 ml16 ">申请单被{{ postForm.reviewName }}评审不通过，不通过原因：{{ postForm.reviewReason }}(评审人：{{ postForm.reviewName
       }} 评审时间：{{ postForm.reviewTime }})</span>
@@ -266,9 +266,8 @@ export default {
       document.title = `${title} - ${this.tempRoute.params.id}`
     },
     goBack() {
-      this.$router.push({
-        path: "/tm/detection/apply/list"
-      })
+      this.$store.dispatch('tagsView/delView', this.$route)
+      this.$router.go(-1)
     },
     footerMethod({ columns, data }) {
       return [

@@ -1,6 +1,6 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
-    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack">返回上一页</el-button>
     <div id="pdfCentent">
       <el-divider content-position="left">工作单信息</el-divider>
       <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
@@ -194,6 +194,10 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    goBack() {
+      this.$store.dispatch('tagsView/delView', this.$route)
+      this.$router.go(-1)
     },
     setTagsViewTitle() {
       const title = '查看工作单'

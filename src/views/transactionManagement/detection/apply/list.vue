@@ -386,6 +386,7 @@ export default {
           this.productlist.testItemList.push(item)
         })
         gooditem = deepClone(this.productlist)
+        gooditem.testItemId = gooditem.itemId
       }
       this.confirmInfo.orderList[index] = gooditem
       console.log(this.productlist.testItemList)

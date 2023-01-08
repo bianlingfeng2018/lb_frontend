@@ -48,7 +48,7 @@
           <template slot-scope="scope">
             <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
             </el-button>
-            <el-button type="primary" size="small" plain @click="handleDelete(scope.row)">编辑结果
+            <el-button type="primary" size="small" plain @click="handleUpload(scope.row)">编辑结果
             </el-button>
             <el-button v-if="scope.row.status == 1" type="primary" plain size="small" @click="handleEdit(scope.row)">审核
             </el-button>
@@ -105,8 +105,8 @@
     <!--弹窗  上传结果1和2-->
     <el-dialog :visible.sync="dialogVisible_result" title="上传结果">
       <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="left">
-        <el-form-item label="测试数值" prop="username">
-          <el-input v-model="resultInfo.username" placeholder="请输入内容"/>
+        <el-form-item label="测试数值" prop="testValue">
+          <el-input v-model="resultInfo.testValue" placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item v-if="resultInfo.type == 2" label="选择分类" prop="email">
           <el-select v-model="resultInfo.levelList" placeholder="请选择" style="display: block; width: 200px">
@@ -114,9 +114,9 @@
                        :value="item.levelName"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="测试结果" prop="username">
+        <el-form-item label="测试结果" prop="testResult">
           <span style="color: #67C23A">符合标准</span>
-          <span> （{{resultInfo.value}}）</span>
+          <span> （{{resultInfo.testResult}}）</span>
         </el-form-item>
         <el-form-item label="上传纸质原始记录表" prop="username">
           <el-upload
@@ -156,8 +156,8 @@
             <el-radio label="不通过"/>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="备注" prop="username">
-          <el-input v-model="resultInfo.username" placeholder="请输入备注"/>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="resultInfo.remark" placeholder="请输入备注"/>
         </el-form-item>
         <el-form-item label="上传纸质原始记录表" prop="username">
           <el-upload
@@ -189,7 +189,7 @@
     <el-dialog :visible.sync="dialogVisible_result4" title="上传结果">
       <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="right">
         <el-form-item label="总数值" prop="username">
-          <el-input v-model="resultInfo.username" placeholder="请输入测试总数值" style="width: 300px">
+          <el-input v-model="resultInfo.testValue" placeholder="请输入测试总数值" style="width: 300px">
             <template slot="append">mg/kg</template>
           </el-input>
         </el-form-item>
@@ -201,12 +201,12 @@
           <el-table-column align="center" prop="limitValue" label="限值"/>
           <el-table-column align="center" prop="avgValue" label="平均值">
             <template slot-scope="row">
-              <el-input v-model="row.avgValue" type="number" @change="testInputChange(row)"/>
+              <el-input v-model="row.avgValue" type="number" />
             </template>
           </el-table-column>
           <el-table-column align="center" prop="testResult" label="测试结果">
             <template slot-scope="row">
-              <el-input v-model="row.testResult" type="number" @change="testInputChange(row)"/>
+              <el-input v-model="row.testResult" type="number"/>
             </template>
           </el-table-column>
         </el-table>
@@ -381,6 +381,7 @@
     },
     // 上传结果
     handleUpload(row) {
+      console.log("handleUpload",row)
       getoriTestInfo({
         requestId: Math.random().toString(24),
         oriRecordId: row.id,
@@ -390,6 +391,7 @@
           const { data, status } = res
           if (status == 200) {
             this.resultInfo = data
+            this.resultInfo.oriRecordId = row.id;
             let type = data.type//1:单个限值 2:多级别限值 3:纯文本判断 4:包含测试子项目
             if (type == 1 || type == 2) {
               this.dialogVisible_result = true
@@ -410,32 +412,34 @@
         })
     },
     setCreditInfo() {
-      console.log(this.uploadInfo.incomeAmt)
-      if (this.uploadInfo.incomeAmt == "") {
-        this.$message.error('请输入支付金额');
-        return
-      }
+      // console.log(this.uploadInfo.incomeAmt)
+      // if (this.uploadInfo.incomeAmt == "") {
+      //   this.$message.error('请输入支付金额');
+      //   return
+      // }
       if (this.multpartfile.length !== 0) {
         //文件
         this.$refs.upload1.submit();
+        // let params = deepClone(this.resultInfo);
+
         getoriUpload(this.uploadForm).then((res) => {
           const { data, status } = res
           if (status == 200) {
             console.log("上传成功")
-            this.uploadInfo.billPath = res.data
-            const colParam = deepClone(this.uploadInfo)
+            this.resultInfo.fileName = res.data
+            const colParam = deepClone(this.resultInfo)
+            console.log("uploadForm",this.resultInfo);
             //上传结果
-            getoriUploadResult(Object.assign({}, colParam)).then((res) => {
+            getoriUploadResult(colParam).then((res) => {
               const { data, status } = res
               if (status == 200) {
-                this.dialogVisible_settlement = false
                 this.$notify({
                   title: '成功',
                   dangerouslyUseHTMLString: true,
                   message: `操作成功`,
                   type: 'success'
                 })
-                this.getListDate();
+                this.handleSearchTestTradeList();
               } else {
                 this.$message.error(res.errMsg)
               }
@@ -444,7 +448,9 @@
                 this.$message.error(e)
               })
               .finally(() => {
-                this.dialogVisible_settlement = false
+                this.dialogVisible_result = false;
+                this.dialogVisible_result3 = false;
+                this.dialogVisible_result4 = false;
               })
 
           } else {
@@ -508,6 +514,7 @@
                   message: `操作成功`,
                   type: 'success'
                 })
+                this.handleSearchTestTradeList();
               } else {
                 this.$message.error(res.errMsg)
               }

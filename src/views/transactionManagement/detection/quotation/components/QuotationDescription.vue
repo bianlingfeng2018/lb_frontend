@@ -531,17 +531,20 @@ export default {
         this.postForm = response.data
         this.postForm.goods.forEach(good => {
           let aPrice = 0
-            good.alist?.forEach(item => {
+            good.alist?.forEach((item,idx) => {
               console.log(item)
               const price = Number(item.totalCost)
               aPrice += (isNaN(price) ? 0 : price)
             })
 
             let rPrice = 0
-            good.rlist?.forEach(item => {
+            good.rlist?.forEach((item,idx) => {
               console.log(item)
               const price = Number(item.totalCost)
               rPrice += (isNaN(price) ? 0 : price)
+            })
+            good.items.forEach((item,idx)=>{
+              item.itemId = idx+1
             })
             this.total += good.amount
             this.total += aPrice + rPrice
@@ -757,8 +760,8 @@ export default {
       this.creditInfo.testFee = 0
       this.creditInfo.goods.forEach(good => {
         let testFee = 0
-          good.items?.forEach(item => {
-            item.itemId = item.id
+          good.items?.forEach((item,idx) => {
+            item.itemId = idx+1
             console.log(item)
             const price = Number(item.price)
             console.log((isNaN(price) ? 0 : price))

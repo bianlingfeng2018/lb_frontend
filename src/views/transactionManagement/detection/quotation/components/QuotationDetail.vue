@@ -588,7 +588,7 @@ export default {
           this.checkedGoodsReportTypes[id] = good.reportTypes
           this.payType = good.payType
           good.items.forEach((item, idx) => {
-            item.id = item.itemId
+            item.id = idx+1
             item.name = item.testItem
             item.price = item.unitPrice
             item.price2 = item.amountRmb
@@ -936,8 +936,8 @@ export default {
       this.postForm.testFee = 0
       this.postForm.goods.forEach(good => {
         let testFee = 0
-            good.items?.forEach(item => {
-              item.itemId = item.id
+            good.items?.forEach((item,idx) => {
+              item.itemId = (idx+1)
               console.log(item)
               const price = Number(item.price)
               console.log((isNaN(price) ? 0 : price))

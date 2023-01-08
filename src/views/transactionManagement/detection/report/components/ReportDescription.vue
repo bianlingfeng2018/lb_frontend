@@ -38,51 +38,51 @@
       <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
         <el-descriptions-item>
           <template slot="label">样品名称</template>
-          {{ postForm.sampleNameCn }}({{postForm.sampleNameEn}})
+          {{ postForm.sample.sampleNameCn }}({{postForm.sample.sampleNameEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品数量</template>
-          {{ postForm.sampleQuantity }}
+          {{ postForm.sample.sampleQuantity }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品型号</template>
-          {{ postForm.sampleModelCn }}({{postForm.sampleModelEn}})
+          {{ postForm.sample.sampleModelCn }}({{postForm.sample.sampleModelEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品状态</template>
-          {{ postForm.sampleStatusCn }}({{postForm.sampleStatusEn}})
+          {{ postForm.sample.sampleStatusCn }}({{postForm.sample.sampleStatusEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">商标</template>
-          {{ postForm.brandCn }}({{postForm.brandEn}})
+          {{ postForm.sample.brandCn }}({{postForm.sample.brandEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">批次</template>
-          {{ postForm.lotNoCn }}({{postForm.lotNoEn}})
+          {{ postForm.sample.lotNoCn }}({{postForm.sample.lotNoEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">规格</template>
-          {{ postForm.specificationCn }}({{postForm.specificationEn}})
+          {{ postForm.sample.specificationCn }}({{postForm.sample.specificationEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">供应商</template>
-          {{ postForm.supplierCn }}({{postForm.supplierEn}})
+          {{ postForm.sample.supplierCn }}({{postForm.sample.supplierEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">购买商</template>
-          {{ postForm.buyerCn }}({{postForm.buyerEn}})
+          {{ postForm.sample.buyerCn }}({{postForm.sample.buyerEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">订单号</template>
-          {{ postForm.orderNo }}
+          {{ postForm.sample.orderNo }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">生产商</template>
-          {{ postForm.manufacturerCn }}({{postForm.manufacturerEn}})
+          {{ postForm.sample.manufacturerCn }}({{postForm.sample.manufacturerEn}})
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">出口地</template>
-          {{ postForm.exportedTo }}
+          {{ postForm.sample.exportedTo }}
         </el-descriptions-item>
       </el-descriptions>
       <p class="remark-content">
@@ -123,7 +123,7 @@
       </el-table>
     </div>
     <el-button v-loading="submitLoading" type="primary" size="small" plain @click="ExportSavePdf(htmlTitle,Date.now())">下载</el-button>
-    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>
+<!--    <el-button type="primary" size="small" plain @click="handlePreview()">预览</el-button>-->
   </div>
 </template>
 

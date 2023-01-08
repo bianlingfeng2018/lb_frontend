@@ -1,7 +1,7 @@
 <template>
   <div class="app-container ohn quotation-box">
     <div id="pdfCentent">
-      <!--    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>-->
+          <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack">返回上一页</el-button>
       <!--    <el-divider content-position="left">基本信息</el-divider>-->
       <el-descriptions class="margin-top" title="" :column="3" :content-style="{ 'width': '200px' }">
         <el-descriptions-item>
@@ -714,9 +714,8 @@ export default {
       document.title = `${title} - ${this.tempRoute.params.id}`
     },
     goBack() {
-      this.$router.push({
-        path: "/tm/detection/quotation/list"
-      })
+      this.$store.dispatch('tagsView/delView', this.$route)
+      this.$router.go(-1)
     },
     // 编辑单元格事件
     async editClose({

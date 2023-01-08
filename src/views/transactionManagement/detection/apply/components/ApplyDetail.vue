@@ -1,6 +1,6 @@
 <template>
   <div class="app-container ohn ">
-    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack">返回上一页</el-button>
     <el-divider class="mt50" content-position="left">申请信息</el-divider>
     <el-form
       ref="postForm"
@@ -522,6 +522,10 @@ export default {
 
         }
       })
+    },
+    goBack() {
+      this.$store.dispatch('tagsView/delView', this.$route)
+      this.$router.go(-1)
     },
     resetForm(formName) {
       this.postForm.sampleList = []

@@ -1,7 +1,7 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
 
-    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="$router.go(-1)">返回上一页</el-button>
+    <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack">返回上一页</el-button>
     <div v-if="postForm.status == 3" class="mt20" style="background-color: #F56C6C;padding:10px">
       <span class="mt20 mb20 ml16 ">原始记录单被{{ postForm.reviewName }}评审不通过，不通过原因：{{ postForm.reviewReason }}(评审人：{{ postForm.reviewName
       }} 评审时间：{{ postForm.reviewTime }})</span>
@@ -78,7 +78,8 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">纸质原始记录表</template>
-          {{ postForm.withdraw }}
+          <el-button v-if="postForm.type ==1 " type="text" @click="handleDownLoad(postForm.oriReportFile)">{{postForm.oriReportFile}}</el-button>
+          <el-image v-if="postForm.type ==2 " class="img" :src="postForm.oriReportFile" />
         </el-descriptions-item>
       </el-descriptions>
     </div>
@@ -138,26 +139,20 @@ export default {
         "_blank"
       )
     },
-    handleDownLoad() {
-      console.log('handleDownLoad')
-      const fileName = '工作单-' + this.downloadParam.testTradeId
+    handleDownLoad(fileName) {
       fetch(
         prefix.lb +
-        "/api/test/downloadTestWorkOrder?testTradeId=" +
-        this.downloadParam.testTradeId,
+        "/ori/download?fileName=" + fileName,
         {
           method: "GET",
-          responseType: "blob",
-          headers: new Headers({
-            "token": getToken().toString()
-          })
+          responseType: "blob"
         }
       )
         .then((res) => res.blob())
         .then((data) => {
           const blobUrl = window.URL.createObjectURL(data)
           const a = document.createElement("a")
-          a.download = fileName + ".pdf"
+          a.download = fileName
           a.href = blobUrl
           a.click()
           this.$message({
@@ -178,15 +173,21 @@ export default {
       getoriDetail(Object.assign({}, { id: id })).then(response => {
         console.log(response.data)
         this.postForm = response.data
+        if(this.postForm.oriReportFile.indexOf("pdf") != -1){
+          this.postForm.type = 1
+        }else{
+          this.postForm.type = 2
+          this.postForm.oriReportFile = prefix.lb + '/ori/download?' +  this.postForm.oriReportFile
+        }
+
       }).catch(err => {
         console.log(err)
       })
     },
 
     goBack() {
-      this.$router.push({
-        path: "/tm/detection/worksheet/list"
-      })
+      this.$store.dispatch('tagsView/delView', this.$route)
+      this.$router.go(-1)
     }
   }
 }

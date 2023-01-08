@@ -117,11 +117,11 @@
         <template slot-scope="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
           </el-button>
-          <el-button v-if="scope.row.state ==1" type="primary" plain size="small" @click="handleEdit(scope.row)">编辑
+          <el-button v-if="scope.row.state == 1" type="primary" plain size="small" @click="handleEdit(scope.row)">编辑
           </el-button>
           <el-button v-if="scope.row.state == 1" type="primary" plain size="small" @click="handleCheck(scope.row)">审核
           </el-button>
-          <el-button v-if="scope.row.state == 3 || scope.row.state == 5 || scope.row.step > 1" type="primary" plain size="small" @click="handleDelete(scope.row)">上传水单
+          <el-button v-if="scope.row.state == 3 || scope.row.state == 5 && scope.row.step > 1" type="primary" plain size="small" @click="handleDelete(scope.row)">上传水单
           </el-button>
         </template>
       </el-table-column>

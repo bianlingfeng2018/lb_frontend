@@ -48,11 +48,11 @@
           <template slot-scope="scope">
             <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
             </el-button>
-            <el-button type="primary" size="small" plain @click="handleUpload(scope.row)">编辑结果
+            <el-button type="primary" size="small" plain @click="handleUpload(scope.row,2)">编辑结果
             </el-button>
             <el-button v-if="scope.row.status == 1" type="primary" plain size="small" @click="handleEdit(scope.row)">审核
             </el-button>
-            <el-button type="primary" size="small" plain @click="handleUpload(scope.row)">上传结果
+            <el-button type="primary" size="small" plain @click="handleUpload(scope.row,1)">上传结果
             </el-button>
             <el-button type="primary" size="small" plain @click="handleFenpei(scope.row)">分配
             </el-button>
@@ -380,7 +380,7 @@
 
     },
     // 上传结果
-    handleUpload(row) {
+    handleUpload(row,uploadType) {
       console.log("handleUpload",row)
       getoriTestInfo({
         requestId: Math.random().toString(24),
@@ -391,6 +391,7 @@
           const { data, status } = res
           if (status == 200) {
             this.resultInfo = data
+            this.resultInfo.uploadType = uploadType;
             this.resultInfo.oriRecordId = row.id;
             let type = data.type//1:单个限值 2:多级别限值 3:纯文本判断 4:包含测试子项目
             if (type == 1 || type == 2) {

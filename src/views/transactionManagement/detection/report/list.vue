@@ -62,7 +62,7 @@
         <template slot-scope="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
           </el-button>
-          <el-button type="primary" plain size="small" @click="handleEdit(scope.row)">审核
+          <el-button v-if="scope.row.reportStatus == 0" type="primary" plain size="small" @click="handleEdit(scope.row)">审核
           </el-button>
         </template>
       </el-table-column>
@@ -178,7 +178,6 @@ export default {
         })
     },
     queryClientCom(s, cb) {
-      this.columnParam.client = ''
       const params = {
         clientName: s
       }
@@ -199,7 +198,7 @@ export default {
       })
     },
     onSelect(item) {
-      this.columnParam.client = item.clientId
+      this.columnParam.client = item.value
     },
     handleClick(tab) {
       this.columnParam.reportStatus = tab.name

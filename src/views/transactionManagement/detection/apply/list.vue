@@ -135,8 +135,8 @@
             :visible.sync="innerDialogVisible"
             append-to-body>
             <el-checkbox-group v-model="checkList">
-              <el-checkbox v-for="date in productItemlist" :key="date.id" :label="date" style="margin: 5px">{{ date.name
-                }} {{ date.price |
+              <el-checkbox v-for="date in productItemlist" :key="date.itemId" :label="date" style="margin: 5px">{{ date.itemName
+                }} {{ date.unitPrice |
                 changePrice2money }}
               </el-checkbox>
             </el-checkbox-group>
@@ -221,10 +221,6 @@
         },
         productlist: {
           testItemList: [
-            {
-              labId: 0,
-              testItemId: 0
-            }
           ],
           comName: "",
           subContract: "",
@@ -282,15 +278,16 @@
 
     },
     // 获取info列表
-    getDataInfoList(id) {
+    async getDataInfoList(id) {
       // 获取基本检测项列表
-      const res1 = getworkOrderItemList({
+      const res1 = await getworkOrderItemList({
         requestId: Math.random().toString(24),
         comId: id,
-        applicationNum: this.applicationNum
+        applicationNum: this.confirmInfo.applicationNum
       })
       this.productItemlist = res1.data.dataList
 
+      console.log(res1)
     },
     queryClientCom(s, cb) {
       this.productlist.testComId = ''
@@ -305,6 +302,8 @@
             var mer = {}
             mer.value = client.comName
             mer.id = client.id
+            mer.comName = client.comName
+            mer.subContract = client.subContract
             cliets.push(mer)
           })
           cb(cliets)
@@ -360,6 +359,7 @@
     },
     //创建工作单
     handleConfirm() {
+      this.confirmInfo.orderList.push(this.productlist)
       if (this.confirmInfo.orderList.length == 0) {
         this.$message.error('请选择测试项目')
         return
@@ -468,7 +468,7 @@
     },
     handleEdit(data) {
       this.dialogVisible = true
-      this.applicationNum = data.applicationNum
+      this.confirmInfo.applicationNum = data.applicationNum
     },
     handleAudit(data) {
       this.$router.push({

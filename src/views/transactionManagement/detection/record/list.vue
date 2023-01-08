@@ -249,7 +249,6 @@ export default {
       dialogVisible_result4: false,
       uploadForm: new FormData(),
       multpartfile: [],
-      columnParam: [],
       tableData: [],
       // 搜索条件
       columnParam: {

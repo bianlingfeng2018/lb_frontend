@@ -39,13 +39,13 @@
         plain
         size="small"
         style="position: absolute;right:10px;top:5px;"
-        @click="handleShow"
+        @click="handleEdit(null,true)"
       >审核
       </el-button>
     </div>
 
-    <el-table v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8">
-      <el-table-column align="center" type="selection" min-width="80" />
+    <el-table v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8" @selection-change="handleSelectionChange">
+      <el-table-column align="center" type="selection" min-width="80" :selectable="canSelect"/>
       <el-table-column prop="reportNum" label="报告单编号" min-width="120" />
       <el-table-column prop="client" label="客户名称" min-width="120" />
       <el-table-column prop="tester" label="测试人员" min-width="120" />
@@ -56,13 +56,19 @@
           <span v-if="scope.row.reportStatus == 0">待审核</span>
           <span v-else-if="scope.row.reportStatus == 1">审核通过</span>
           <span v-else-if="scope.row.reportStatus == 2">审核不通过</span>
+        <el-tooltip v-if="scope.row.reportStatus == 2" class="item" effect="dark" placement="top">
+          <i class="el-icon-question" style="font-size: 16px; vertical-align: middle;" />
+          <div slot="content">
+            <p>{{ scope.row.reason }}</p>
+          </div>
+        </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
           <el-button type="primary" plain size="small" @click="handleShow(scope.row)">查看
           </el-button>
-          <el-button type="primary" plain size="small" @click="handleEdit(scope.row)">审核
+          <el-button v-if="scope.row.reportStatus == 0" type="primary" plain size="small" @click="handleEdit(scope.row,false)">审核
           </el-button>
         </template>
       </el-table-column>
@@ -92,7 +98,7 @@
         <el-form-item label="审核结果：" prop="checkResult">
           <el-select v-model="creditInfo.checkResult" placeholder="请选择" style="display: block; width: 200px">
             <el-option key="0" label="审核通过" value="1" />
-            <el-option key="1" label="审核不通过" value="0" />
+            <el-option key="1" label="审核不通过" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item
@@ -114,7 +120,7 @@
 <script>
 import { deepClone } from "../../../../utils"
 import {
-  getReportList
+  getReportList,approveReport,approveReportBatch
 } from "@/api/worksheet"
 import { getClientByName } from "@/api/clientCompany"
 export default {
@@ -125,6 +131,7 @@ export default {
         checkResult: '',
         quotationNum: '',
         reason: '',
+
         requestId: Math.random().toString(24)
       },
       auditRules: {
@@ -141,7 +148,9 @@ export default {
         currPage: 1,
         pageSize: 10,
         pageTotal: 0
-      }
+      },
+      selectData:[],
+      isBatch:false,
     }
   },
   created() {
@@ -178,7 +187,6 @@ export default {
         })
     },
     queryClientCom(s, cb) {
-      this.columnParam.client = ''
       const params = {
         clientName: s
       }
@@ -199,7 +207,7 @@ export default {
       })
     },
     onSelect(item) {
-      this.columnParam.client = item.clientId
+      this.columnParam.client = item.value
     },
     handleClick(tab) {
       this.columnParam.reportStatus = tab.name
@@ -208,21 +216,67 @@ export default {
     },
     // 查看详情
     handleShow(data) {
-      this.$router.push({
-        path: "/tm/detection/report/show/" + data.id
-      })
+      // this.$router.push({
+      //   path: "/tm/detection/report/show/" + data.id
+      // })
+    },
+    canSelect(row, index) {
+      return row.reportStatus == 0
+    },
+    handleSelectionChange(data) {
+      console.log(data)
+      this.selectData = data
     },
     // 审核
-    handleEdit(data) {
+    handleEdit(data,isBatch) {
       this.dialogVisible_check = true
-      this.creditInfo = deepClone(row)
+      this.isBatch = isBatch;
+      !isBatch && (this.creditInfo = deepClone(data));
     },
     // 审核
     async handleCheckConfirm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          getQuotationExamine(this.creditInfo)
-            .then((res) => {
+          this.creditInfo.reportStatus = this.creditInfo.checkResult;
+          if(!this.isBatch){
+            approveReport(this.creditInfo)
+              .then((res) => {
+                const { data, status } = res
+                if (status == 200) {
+                  this.dialogVisible_check = false
+                  this.$notify({
+                    title: '成功',
+                    dangerouslyUseHTMLString: true,
+                    message: `操作成功`,
+                    type: 'success'
+                  })
+                  this.handleSearchTestTradeList();
+                } else {
+                  this.$message.error(res.errMsg)
+                }
+              })
+              .catch((e) => {
+                this.$message.error(e)
+              })
+              .finally(() => {
+                this.dialogVisible_check = false
+              })
+          }else{
+            if(!this.selectData.length){
+              this.$message.error("请选择要审核的检测单");
+              return ;
+            }
+            let params = [];
+            this.selectData.forEach(item=>{
+              let param = {
+                reportNum: item.reportNum,
+                reason: this.creditInfo.reason,
+                id : item.id,
+                reportStatus:this.creditInfo.reportStatus
+              }
+              params.push(param);
+            })
+            approveReportBatch({reqList:params}).then((res) => {
               const { data, status } = res
               if (status == 200) {
                 this.dialogVisible_check = false
@@ -232,21 +286,25 @@ export default {
                   message: `操作成功`,
                   type: 'success'
                 })
+                this.handleSearchTestTradeList();
               } else {
                 this.$message.error(res.errMsg)
               }
             })
-            .catch((e) => {
-              this.$message.error(e)
-            })
-            .finally(() => {
-              this.dialogVisible_check = false
-            })
+              .catch((e) => {
+                this.$message.error(e)
+              })
+              .finally(() => {
+                this.dialogVisible_check = false
+              })
+          }
         } else {
           return false
         }
       })
     },
+
+
     handleSizeChange(val) {
       this.pagination.pageSize = val
       this.handleSearchTestTradeList()

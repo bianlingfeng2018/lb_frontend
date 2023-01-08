@@ -91,5 +91,21 @@ export function getReportList(data) {
   })
 }
 
+//检测报告单审核
+export function approveReport(data) {
+  return requestsh({
+    url: '/report/approve',
+    method: 'post',
+    data
+  })
+}
+//检测报告单审核
+export function approveReportBatch(data) {
+  return requestsh({
+    url: '/report/approveBatch',
+    method: 'post',
+    data
+  })
+}
 
 

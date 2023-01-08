@@ -103,7 +103,7 @@
     </el-dialog>
 
     <!--弹窗  上传结果1和2-->
-    <el-dialog :visible.sync="dialogVisible_result" title="上传结果">
+    <el-dialog :visible.sync="dialogVisible_result" :title="resultInfo.uploadType=='1'?'上传结果':'编辑上传结果'">
       <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="left">
         <el-form-item label="测试数值" prop="testValue">
           <el-input v-model="resultInfo.testValue" placeholder="请输入内容"/>
@@ -145,7 +145,7 @@
     </el-dialog>
 
     <!--弹窗  上传结果3-->
-    <el-dialog :visible.sync="dialogVisible_result3" title="上传结果">
+    <el-dialog :visible.sync="dialogVisible_result3" :title="resultInfo.uploadType=='1'?'上传结果':'编辑上传结果'">
       <div>该测试项目系统无法自动得出结果。限值：</div>
       <div class="mt8" style="fontSize:16px; font-weight: bold;"> {{ resultInfo.value}}</div>
       <div class="mt20 mb10">请手动输入测试结果：</div>
@@ -186,7 +186,7 @@
     </el-dialog>
 
     <!--弹窗  上传结果4-->
-    <el-dialog :visible.sync="dialogVisible_result4" title="上传结果">
+    <el-dialog :visible.sync="dialogVisible_result4" :title="resultInfo.uploadType=='1'?'上传结果':'编辑上传结果'">
       <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="right">
         <el-form-item label="总数值" prop="username">
           <el-input v-model="resultInfo.testValue" placeholder="请输入测试总数值" style="width: 300px">

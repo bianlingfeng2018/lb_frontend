@@ -147,7 +147,7 @@
     <!--弹窗  上传结果3-->
     <el-dialog :visible.sync="dialogVisible_result3" title="上传结果">
       <div>该测试项目系统无法自动得出结果。限值：</div>
-      <div class="mt8" style="fontSize:16px; font-weight: bold;"> 不应出现滑脱、断裂和变形</div>
+      <div class="mt8" style="fontSize:16px; font-weight: bold;"> {{ resultInfo.value}}</div>
       <div class="mt20 mb10">请手动输入测试结果：</div>
       <el-form ref="auditRulesForm" :model="resultInfo" :rules="auditRules" label-width="150px" label-position="right">
         <el-form-item label="测试结果" prop="email">

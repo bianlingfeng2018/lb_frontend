@@ -217,7 +217,7 @@ export function getworkOrderItemList(data) {
     data
   })
 }
-//新增工作单
+// 新增工作单
 export function getworkOrderCreate(data) {
   return requestsh({
     url: '/workOrder/create',
@@ -225,6 +225,14 @@ export function getworkOrderCreate(data) {
     data
   })
 }
+// //编辑工作单
+// export function getworkOrderModify(data) {
+//   return requestsh({
+//     url: '/workOrder/create',
+//     method: 'post',
+//     data
+//   })
+// }
 // 新增申请单
 export function getApplicationCreate(data) {
   return requestsh({

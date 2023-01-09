@@ -83,11 +83,13 @@
       >批量核销
       </el-button>
     </div>
-    <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8" @selection-change="handleSelectionChange">
-      <el-table-column align="center" type="selection" min-width="80" :selectable="canSelect" />
-      <el-table-column prop="tradeId" label="报价单编号" min-width="150" />
-      <el-table-column prop="tradeName" label="交易名称" min-width="150" />
-      <el-table-column prop="clientName" label="客户中文名称" min-width="150" />
+    <el-table :v-loading="tableLoading" :data="tableData" stripe border style="width: 100%" class="mt8"
+              @selection-change="handleSelectionChange"
+    >
+      <el-table-column align="center" type="selection" min-width="80" :selectable="canSelect"/>
+      <el-table-column prop="tradeId" label="报价单编号" min-width="150"/>
+      <el-table-column prop="tradeName" label="交易名称" min-width="150"/>
+      <el-table-column prop="clientName" label="客户中文名称" min-width="150"/>
       <el-table-column prop="orderAmt" label="交易金额" min-width="150">
         <template v-slot="scope">
           <span>{{ scope.row.orderAmt | changePrice2money }}</span>
@@ -98,9 +100,9 @@
           <span>{{ scope.row.incomeAmt | changePrice2money }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="uploadTime" label="上传水单日期" min-width="150" />
-      <el-table-column prop="incomeTime" label="实际收款日期" min-width="150" />
-      <el-table-column prop="operTime" label="核销日期" min-width="150" />
+      <el-table-column prop="uploadTime" label="上传水单日期" min-width="150"/>
+      <el-table-column prop="incomeTime" label="实际收款日期" min-width="150"/>
+      <el-table-column prop="operTime" label="核销日期" min-width="150"/>
       <el-table-column prop="status" label="状态" min-width="150">
         <template v-slot="scope">
           <span v-if="scope.row.status==0">未核销</span>
@@ -133,10 +135,10 @@
         <el-form-item label="客户名称" label-width="150px">{{ creditInfo.clientName }}</el-form-item>
         <el-form-item label="报价单编号" label-width="150px">{{ creditInfo.tradeId }}</el-form-item>
         <el-form-item label="回款金额" prop="incomeAmt" label-width="150px">
-          <el-input v-model="inputIncomeAmt" placeholder="输入回款金额" width="120" />
+          <el-input v-model="inputIncomeAmt" placeholder="输入回款金额" width="120"/>
         </el-form-item>
         <el-form-item label="水单" label-width="150px" prop="username">
-          <el-input v-model="creditInfo.billPath" width="120" />
+          <el-input v-model="creditInfo.billPath" width="120"/>
         </el-form-item>
         <el-form-item label="实际收款日期" label-width="150px" prop="username">
           <el-date-picker
@@ -194,9 +196,10 @@
 <script>
 import { getPersonalBillList, updatePersonalBillBatch, updatePersonalBill } from "@/api/bill"
 import { deepClone } from "@/utils"
-import { changePrice2money } from "@/utils/simple-util"
+import { changePrice2money, appendParamsToUrl } from "@/utils/simple-util"
 import { getClientByName } from "@/api/clientCompany"
 import { getQuotationByName } from "@/api/organizations"
+
 export default {
   name: "IndividualList",
   filters: {
@@ -244,10 +247,14 @@ export default {
       this.tableData = []
       this.tableLoading = true
       const colParam = deepClone(this.columnParam)
-      colParam.uploadStartTime = this.uploadTime[0]
-      colParam.uploadEndTime = this.uploadTime[1]
-      colParam.startTime = this.truelyTime[0]
-      colParam.endTime = this.truelyTime[1]
+      if (this.uploadTime) {
+        colParam.uploadStartTime = this.uploadTime[0]
+        colParam.uploadEndTime = this.uploadTime[1]
+      }
+      if (this.truelyTime) {
+        colParam.startTime = this.truelyTime[0]
+        colParam.endTime = this.truelyTime[1]
+      }
       const queryParam = {
         pageNum: this.pagination.currPage,
         pageSize: this.pagination.pageSize
@@ -415,21 +422,26 @@ export default {
     },
     // 导出
     onExport() {
-      // const colParam = deepClone(this.columnParam)
-      // const range = colParam.lastTraceDate
-      // if (range && range.length > 1) {
-      //   colParam.startDate = range[0]
-      //   colParam.endDate = range[1]
-      // }
-      // colParam.lastTraceDate = null
-      // this.tableLoading = true
-      // const fileName = 'export-all.xlsx'
-      // const url = "/api/cli-all-export"
-      // const urlWithParam = appendParamsToUrl(url, colParam)
-      // this.$router.push({
-      //   path: "/clm/cli-com-export",
-      //   query: Object.assign({}, colParam, { url: urlWithParam, fileName: fileName })
-      // })
+      const colParam = deepClone(this.columnParam)
+      if (this.uploadTime) {
+        colParam.uploadStartTime = this.uploadTime[0]
+        colParam.uploadEndTime = this.uploadTime[1]
+      }
+      if (this.truelyTime) {
+        colParam.startTime = this.truelyTime[0]
+        colParam.endTime = this.truelyTime[1]
+      }
+
+      colParam.pageNum = this.pagination.currPage;
+      colParam.pageSize = this.pagination.pageSize
+      this.tableLoading = false
+      const fileName = 'export-all.xlsx'
+      const url = "/bill/api/bill-customer-export"
+      const urlWithParam = appendParamsToUrl(url, {})
+      this.$router.push({
+        path: "/clm/cli-com-export",
+        query: Object.assign({}, colParam, { url: urlWithParam, fileName: fileName })
+      })
     }
 
   }

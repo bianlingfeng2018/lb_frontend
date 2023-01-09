@@ -49,7 +49,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="'最晚收款日期'">
+      <el-form-item :label="'挂账日期'">
         <el-date-picker
           v-model="lastTime"
           type="daterange"
@@ -283,7 +283,8 @@
 <script>
 import { getAllIncomeBill, getAllOutBill, addOutBillBatch, addOneIncomeBill } from "@/api/bill"
 import {allCompany, getQuotationByName} from "@/api/organizations"
-import { deepClone } from "@/utils"
+import { deepClone} from "@/utils"
+import { appendParamsToUrl } from "@/utils/simple-util"
 export default {
   name: "Details",
   data() {
@@ -564,7 +565,7 @@ export default {
       colParam.lastTraceDate = null
       this.tableLoading = true
       const fileName = 'export-all.xlsx'
-      const url = "/api/cli-all-export"
+      const url = "/bill/api/bill-out-export"
       const urlWithParam = appendParamsToUrl(url, colParam)
       this.$router.push({
         path: "/clm/cli-com-export",

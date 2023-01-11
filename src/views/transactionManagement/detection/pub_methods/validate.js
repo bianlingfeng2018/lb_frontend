@@ -142,6 +142,9 @@ const methods = {
     sampleNameCn: [
       { required: true, message: '请输入样品名称', trigger: 'blur' }
     ],
+    sampleStatusCn: [
+      { required: true, message: '请输入样品状态', trigger: 'blur' }
+    ],
     sampleQuantity: [
       { required: true, message: '请输入样品数量', trigger: 'blur' }
     ],
@@ -176,6 +179,47 @@ const methods = {
     ],
     approverId: [
       { required: true, message: '请选择批准人', trigger: 'blur' }
+    ]
+  },
+  orderValidate: {
+    comAddrCn: [
+      { required: true, message: 'Please enter the Applicant Address', trigger: 'blur' }
+    ],
+    radioStandard: [
+      { required: true, message: 'Please enter the Exporting country', trigger: 'blur' }
+    ],
+    invoiceTitle: [
+      { required: true, message: 'Please select the Inspection times', trigger: 'blur' }
+    ],
+    sampleNameCn: [
+      { required: true, message: 'Please enter the Inspection date', trigger: 'blur' }
+    ],
+    sampleQuantity: [
+      { required: true, message: 'Please enter the Inspection company', trigger: 'blur' }
+    ],
+    sampleModelCn: [
+      { required: true, message: 'Please enter the Inspection place', trigger: 'blur' }
+    ],
+    sampleName: [
+      { required: true, message: 'Please enter the Contact Person', trigger: 'blur' }
+    ],
+    sampleDescription: [
+      { required: true, message: 'Please enter the Mobile', trigger: 'blur' }
+    ],
+    sampleDesction: [
+      { required: true, message: 'Please enter the Email', trigger: 'blur' }
+    ],
+    sampleDescriptn: [
+      { required: true, message: 'Please select the Approval Sample Getting', trigger: 'blur' }
+    ],
+    Purpose: [
+      { required: true, message: 'Please select the Sample Purpose', trigger: 'blur' }
+    ],
+    Inspection: [
+      { required: true, message: 'Please select the  Inspection type', trigger: 'blur' }
+    ],
+    invoice: [
+      { required: true, message: 'Please enter the Packing list and invoice', trigger: 'blur' }
     ]
   },
   reportCreateValidate: {},

@@ -6,6 +6,7 @@
           v-model="columnParam.applicationNum"
           placeholder="请输入申请单编号"
           style="width: 240px"
+          clearable
           @keydown.enter.native="onSearch"
         />
       </el-form-item>
@@ -13,12 +14,13 @@
         <el-input
           v-model="columnParam.applicationName"
           placeholder="请输入申请单位名称"
+          clearable
           style="width: 240px"
           @keydown.enter.native="onSearch"
         />
       </el-form-item>
       <el-form-item label="收样状态">
-        <el-select v-model="columnParam.sampleStatus" placeholder="请选择" style="display: block; width: 140px">
+        <el-select v-model="columnParam.sampleStatus" clearable placeholder="请选择" style="display: block; width: 140px">
           <el-option key="0" label="已收样" value="1" />
           <el-option key="1" label="未收样" value="0" />
         </el-select>
@@ -444,6 +446,7 @@ export default {
                   message: `操作成功`,
                   type: 'success'
                 })
+                this.getApplicationList()
               } else {
                 this.$message.error(res.errMsg)
               }

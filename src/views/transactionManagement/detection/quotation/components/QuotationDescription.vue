@@ -52,7 +52,7 @@
         <el-tab-pane label="报价明细" name="0">
           <div v-for="goodsItem in postForm.goods">
             <div class="parent">
-              <el-form ref="postForm" class="left mt20" :inline="true" :model="goodsItem" status-icon label-width="150px">
+              <el-form ref="postForm" class="left" :inline="true" :model="goodsItem" status-icon label-width="140px">
                 <el-form-item label="产品名：" prop="telClient">{{ goodsItem.goodsName }}</el-form-item>
                 <el-form-item label="HSCode：" prop="telClient">{{ goodsItem.hsCode }}</el-form-item>
                 <el-form-item label="材质：" prop="telClient">{{ goodsItem.material }}</el-form-item>
@@ -144,7 +144,7 @@
                   <span class="text-danger">{{ postForm.reportFee | changePrice2money }}</span>
                 </el-form-item>
                 <el-form-item label="快递费：">
-                  <span class="text-danger">{{ postForm.postage | changePrice2money }}</span>
+                  <span class="text-danger">{{ postForm.postage }}</span>
                 </el-form-item>
                 <br>
                 <el-form-item :label="'总计（含税）：'">

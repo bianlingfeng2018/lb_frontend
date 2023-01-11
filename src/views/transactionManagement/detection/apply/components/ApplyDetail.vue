@@ -101,8 +101,8 @@
         <el-input v-model="postForm.brandCn" placeholder="请输入商标" clearable style="width: 240px" />
         <el-input v-model="postForm.brandEn" placeholder="英文" clearable style="width: 240px; margin-left: 20px;" />
       </el-form-item>
-      <el-form-item :label="'批号'">
-        <el-input v-model="postForm.lotNoCn" placeholder="请输入样品批号" clearable style="width: 240px" />
+      <el-form-item :label="'批次'">
+        <el-input v-model="postForm.lotNoCn" placeholder="请输入样品批次" clearable style="width: 240px" />
         <el-input v-model="postForm.lotNoEn" placeholder="英文" clearable style="width: 240px; margin-left: 20px;" />
       </el-form-item>
       <el-form-item :label="'规格'">
@@ -136,7 +136,7 @@
         />
       </el-form-item>
       <el-form-item :label="'出口地'" prop="exportedTo">
-        <el-select v-model="postForm.exportedTo" style="width: 240px" placeholder="请选择出口地">
+        <el-select v-model="postForm.exportedTo" style="width: 240px" clearable placeholder="请选择出口地">
           <el-option
             v-for="item in exportList"
             :key="item.id"
@@ -152,13 +152,13 @@
           <el-radio label="其它" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item :label="'服务类型'" prop="serviceType">
-        <el-select v-model="postForm.serviceType" placeholder="请选择" style="display: block; width: 200px">
-          <el-option key="0" label="标准" value="0" />
-          <el-option key="1" label="加急" value="1" />
-          <el-option key="2" label="特急" value="2" />
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item :label="'服务类型'" prop="serviceType">-->
+<!--        <el-select v-model="postForm.serviceType" placeholder="请选择" style="display: block; width: 200px">-->
+<!--          <el-option key="0" label="标准" value="0" />-->
+<!--          <el-option key="1" label="加急" value="1" />-->
+<!--          <el-option key="2" label="特急" value="2" />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <br>
       <el-form-item :label="'样品处理方式'" prop="sampleDeal">
         <el-radio-group v-model="postForm.sampleDeal">

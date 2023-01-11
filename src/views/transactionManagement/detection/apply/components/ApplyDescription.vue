@@ -1,8 +1,8 @@
 <template>
   <div v-if="postForm !== undefined" class="app-container ohn quotation-box">
     <el-button class="f1 pointer" icon="el-icon-arrow-left" @click="goBack">返回上一页</el-button>
-    <div v-if="postForm.status == 3" class="mt20" style="background-color: #F56C6C;padding:10px">
-      <span class="mt20 mb20 ml16 ">申请单被{{ postForm.reviewName }}评审不通过，不通过原因：{{ postForm.reviewReason }}(评审人：{{ postForm.reviewName
+    <div v-if="postForm.contractStatus == 2" class="mt20" style="background-color: #F56C6C;padding:10px">
+      <span class="mt20 mb20 ml16 ">申请单被{{ postForm.reviewName }}评审不通过，不通过原因：{{ postForm.reviewRemark }}(评审人：{{ postForm.reviewName
       }} 评审时间：{{ postForm.reviewTime }})</span>
     </div>
     <div id="pdfCentent">
@@ -18,15 +18,15 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">申请单位地址</template>
-          {{ postForm.comAddrCn }}({{ postForm.comAddrEn }})
+          {{ postForm.comAddrCn }}<span v-if="postForm.comAddrEn">({{ postForm.comAddrEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">报告抬头</template>
-          {{ postForm.reportTitleCn }}({{ postForm.reportTitleEn }})
+          {{ postForm.reportTitleCn }}<span v-if="postForm.reportTitleEn">({{ postForm.reportTitleEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">报告抬头地址</template>
-          {{ postForm.reportAddressCn }}({{ postForm.reportAddressEn }})
+          {{ postForm.reportAddressCn }}<span v-if="postForm.reportAddressEn">({{ postForm.reportAddressEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">报告邮寄地址</template>
@@ -38,14 +38,14 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">需要资质</template>
-          {{ postForm.credentials }}
+          {{ getReports(postForm.credentials)  }}
         </el-descriptions-item>
       </el-descriptions>
       <el-divider class="mb36" content-position="left">样品信息</el-divider>
       <el-descriptions class="margin-top" title="" :column="2" :content-style="{ 'width': '200px' }">
         <el-descriptions-item>
           <template slot="label">样品名称</template>
-          {{ postForm.sampleNameCn }}({{ postForm.sampleNameEn }})
+          {{ postForm.sampleNameCn }}<span v-if="postForm.sampleNameEn">({{ postForm.sampleNameEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品数量</template>
@@ -53,31 +53,31 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品型号</template>
-          {{ postForm.sampleModelCn }}({{ postForm.sampleModelEn }})
+          {{ postForm.sampleModelCn }}<span v-if="postForm.sampleModelEn">({{ postForm.sampleModelEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品状态</template>
-          {{ postForm.sampleStatusCn }}({{ postForm.sampleStatusEn }})
+          {{ postForm.sampleStatusCn }}<span v-if="postForm.sampleStatusEn">({{ postForm.sampleStatusEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">商标</template>
-          {{ postForm.brandCn }}({{ postForm.brandEn }})
+          {{ postForm.brandCn }}<span v-if="postForm.brandEn">({{ postForm.brandEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">批次</template>
-          {{ postForm.lotNoCn }}({{ postForm.lotNoEn }})
+          {{ postForm.lotNoCn }}<span v-if="postForm.lotNoEn">({{ postForm.lotNoEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">规格</template>
-          {{ postForm.specificationCn }}({{ postForm.specificationEn }})
+          {{ postForm.specificationCn }}<span v-if="postForm.specificationEn">({{ postForm.specificationEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">供应商</template>
-          {{ postForm.supplierCn }}({{ postForm.supplierEn }})
+          {{ postForm.supplierCn }}<span v-if="postForm.supplierEn">({{ postForm.supplierEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">购买商</template>
-          {{ postForm.buyerCn }}({{ postForm.buyerEn }})
+          {{ postForm.buyerCn }}<span v-if="postForm.buyerEn">({{ postForm.buyerEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">订单号</template>
@@ -85,7 +85,7 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">生产商</template>
-          {{ postForm.manufacturerCn }}({{ postForm.manufacturerEn }})
+          {{ postForm.manufacturerCn }}<span v-if="postForm.manufacturerEn">({{ postForm.manufacturerEn }})</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">出口地</template>
@@ -97,18 +97,27 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">样品处理方式</template>
-          {{ postForm.sampleDeal }}
+          <span v-if="postForm.sampleDeal == 1">退还</span>
+          <span v-if="postForm.sampleDeal == 2">留样</span>
         </el-descriptions-item>
 
       </el-descriptions>
       <div>测试项目及要求:
-        <el-table :data="tableData" stripe border style="width: 100%" class="mt8">
-          <el-table-column type="seq" label="序号" width="60" />
+        <el-table :data="postForm.items" stripe border style="width: 100%" class="mt8">
+          <el-table-column prop="itemId" label="序号" width="60" />
           <el-table-column prop="testItem" label="测试项目" min-width="120" />
-          <el-table-column prop="unitPrice" label="单价" min-width="120" />
-          <el-table-column prop="applicationDate" label="测试点数" min-width="120" />
-          <el-table-column prop="quantity" label="测试金额" min-width="120" />
-          <el-table-column prop="sampleStatus" label="样品量" min-width="120" />
+          <el-table-column prop="unitPrice" label="单价" min-width="120">
+            <template slot-scope="scope">
+              <span>{{ scope.row.unitPrice | changePrice2money }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="quantity" label="测试点数" min-width="120" />
+          <el-table-column prop="amountRmb" label="测试金额" min-width="120">
+            <template slot-scope="scope">
+              <span>{{ scope.row.amountRmb | changePrice2money }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="sampleQty" label="样品量" min-width="120" />
         </el-table>
       </div>
       <el-divider content-position="left">多种材料清单样品信息</el-divider>
@@ -161,7 +170,7 @@
 import { getApplicationDetail } from "@/api/organizations"
 import { getToken } from "@/utils/auth"
 import config from "@/utils/config"
-import { timeFormatFilter } from "@/utils/simple-util"
+import { changePrice2money } from "@/utils/simple-util"
 import MyFlexTable from "@/views/components/MyFlexTable"
 
 const { prefix } = config[process.env.NODE_ENV]
@@ -171,7 +180,7 @@ export default {
     MyFlexTable
   },
   filters: {
-    timeFormatFilter
+    changePrice2money
   },
   data() {
     return {
@@ -181,7 +190,11 @@ export default {
       },
       postForm: {},
       htmlTitle: 0,
-      mergeFooterItems: [{ row: 0, col: 0, rowspan: 0, colspan: 8 }]
+      mergeFooterItems: [{ row: 0, col: 0, rowspan: 0, colspan: 8 }],
+      customerOptions: [
+        { key: 1, value: "CNAS",},
+        { key: 2, value: "CMA",  },
+      ],
     }
   },
   created() {
@@ -192,6 +205,19 @@ export default {
     this.downloadParam.testTradeId = this.tempRoute.params.id
   },
   methods: {
+    getReports(arr) {
+      let testStr = ""
+      arr.forEach(arritem => {
+          this.customerOptions.map(item => {
+            if (item.key == arritem) {
+              testStr += item.value + ','
+            }
+          })
+        }
+      )
+      return testStr.substring(0, testStr.length - 1)
+    },
+
     handlePreview() {
       window.open(
         "/api/certification/previewByEncryptionKey?encryptionKey=" +

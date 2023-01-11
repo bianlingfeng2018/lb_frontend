@@ -105,6 +105,7 @@
       >
         <el-form-item label="客户名称：" prop="clientName">
           <el-select
+            clearable
             v-model="add_creditInfo.clientName"
             value-key="id"
             filterable
@@ -120,9 +121,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="合同有效期：" prop="contractStartDate">
+        <el-form-item label="合同有效期：" prop="contractTime">
           <el-date-picker
-            v-model="contractTime"
+            clearable
+            v-model="add_creditInfo.contractTime"
             type="daterange"
             value-format="yyyy-MM-dd"
             start-placeholder="开始日期"
@@ -156,7 +158,7 @@
             :auto-upload="false"
           >
             <el-button slot="trigger" size="small">选取文件</el-button>
-            {{ creditInfo.contractPath }}
+            {{ add_creditInfo.contractPath }}
             <div slot="tip" class="el-upload__tip">
               支持pdf格式，单个文件可超过50M
             </div>
@@ -257,12 +259,13 @@ export default {
         contractEndDate: '',
         settlePeriod: '',
         type: '',
-        contractPath: ''
+        contractPath: '',
+        contractTime: [],
       },
       auditRules: {
         clientName: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
-        contractStartDate: [{ required: true, message: '请输入合同有效期', trigger: 'change' }],
-        type: [{ required: true, message: '请选择是否入账', trigger: 'blur' }],
+        contractTime: [{ required: true, message: '请输入合同有效期', trigger: 'change' }],
+        type: [{ required: true, message: '请选择是否入账', trigger: 'change' }],
         settlePeriod: [{ required: true, message: '请输入结算周期', trigger: 'blur' }]
       },
       reviewReasonRules: {
@@ -284,7 +287,7 @@ export default {
       tableLoading: false,
       tableData: [],
       operTime: [],
-      contractTime: [],
+
       pagination: {
         currPage: 1,
         pageSize: 10,
@@ -357,11 +360,11 @@ export default {
     },
     changeTxnBtn() {
       const that = this
-      if (!that.contractTime) {
-        that.contractTime = []
+      if (!that.add_creditInfo.contractTime) {
+        that.add_creditInfo.contractTime = []
       }
-      this.add_creditInfo.contractStartDate = this.contractTime[0] || ''
-      this.add_creditInfo.contractEndDate = this.contractTime[1] || ''
+      this.add_creditInfo.contractStartDate = this.add_creditInfo.contractTime[0] || ''
+      this.add_creditInfo.contractEndDate = this.add_creditInfo.contractTime[1] || ''
     },
     // 获取info列表
     async getDataInfoList() {
@@ -579,6 +582,7 @@ export default {
       this.dialogType = 'new'
       this.getContract(data)
       this.dialogVisible = true
+      this.multpartfile = []
     },
     // 编辑合同
     handleEdit(data) {

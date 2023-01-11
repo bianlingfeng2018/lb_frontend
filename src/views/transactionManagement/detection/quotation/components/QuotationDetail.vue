@@ -460,7 +460,7 @@ export default {
       tableRules: methods.quotationTableValidate,
       payType: 50,
       checkList: [], // 报告类型
-      radio: 1,
+      radio: "1",
       radioStandard: "1",
       dialogVisible: false,
       innerDialogVisible: false,
@@ -646,6 +646,8 @@ export default {
         requestId: Math.random().toString(24)
       })
       this.hsCodes = codes.data
+      console.log( "this.hsCodes")
+      console.log( this.hsCodes)
     },
 
     async onGoodSearch() {

@@ -28,29 +28,33 @@
         />
       </el-form-item>
       <el-form-item label="跟进人">
-        <el-select v-model="columnParam.serviceId" placeholder="请选择" style="display: block; width: 140px">
+        <el-select v-model="columnParam.serviceId" placeholder="请选择" clearable style="display: block; width: 140px">
           <el-option v-for="item in comList" :key="item.id" :label="item.nickname" :value="item.id" />
         </el-select>
       </el-form-item>
       <br>
       <el-form-item label="支付状态" prop="payStatus">
-        <el-select v-model="columnParam.payStatus" placeholder="请选择" style="display: block; width: 140px">
+        <el-select v-model="columnParam.payStatus" placeholder="请选择" clearable style="display: block; width: 140px">
+          <el-option key="-1" label="全部" value="-1" />
+          <el-option key="4" label="待审核价格" value="1" />
+          <el-option key="5" label="审核不通过" value="2" />
           <el-option key="0" label="未支付" value="3" />
           <el-option key="1" label="已挂账" value="4" />
           <el-option key="2" label="已付部分" value="5" />
           <el-option key="3" label="已全付" value="6" />
+          <el-option key="6" label="已失效" value="7" />
         </el-select>
       </el-form-item>
       <el-form-item label="进度" prop="step">
-        <el-select v-model="columnParam.step" placeholder="请选择" style="display: block; width: 140px">
+        <el-select v-model="columnParam.step" placeholder="请选择" clearable style="display: block; width: 140px">
           <el-option key="0" label="报价单审核中" value="1" />
           <el-option key="1" label="报价单已通过" value="2" />
           <el-option key="2" label="申请单待评审" value="3" />
           <el-option key="3" label="申请单已通过" value="4" />
-          <el-option key="3" label="工作单待确认" value="5" />
-          <el-option key="3" label="原始记录单已生成" value="6" />
-          <el-option key="3" label="检测报告单审核中" value="7" />
-          <el-option key="3" label="检测报告单审核通过" value="8" />
+          <el-option key="4" label="工作单待确认" value="5" />
+          <el-option key="5" label="原始记录单已生成" value="6" />
+          <el-option key="6" label="检测报告单审核中" value="7" />
+          <el-option key="7" label="检测报告单审核通过" value="8" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -60,8 +64,8 @@
     </el-form>
 
     <div class="lb-flex" style="position: relative;">
-      <el-tabs v-model="activeIndex" style="width: 100%" @tab-click="handleClick">
-        <el-tab-pane label="全部" name="0" />
+      <el-tabs v-model="columnParam.payStatus" style="width: 100%" @tab-click="handleClick">
+        <el-tab-pane label="全部" name="-1" />
         <el-tab-pane label="待审核价格" name="1" />
         <el-tab-pane label="审核不通过" name="2" />
         <el-tab-pane label="已失效" name="7" />
@@ -219,7 +223,9 @@ export default {
       tableData: [],
       comList: [],
       // 搜索条件
-      columnParam: {},
+      columnParam: {
+        payStatus: '-1'
+      },
       uploadInfo: {
         incomeAmt: '',
         quotationNum: '',
@@ -251,6 +257,12 @@ export default {
     this.getComListDate()
   },
   methods: {
+    // 点击切换type
+    handleClick(tab) {
+      this.columnParam.payStatus = tab.name
+      this.pagination.currPage = 1
+      this.getListDate()
+    },
     getListDate() {
       this.tableLoading = true
       const queryParam = {
@@ -259,6 +271,9 @@ export default {
         pageSize: this.pagination.pageSize
       }
       const colParam = deepClone(this.columnParam)
+      if (this.columnParam.payStatus == '-1') {
+        colParam.payStatus = ""
+      }
       getQuotationList(Object.assign({}, queryParam, colParam))
         .then((res) => {
           console.log(res)
@@ -283,10 +298,7 @@ export default {
       this.comList = res.data.dataList
       console.log(this.comList)
     },
-    // 点击切换type
-    handleClick(tab, event) {
-      console.log(tab, event)
-    },
+
     // 上传水单
     handleDelete(data) {
       this.dialogVisible_settlement = true

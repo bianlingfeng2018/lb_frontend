@@ -146,7 +146,7 @@
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
-            style="width: 120px"
+            style="width: 240px"
           />
         </el-form-item>
       </el-form>

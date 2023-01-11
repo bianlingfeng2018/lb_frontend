@@ -41,7 +41,7 @@
       </el-form-item>
       <br>
       <el-form-item label="核销状态" prop="email">
-        <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px">
+        <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px" clearable>
 
           <el-option key="0" label="未核销" value="0" />
           <el-option key="1" label="已核销" value="1" />
@@ -230,9 +230,9 @@
     <el-dialog :visible.sync="dialogVisible_edit" title="核销">
       <el-form :model="creditInfo" label-width="80px" label-position="left">
         <el-form-item label="核销金额" prop="username">{{ creditInfo.amount /100 }}</el-form-item>
-        <el-form-item label="结余金额" prop="username">{{ routeData.balanceAmt /100 }}</el-form-item>
+        <el-form-item label="结余金额" prop="username">{{ (routeData.creditLimit+routeData.balanceAmt- creditInfo.amount) /100}}</el-form-item>
       </el-form>
-      <span v-if="creditInfo.amount>routeData.balanceAmt" class="lb-error">结余金额不足，请核实</span>
+      <span v-if="creditInfo.amount>(routeData.creditLimit+routeData.balanceAmt- creditInfo.amount)" class="lb-error">结余金额不足，请核实</span>
       <div style="text-align:right;">
         <el-button type="danger" size="small" plain @click="dialogVisible_edit = false">取消</el-button>
         <el-button type="primary" size="small" plain @click="onBatchOut">确认</el-button>
@@ -284,7 +284,7 @@
 import { getAllIncomeBill, getAllOutBill, addOutBillBatch, addOneIncomeBill } from "@/api/bill"
 import {allCompany, getQuotationByName} from "@/api/organizations"
 import { deepClone} from "@/utils"
-import { appendParamsToUrl } from "@/utils/simple-util"
+import { appendParamsToUrl , changePrice2money } from "@/utils/simple-util"
 export default {
   name: "Details",
   data() {

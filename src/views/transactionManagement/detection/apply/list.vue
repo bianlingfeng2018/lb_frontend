@@ -350,7 +350,6 @@ export default {
       this.productlist.comName = item.comName
       this.productlist.subContract = item.subContract
       this.productlist.testComId = item.id
-
       this.getDataInfoList(item.id)
     },
     // 新增
@@ -383,13 +382,14 @@ export default {
       this.productlist.testItemList = []
       if (this.checkList.length) {
         this.checkList.forEach((item) => {
+          item.testItemId = item.itemId;
           this.productlist.testItemList.push(item)
         })
         gooditem = deepClone(this.productlist)
-        gooditem.testItemId = gooditem.itemId
       }
       this.confirmInfo.orderList[index] = gooditem
       console.log(this.productlist.testItemList)
+      console.log("productlist",this.productlist)
       console.log("gooditem", gooditem)
       console.log("confirmInfo.orderList", this.confirmInfo.orderList)
     },

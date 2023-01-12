@@ -14,7 +14,7 @@
       <el-form-item v-if="isEdit" label="申请单编号">{{ postForm.applicationNum }}</el-form-item>
       <el-form-item label="申请单位">{{ postForm.applicationName }}</el-form-item>
       <br>
-      <el-form-item :label="'申请单位地址'" prop="comAddrCn">
+      <el-form-item :label="'申请单位地址'"  prop="comAddrCn">
         <el-input v-model="postForm.comAddrCn" placeholder="请输入申请单位地址 " clearable style="width: 240px" />
         <el-input v-model="postForm.comAddrEn" placeholder="请输入英文地址 " clearable style="width: 240px;margin-left: 20px;" />
       </el-form-item>
@@ -307,8 +307,10 @@ export default {
       rules: methods.applyCreateValidate,
       postForm: {
         credentials: [],
-        sampleList: []
+        sampleList: [],
+        comAddrCn:''
       },
+      test:'',
       applyForm: [],
       exportList: [], // 出口国
       innerDialogVisible: false,

@@ -22,6 +22,7 @@
         <el-date-picker
           v-model="columnParam.lastTraceDate"
           type="daterange"
+          clearable
           value-format="yyyy-MM-dd"
           start-placeholder="开始日期"
           end-placeholder="结束日期"

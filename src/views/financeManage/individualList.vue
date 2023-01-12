@@ -29,7 +29,7 @@
         />
       </el-form-item>
       <el-form-item label="核销状态" prop="email">
-        <el-select v-model="columnParam.status" placeholder="请选择" style="display: block; width: 240px" clearable>
+        <el-select v-model="columnParam.status" placeholder="请选择"  style="display: block; width: 240px" clearable>
           <el-option
             v-for="(item,i) in statusList"
             :key="i"
@@ -43,6 +43,7 @@
         <el-date-picker
           v-model="uploadTime"
           type="daterange"
+          clearable
           value-format="yyyy-MM-dd"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -56,6 +57,7 @@
           value-format="yyyy-MM-dd"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          clearable
           style="width: 240px"
         />
       </el-form-item>
